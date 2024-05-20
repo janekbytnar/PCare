@@ -32,7 +32,9 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> createUserWithEmailAndPassword() async {
     try {
       await Auth().createUserWithEmailAndPassword(
-          email: _controllerEmail.text, password: _controllerPassword.text);
+        email: _controllerEmail.text,
+        password: _controllerPassword.text,
+      );
     } on FirebaseAuthException catch (e) {
       setState(() {
         errorMessage = e.message;
@@ -41,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _title() {
-    return const Text('Login or no xD');
+    return Text(isLogin ? 'Login' : 'Register');
   }
 
   Widget _entryField(

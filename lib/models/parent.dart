@@ -1,53 +1,40 @@
 import 'package:perfect_childcare/models/child.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:perfect_childcare/models/userData.dart';
 
-class Parent {
-  final String? uid;
-  final String? firstName;
-  final String? surname;
-  final String? imgUrl;
+class Parent extends UserData {
   final List<Child>? childrens;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
+  final String? partnerId;
 
   Parent({
-    this.uid,
-    this.firstName,
-    this.surname,
-    this.imgUrl,
+    String? firstName,
+    String? surname,
+    String? imgUrl,
+    DateTime? createdAt,
+    DateTime? updatedAt,
     this.childrens,
-    this.createdAt,
-    this.updatedAt,
-  });
+    this.partnerId,
+  }) : super(
+          firstName: firstName,
+          surname: surname,
+        );
 
   Map<String, dynamic> toMap() {
     return {
-      'uid': uid,
       'firstName': firstName,
       'surname': surname,
       'imgUrl': imgUrl,
       'childrens': childrens
           ?.map((child) => child.toMap())
-          .toList(), // Konwersja listy dzieci na listę map
-      'createdAt': createdAt
-          ?.toIso8601String(), // Konwersja daty utworzenia na string w formacie ISO 8601
-      'updatedAt': updatedAt
-          ?.toIso8601String(), // Konwersja daty aktualizacji na string w formacie ISO 8601
+          .toList(), // Conversion child/s for List
+      'createdAt': createdAt?.toIso8601String(), // Conversion date to String
+      'updatedAt': updatedAt?.toIso8601String(),
     };
   }
 
   Parent.fromDocumentSnapshot(DocumentSnapshot<Map<String, dynamic>> doc)
-      : uid = doc.id,
-        firstName = doc.data()!["firstName"],
-        surname = doc.data()!["surname"],
-        imgUrl = doc.data()!["imgUrl"],
-        childrens = (doc.data()?["childrens"] as List<dynamic>?)
+      : childrens = (doc.data()?["childrens"] as List<dynamic>?)
             ?.map((childData) => Child.fromMap(childData))
             .toList(),
-        createdAt = doc.data()?["createdAt"] != null
-            ? DateTime.parse(doc.data()?["createdAt"])
-            : null,
-        updatedAt = doc.data()?["updatedAt"] != null
-            ? DateTime.parse(doc.data()?["updatedAt"])
-            : null;
+        partnerId = doc.data()?["partnerId"];
 }
