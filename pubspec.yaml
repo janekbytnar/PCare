@@ -25,6 +25,7 @@ dependencies:
     path: packages/user_repository
   
   syncfusion_flutter_sliders: ^25.1.35
+  persistent_bottom_nav_bar: ^5.0.2
 
 dev_dependencies:
   flutter_test:
