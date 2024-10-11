@@ -1,28 +1,24 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:perfect_childcare/blocs/register_bloc/register_bloc.dart';
-import 'package:perfect_childcare/screens/auth/components/my_text_field.dart';
-import 'package:user_repository/user_repository.dart';
+import 'package:perfect_childcare/screens/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
+import 'package:perfect_childcare/components/my_text_field.dart';
 
-class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+class SignInScreen extends StatefulWidget {
+  const SignInScreen({super.key});
 
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  State<SignInScreen> createState() => _SignInScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class _SignInScreenState extends State<SignInScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  final confirmPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  bool registerFirebaseError = false;
-  bool registerRequired = false;
+  bool signInFirebaseError = false;
+  bool signInRequired = false;
   bool obscurePassword = true;
-  bool obscureConfirmPassword = true;
   IconData iconPassword = CupertinoIcons.eye_fill;
-  IconData iconConfirmPassword = CupertinoIcons.eye_fill;
   String? _errorMsg;
   String? _errorMsgFirebase;
 
@@ -39,7 +35,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         validator: (val) {
           if (val!.isEmpty) {
             return 'Please fill the field';
-          } else if (!RegExp(r'^[\w=\.]+@([\w-]+.)+.[\w-]{2,3}$')
+          } else if (!RegExp(r'^[\w=\.]+@([\w-]+.)+[\w-]{2,3}$')
               .hasMatch(val)) {
             return 'Invalid email format';
           }
@@ -85,60 +81,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _confirmPasswordField() {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.9,
-      child: MyTextField(
-        controller: confirmPasswordController,
-        hintText: 'Confirm password',
-        obscureText: obscureConfirmPassword,
-        keyboardType: TextInputType.visiblePassword,
-        prefixIcon: const Icon(CupertinoIcons.lock_fill),
-        errorMsg: _errorMsg,
-        validator: (val) {
-          if (val!.isEmpty) {
-            return 'Please fill the field';
-            // } else if (!passwordRexExp.hasMatch(val)) {
-            //   return 'Please enter a valid password';
-            // }
-          } else if (passwordController.text != val) {
-            return 'Passwords do not match';
-          }
-          return null;
-        },
-        suffixIcon: IconButton(
-          onPressed: () {
-            setState(() {
-              obscureConfirmPassword = !obscureConfirmPassword;
-              if (obscureConfirmPassword) {
-                iconConfirmPassword = CupertinoIcons.eye_fill;
-              } else {
-                iconConfirmPassword = CupertinoIcons.eye_slash_fill;
-              }
-            });
-          },
-          icon: Icon(iconConfirmPassword),
-        ),
-      ),
-    );
-  }
-
   Widget _button() {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.5,
       child: TextButton(
         onPressed: () {
           if (_formKey.currentState!.validate()) {
-            MyUser myUser = MyUser.empty;
-            myUser = myUser.copyWith(
-              email: emailController.text,
-            );
-            setState(() {
-              context.read<RegisterBloc>().add(RegisterRequired(
-                    myUser,
-                    passwordController.text,
-                  ));
-            });
+            context.read<SignInBloc>().add(SignInRequired(
+                  emailController.text,
+                  passwordController.text,
+                ));
           }
         },
         style: TextButton.styleFrom(
@@ -150,7 +102,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
         child: const Padding(
           padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-          child: Text('Register',
+          child: Text('Sign In',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.black,
@@ -164,28 +116,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<RegisterBloc, RegisterState>(
+    return BlocListener<SignInBloc, SignInState>(
       listener: (context, state) {
-        if (state is RegisterSuccess) {
+        if (state is SignInSuccess) {
+          return;
+        } else if (state is SignInProcess) {
           setState(() {
-            registerRequired = false;
+            signInRequired = true;
+            signInFirebaseError = false;
           });
-        } else if (state is RegisterProcess) {
+        } else if (state is SignInFailure && state.message != null) {
           setState(() {
-            registerRequired = true;
-          });
-        } else if (state is RegisterFailure && state.message != null) {
-          setState(() {
-            registerFirebaseError = true;
-            registerRequired = false;
+            signInFirebaseError = true;
+            signInRequired = false;
             _errorMsgFirebase = state.message!
                 .replaceFirst(
                     state.message![0], state.message![0].toUpperCase())
                 .replaceAll('-', ' ');
           });
-        } else if (state is RegisterFailure) {
+        } else if (state is SignInFailure) {
           setState(() {
-            registerRequired = false;
+            signInRequired = false;
+            signInFirebaseError = false;
           });
         }
       },
@@ -197,17 +149,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
             _emailField(),
             const SizedBox(height: 10),
             _passwordField(),
-            const SizedBox(height: 10),
-            _confirmPasswordField(),
-            if (registerFirebaseError) const SizedBox(height: 10),
-            if (registerFirebaseError)
+            if (signInFirebaseError) const SizedBox(height: 10),
+            if (signInFirebaseError)
               Text(
                 // firebase error display
                 _errorMsgFirebase ?? '',
                 style: const TextStyle(color: Colors.red),
               ),
             const SizedBox(height: 20),
-            !registerRequired ? _button() : const CircularProgressIndicator(),
+            !signInRequired ? _button() : const CircularProgressIndicator(),
           ],
         ),
       ),

@@ -1,24 +1,28 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:perfect_childcare/blocs/sign_in_bloc/sign_in_bloc.dart';
-import 'package:perfect_childcare/screens/auth/components/my_text_field.dart';
+import 'package:perfect_childcare/screens/auth/blocs/register_bloc/register_bloc.dart';
+import 'package:perfect_childcare/components/my_text_field.dart';
+import 'package:user_repository/user_repository.dart';
 
-class SignInScreen extends StatefulWidget {
-  const SignInScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  State<SignInScreen> createState() => _SignInScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _SignInScreenState extends State<SignInScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  bool signInFirebaseError = false;
-  bool signInRequired = false;
+  bool registerFirebaseError = false;
+  bool registerRequired = false;
   bool obscurePassword = true;
+  bool obscureConfirmPassword = true;
   IconData iconPassword = CupertinoIcons.eye_fill;
+  IconData iconConfirmPassword = CupertinoIcons.eye_fill;
   String? _errorMsg;
   String? _errorMsgFirebase;
 
@@ -29,13 +33,13 @@ class _SignInScreenState extends State<SignInScreen> {
         controller: emailController,
         hintText: 'Email',
         obscureText: false,
-        keyboardType: TextInputType.visiblePassword,
+        keyboardType: TextInputType.emailAddress,
         prefixIcon: const Icon(CupertinoIcons.mail_solid),
         errorMsg: _errorMsg,
         validator: (val) {
           if (val!.isEmpty) {
             return 'Please fill the field';
-          } else if (!RegExp(r'^[\w=\.]+@([\w-]+.)+[\w-]{2,3}$')
+          } else if (!RegExp(r'^[\w=\.]+@([\w-]+.)+.[\w-]{2,3}$')
               .hasMatch(val)) {
             return 'Invalid email format';
           }
@@ -81,16 +85,60 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
+  Widget _confirmPasswordField() {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.9,
+      child: MyTextField(
+        controller: confirmPasswordController,
+        hintText: 'Confirm password',
+        obscureText: obscureConfirmPassword,
+        keyboardType: TextInputType.visiblePassword,
+        prefixIcon: const Icon(CupertinoIcons.lock_fill),
+        errorMsg: _errorMsg,
+        validator: (val) {
+          if (val!.isEmpty) {
+            return 'Please fill the field';
+            // } else if (!passwordRexExp.hasMatch(val)) {
+            //   return 'Please enter a valid password';
+            // }
+          } else if (passwordController.text != val) {
+            return 'Passwords do not match';
+          }
+          return null;
+        },
+        suffixIcon: IconButton(
+          onPressed: () {
+            setState(() {
+              obscureConfirmPassword = !obscureConfirmPassword;
+              if (obscureConfirmPassword) {
+                iconConfirmPassword = CupertinoIcons.eye_fill;
+              } else {
+                iconConfirmPassword = CupertinoIcons.eye_slash_fill;
+              }
+            });
+          },
+          icon: Icon(iconConfirmPassword),
+        ),
+      ),
+    );
+  }
+
   Widget _button() {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.5,
       child: TextButton(
         onPressed: () {
           if (_formKey.currentState!.validate()) {
-            context.read<SignInBloc>().add(SignInRequired(
-                  emailController.text,
-                  passwordController.text,
-                ));
+            MyUser myUser = MyUser.empty;
+            myUser = myUser.copyWith(
+              email: emailController.text,
+            );
+            setState(() {
+              context.read<RegisterBloc>().add(RegisterRequired(
+                    myUser,
+                    passwordController.text,
+                  ));
+            });
           }
         },
         style: TextButton.styleFrom(
@@ -102,7 +150,7 @@ class _SignInScreenState extends State<SignInScreen> {
         ),
         child: const Padding(
           padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-          child: Text('Sign In',
+          child: Text('Register',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.black,
@@ -116,28 +164,28 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<SignInBloc, SignInState>(
+    return BlocListener<RegisterBloc, RegisterState>(
       listener: (context, state) {
-        if (state is SignInSuccess) {
-          return;
-        } else if (state is SignInProcess) {
+        if (state is RegisterSuccess) {
           setState(() {
-            signInRequired = true;
-            signInFirebaseError = false;
+            registerRequired = false;
           });
-        } else if (state is SignInFailure && state.message != null) {
+        } else if (state is RegisterProcess) {
           setState(() {
-            signInFirebaseError = true;
-            signInRequired = false;
+            registerRequired = true;
+          });
+        } else if (state is RegisterFailure && state.message != null) {
+          setState(() {
+            registerFirebaseError = true;
+            registerRequired = false;
             _errorMsgFirebase = state.message!
                 .replaceFirst(
                     state.message![0], state.message![0].toUpperCase())
                 .replaceAll('-', ' ');
           });
-        } else if (state is SignInFailure) {
+        } else if (state is RegisterFailure) {
           setState(() {
-            signInRequired = false;
-            signInFirebaseError = false;
+            registerRequired = false;
           });
         }
       },
@@ -149,15 +197,17 @@ class _SignInScreenState extends State<SignInScreen> {
             _emailField(),
             const SizedBox(height: 10),
             _passwordField(),
-            if (signInFirebaseError) const SizedBox(height: 10),
-            if (signInFirebaseError)
+            const SizedBox(height: 10),
+            _confirmPasswordField(),
+            if (registerFirebaseError) const SizedBox(height: 10),
+            if (registerFirebaseError)
               Text(
                 // firebase error display
                 _errorMsgFirebase ?? '',
                 style: const TextStyle(color: Colors.red),
               ),
             const SizedBox(height: 20),
-            !signInRequired ? _button() : const CircularProgressIndicator(),
+            !registerRequired ? _button() : const CircularProgressIndicator(),
           ],
         ),
       ),

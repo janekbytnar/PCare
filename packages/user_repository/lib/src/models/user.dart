@@ -7,9 +7,9 @@ class MyUser extends Equatable {
   final String firstName;
   final String surname;
   final String imgUrl;
-  final int updatedAt;
   final bool isNanny;
-  final List<String> sessionID;
+  final String linkedPerson;
+  final List<String> children;
 
   const MyUser({
     required this.userId,
@@ -17,9 +17,9 @@ class MyUser extends Equatable {
     required this.firstName,
     required this.surname,
     required this.imgUrl,
-    required this.updatedAt,
     required this.isNanny,
-    required this.sessionID,
+    required this.linkedPerson,
+    required this.children,
   });
 
   static const empty = MyUser(
@@ -28,9 +28,9 @@ class MyUser extends Equatable {
     firstName: '',
     surname: '',
     imgUrl: '',
-    updatedAt: 0,
     isNanny: false,
-    sessionID: [],
+    linkedPerson: '',
+    children: [],
   );
 
   MyUser copyWith({
@@ -39,9 +39,9 @@ class MyUser extends Equatable {
     String? firstName,
     String? surname,
     String? imgUrl,
-    int? updatedAt,
     bool? isNanny,
-    List<String>? sessionID,
+    String? linkedPerson,
+    List<String>? children,
   }) {
     return MyUser(
       userId: userId ?? this.userId,
@@ -49,9 +49,9 @@ class MyUser extends Equatable {
       firstName: firstName ?? this.firstName,
       surname: surname ?? this.surname,
       imgUrl: imgUrl ?? this.imgUrl,
-      updatedAt: updatedAt ?? this.updatedAt,
       isNanny: isNanny ?? this.isNanny,
-      sessionID: sessionID ?? this.sessionID,
+      linkedPerson: linkedPerson ?? this.linkedPerson,
+      children: children ?? this.children,
     );
   }
 
@@ -62,9 +62,9 @@ class MyUser extends Equatable {
       firstName: firstName,
       surname: surname,
       imgUrl: imgUrl,
-      updatedAt: updatedAt,
       isNanny: isNanny,
-      sessionID: sessionID,
+      linkedPerson: linkedPerson,
+      children: children,
     );
   }
 
@@ -75,20 +75,21 @@ class MyUser extends Equatable {
       firstName: entity.firstName,
       surname: entity.surname,
       imgUrl: entity.imgUrl,
-      updatedAt: entity.updatedAt,
       isNanny: entity.isNanny,
-      sessionID: entity.sessionID,
+      linkedPerson: entity.linkedPerson,
+      children: entity.children,
     );
   }
 
   @override
   List<Object?> get props => [
         userId,
+        email,
         firstName,
         surname,
         imgUrl,
-        updatedAt,
         isNanny,
-        sessionID,
+        linkedPerson,
+        children,
       ];
 }

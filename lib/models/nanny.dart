@@ -1,4 +1,3 @@
-import 'package:perfect_childcare/constants/date_utility.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:perfect_childcare/models/userData.dart';
 
@@ -25,7 +24,7 @@ class Nanny extends UserData {
       'firstName': firstName,
       'surname': surname,
       'imgUrl': imgUrl,
-      'experience': getAge(experience),
+      'experience': experience,
       'createdAt': createdAt?.toIso8601String(), // Conversion date to String
       'updatedAt': updatedAt?.toIso8601String(),
     };

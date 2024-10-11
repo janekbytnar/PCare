@@ -6,9 +6,9 @@ class MyUserEntity extends Equatable {
   final String firstName;
   final String surname;
   final String imgUrl;
-  final int updatedAt;
   final bool isNanny;
-  final List<String> sessionID;
+  final String linkedPerson;
+  final List<String> children;
 
   const MyUserEntity({
     required this.userId,
@@ -16,9 +16,9 @@ class MyUserEntity extends Equatable {
     required this.firstName,
     required this.surname,
     required this.imgUrl,
-    required this.updatedAt,
     required this.isNanny,
-    required this.sessionID,
+    required this.linkedPerson,
+    required this.children,
   });
 
   Map<String, Object?> toDocument() {
@@ -27,23 +27,24 @@ class MyUserEntity extends Equatable {
       'email': email,
       'firstName': firstName,
       'surname': surname,
-      'imgUrl': imgUrl, // Conversion date to String
-      'updatedAt': updatedAt,
+      'imgUrl': imgUrl,
       'nanny': isNanny,
-      'sessionID': sessionID,
+      'linkedPerson': linkedPerson,
+      'children': children,
     };
   }
 
   static MyUserEntity fromDocument(Map<String, dynamic> doc) {
     return MyUserEntity(
-        userId: doc['userId'],
-        email: doc['email'],
-        firstName: doc['firstName'],
-        surname: doc['surname'],
-        imgUrl: doc['imgUrl'],
-        updatedAt: doc['updatedAt'],
-        isNanny: doc['isNanny'],
-        sessionID: doc['sessionID']);
+      userId: doc['userId'] ?? '',
+      email: doc['email'] ?? '',
+      firstName: doc['firstName'] ?? '',
+      surname: doc['surname'] ?? '',
+      imgUrl: doc['imgUrl'] ?? '',
+      isNanny: doc['isNanny'] ?? false,
+      linkedPerson: doc['linkedPerson'] ?? '',
+      children: List<String>.from(doc['children']),
+    );
   }
 
   @override
@@ -53,8 +54,8 @@ class MyUserEntity extends Equatable {
         firstName,
         surname,
         imgUrl,
-        updatedAt,
         isNanny,
-        sessionID,
+        linkedPerson,
+        children,
       ];
 }

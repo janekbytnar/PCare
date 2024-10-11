@@ -2,8 +2,7 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:user_repository/src/models/user.dart';
-import 'package:user_repository/src/user_repo.dart';
+import 'package:user_repository/user_repository.dart';
 
 class FirebaseUserRepo implements UserRepository {
   final FirebaseAuth _firebaseAuth;
@@ -70,6 +69,46 @@ class FirebaseUserRepo implements UserRepository {
     } catch (e) {
       log('Error signOut: ${e.toString()}');
       rethrow;
+    }
+  }
+
+  @override
+  String? getCurrentUserId() {
+    return _firebaseAuth.currentUser?.uid;
+  }
+
+  @override
+  Future<MyUser?> getCurrentUserData() async {
+    final userId = getCurrentUserId();
+    if (userId != null) {
+      final doc = await usersCollection.doc(userId).get();
+      if (doc.exists) {
+        final data = doc.data() as Map<String, dynamic>;
+        return MyUser.fromEntity(MyUserEntity.fromDocument(data));
+      } else {
+        // user document doesn't exist
+        return null;
+      }
+    } else {
+      // User is not logged in
+      return null;
+    }
+  }
+
+  @override
+  Stream<MyUser?> getCurrentUserDataStream() {
+    final userId = _firebaseAuth.currentUser?.uid;
+    if (userId != null) {
+      return usersCollection.doc(userId).snapshots().map((snapshot) {
+        if (snapshot.exists) {
+          final data = snapshot.data() as Map<String, dynamic>;
+          return MyUser.fromEntity(MyUserEntity.fromDocument(data));
+        } else {
+          return null;
+        }
+      });
+    } else {
+      return Stream.value(null);
     }
   }
 }
