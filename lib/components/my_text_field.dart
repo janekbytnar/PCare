@@ -12,6 +12,9 @@ class MyTextField extends StatelessWidget {
   final FocusNode? focusNode;
   final String? errorMsg;
   final String? Function(String?)? onChanged;
+  final int? maxLines;
+  final int? minLines;
+  final EdgeInsetsGeometry? contentPadding;
 
   const MyTextField({
     super.key,
@@ -26,6 +29,9 @@ class MyTextField extends StatelessWidget {
     this.focusNode,
     this.errorMsg,
     this.onChanged,
+    this.maxLines,
+    this.minLines,
+    this.contentPadding,
   });
 
   @override
@@ -37,6 +43,8 @@ class MyTextField extends StatelessWidget {
       keyboardType: keyboardType,
       focusNode: focusNode,
       onTap: onTap,
+      maxLines: obscureText ? 1 : (maxLines ?? 1),
+      minLines: obscureText ? 1 : minLines,
       textInputAction: TextInputAction.next,
       onChanged: onChanged,
       decoration: InputDecoration(
@@ -66,13 +74,15 @@ class MyTextField extends StatelessWidget {
             color: Colors.blue,
           ),
         ),
-        fillColor: Colors.grey.shade200,
+        fillColor: Colors.white,
         filled: true,
         hintText: hintText,
         hintStyle: TextStyle(
           color: Colors.grey[500],
         ),
         errorText: errorMsg,
+        contentPadding: contentPadding ??
+            const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
       ),
     );
   }

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:perfect_childcare/blocs/authentication_bloc/authentication_bloc.dart';
-import 'package:perfect_childcare/blocs/register_bloc/register_bloc.dart';
-import 'package:perfect_childcare/blocs/sign_in_bloc/sign_in_bloc.dart';
-import 'package:perfect_childcare/screens/auth/register_screen.dart';
-import 'package:perfect_childcare/screens/auth/sing_in_screen.dart';
+import 'package:perfect_childcare/screens/auth/blocs/register_bloc/register_bloc.dart';
+import 'package:perfect_childcare/screens/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
+import 'package:perfect_childcare/screens/auth/views/register_screen.dart';
+import 'package:perfect_childcare/screens/auth/views/sing_in_screen.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -77,7 +77,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.white70,
       body: SingleChildScrollView(
         child: SizedBox(
           height: MediaQuery.of(context).size.height,

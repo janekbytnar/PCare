@@ -23,15 +23,26 @@ dependencies:
   #custom repositories
   user_repository:
     path: packages/user_repository
+  child_repository:
+    path: packages/child_repository
   
-  syncfusion_flutter_sliders: ^25.1.35
+  syncfusion_flutter_sliders: ^26.1.35
   persistent_bottom_nav_bar: ^5.0.2
+  connectivity_plus: ^6.0.3
+  http: ^1.2.0
+  auto_size_text: ^3.0.0
+  image_picker: ^1.0.8
+  image_cropper: ^5.0.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^4.0.0
   
 
 flutter:
-uses-material-design: true
+  uses-material-design: true
+
+  assets:
+    - assets/
+    - assets/icons/

@@ -1,5 +1,3 @@
-import 'package:perfect_childcare/constants/date_utility.dart';
-
 class Child {
   final String? firstName;
   final String? surname;
@@ -16,7 +14,7 @@ class Child {
       'firstName': firstName,
       'surname': surname,
       'dOB': dOB?.toIso8601String(),
-      'age': getAge(dOB),
+      'age': dOB,
     };
   }
 
