@@ -73,6 +73,18 @@ class FirebaseUserRepo implements UserRepository {
   }
 
   @override
+  Future<void> addChildToUser(String userId, String childId) async {
+    try {
+      await usersCollection.doc(userId).update({
+        'children': FieldValue.arrayUnion([childId]),
+      });
+    } catch (e) {
+      log('Error addChildToUser: ${e.toString()}');
+      rethrow;
+    }
+  }
+
+  @override
   String? getCurrentUserId() {
     return _firebaseAuth.currentUser?.uid;
   }
