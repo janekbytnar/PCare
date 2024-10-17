@@ -5,11 +5,13 @@ class ChildEntity {
   final String id;
   final String name;
   final List<String> parentIds;
+  final DateTime dateOfBirth;
 
   const ChildEntity({
     required this.id,
     required this.name,
     required this.parentIds,
+    required this.dateOfBirth,
   });
 
   // Tworzenie dokumentu Firestore
@@ -18,6 +20,7 @@ class ChildEntity {
       'id': id,
       'name': name,
       'parent_ids': parentIds,
+      'date_of_birth': Timestamp.fromDate(dateOfBirth),
     };
   }
 
@@ -27,6 +30,7 @@ class ChildEntity {
       id: doc['id'] ?? '',
       name: doc['name'] ?? '',
       parentIds: List<String>.from(doc['parent_ids']),
+      dateOfBirth: (doc['date_of_birth'] as Timestamp).toDate(),
     );
   }
 
@@ -36,6 +40,7 @@ class ChildEntity {
       id: id,
       name: name,
       parentIds: parentIds,
+      dateOfBirth: dateOfBirth,
     );
   }
 }

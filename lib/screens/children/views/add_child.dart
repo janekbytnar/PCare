@@ -1,78 +1,61 @@
-/*
+import 'package:child_repository/child_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:perfect_childcare/blocs/authentication_bloc/authentication_bloc.dart';
-import 'package:child_repository/child_repository.dart';
+import 'package:perfect_childcare/components/my_button.dart';
 import 'package:perfect_childcare/components/my_text_field.dart';
+import 'package:perfect_childcare/screens/children/blocs/children_management_bloc/children_management_bloc_bloc.dart';
+import 'package:perfect_childcare/screens/children/blocs/children_management_bloc/children_management_bloc_event.dart';
+import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
 class AddChildScreen extends StatefulWidget {
-  const AddChildScreen({Key? key}) : super(key: key);
+  const AddChildScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _AddChildScreenState createState() => _AddChildScreenState();
 }
 
 class _AddChildScreenState extends State<AddChildScreen> {
   final _formKey = GlobalKey<FormState>();
   final nameController = TextEditingController();
+  final dateController = TextEditingController();
+  DateTime? _selectedDate;
+  DateTime currentDate = DateTime.now();
   String? _errorMsg;
 
-  bool _isLoading = false;
-
-  Future<void> _addChild() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
-      try {
-        final userRepository =
-            context.read<AuthenticationBloc>().userRepository;
-        final currentUser = await userRepository.getCurrentUserData();
-
-        // Create new Child
-        final newChild = Child(
-          id: _firestore.collection('children').doc().id,
-          name: nameController.text.trim(),
-          parentIds: [currentUser!.userId],
-        );
-
-        // Save the child to the database
-        final childRepository = FirebaseChildRepo();
-        await childRepository.addChild(newChild);
-
-        // Update the user's children list
-        final updatedChildren = List<Child>.from(currentUser.children)
-          ..add(newChild);
-        final updatedUser = currentUser.copyWith(children: updatedChildren);
-
-        // Save the updated user to the database
-        await userRepository.setUserData(updatedUser);
-
-        // Show confirmation message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Child ${newChild.name} added successfully!')),
-        );
-
-        // Navigate back to the previous screen
-        Navigator.pop(context);
-      } catch (e) {
-        // Handle errors
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error adding child: $e')),
-        );
-      } finally {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+  String _capitalizeName(String text) {
+    if (text.isEmpty) {
+      return text;
     }
+
+    return text
+        .split(' ') // Podziel tekst na słowa
+        .map((word) =>
+            word[0].toUpperCase() +
+            word.substring(1).toLowerCase()) // Zmieniaj każde słowo
+        .join(' '); // Połącz z powrotem w jedno zdanie
   }
 
-  @override
-  void dispose() {
-    nameController.dispose();
-    super.dispose();
+  void _addChild() {
+    if (_formKey.currentState!.validate()) {
+      final childName = _capitalizeName(nameController.text.trim());
+
+      final currentUserId = context.read<AuthenticationBloc>().state.user!.uid;
+
+      final newChild = Child(
+          id: UniqueKey().toString(),
+          name: childName,
+          parentIds: [currentUserId],
+          dateOfBirth: _selectedDate!);
+
+      context.read<ChildrenManagementBloc>().add(AddChildEvent(
+            newChild,
+            currentUserId,
+          ));
+      Navigator.pop(context);
+    }
   }
 
   Widget _nameField() {
@@ -95,44 +78,80 @@ class _AddChildScreenState extends State<AddChildScreen> {
     );
   }
 
+  Widget _dateField() {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.9,
+      child: MyTextField(
+        controller: dateController,
+        hintText: 'Child\'s Date of Birth',
+        obscureText: false,
+        onTap: _dataPicker,
+        readOnly: true,
+        keyboardType: TextInputType.datetime,
+        prefixIcon: const Icon(CupertinoIcons.calendar),
+        errorMsg: _errorMsg,
+        validator: (val) {
+          if (val!.isEmpty) {
+            return 'Please select a date';
+          }
+          return null;
+        },
+      ),
+    );
+  }
+
+  void _dataPicker() {
+    showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(
+        currentDate.year - 18,
+        currentDate.month,
+        currentDate.day,
+      ),
+      lastDate: DateTime.now(),
+    ).then((date) {
+      if (date != null) {
+        setState(() {
+          _selectedDate = date;
+          String formattedDate =
+              DateFormat('yyyy-MM-dd').format(_selectedDate!);
+          dateController.text = formattedDate;
+        });
+      }
+    });
+  }
+
+  Widget _submitButton() {
+    return MyTextButton(
+      onPressed: _addChild,
+      text: 'Add Child',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add a Child'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    TextFormField(
-                      controller: nameController,
-                      decoration: const InputDecoration(
-                        labelText: 'Child\'s Name',
-                        prefixIcon: Icon(Icons.child_care),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter the child\'s name';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: _addChild,
-                      child: const Text('Add Child'),
-                    ),
-                  ],
-                ),
-              ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                _nameField(),
+                const SizedBox(height: 20),
+                _dateField(),
+                const SizedBox(height: 20),
+                _submitButton(),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
 }
-
-*/

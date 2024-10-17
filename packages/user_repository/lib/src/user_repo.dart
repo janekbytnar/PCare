@@ -12,6 +12,8 @@ abstract class UserRepository {
 
   Future<void> signOut();
 
+  Future<void> addChildToUser(String userId, String childId);
+
   Future<MyUser?> getCurrentUserData();
 
   Stream<MyUser?> getCurrentUserDataStream();

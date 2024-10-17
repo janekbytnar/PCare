@@ -1,4 +1,4 @@
-import 'package:perfect_childcare/models/child.dart';
+/*import 'package:perfect_childcare/models/child.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:perfect_childcare/models/userData.dart';
 
@@ -38,3 +38,4 @@ class Parent extends UserData {
             .toList(),
         partnerId = doc.data()?["partnerId"];
 }
+*/

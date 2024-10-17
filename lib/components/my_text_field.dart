@@ -15,6 +15,7 @@ class MyTextField extends StatelessWidget {
   final int? maxLines;
   final int? minLines;
   final EdgeInsetsGeometry? contentPadding;
+  final bool readOnly;
 
   const MyTextField({
     super.key,
@@ -32,6 +33,7 @@ class MyTextField extends StatelessWidget {
     this.maxLines,
     this.minLines,
     this.contentPadding,
+    this.readOnly = false,
   });
 
   @override
@@ -47,6 +49,7 @@ class MyTextField extends StatelessWidget {
       minLines: obscureText ? 1 : minLines,
       textInputAction: TextInputAction.next,
       onChanged: onChanged,
+      readOnly: readOnly,
       decoration: InputDecoration(
         suffixIcon: suffixIcon,
         prefixIcon: prefixIcon,

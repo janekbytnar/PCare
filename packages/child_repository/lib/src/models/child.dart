@@ -5,28 +5,33 @@ class Child extends Equatable {
   final String id;
   final String name;
   final List<String> parentIds;
+  final DateTime dateOfBirth;
 
   const Child({
     required this.id,
     required this.name,
     required this.parentIds,
+    required this.dateOfBirth,
   });
 
-  static const empty = Child(
+  static final empty = Child(
     id: '',
     name: '',
-    parentIds: [],
+    parentIds: const [],
+    dateOfBirth: DateTime(1970, 1, 1, 0, 0, 0),
   );
 
   Child copyWith({
     String? id,
     String? name,
     List<String>? parentIds,
+    DateTime? dateOfBirth,
   }) {
     return Child(
       id: id ?? this.id,
       name: name ?? this.name,
       parentIds: parentIds ?? this.parentIds,
+      dateOfBirth: dateOfBirth ?? this.dateOfBirth,
     );
   }
 
@@ -35,6 +40,7 @@ class Child extends Equatable {
       id: id,
       name: name,
       parentIds: parentIds,
+      dateOfBirth: dateOfBirth,
     );
   }
 
@@ -43,6 +49,7 @@ class Child extends Equatable {
       id: entity.id,
       name: entity.name,
       parentIds: entity.parentIds,
+      dateOfBirth: entity.dateOfBirth,
     );
   }
 
@@ -51,5 +58,6 @@ class Child extends Equatable {
         id,
         name,
         parentIds,
+        dateOfBirth,
       ];
 }

@@ -126,7 +126,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _linkButton() {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.8,
-      child: TextButton(
+      child: ElevatedButton(
         onPressed: () {
           if (_formKey.currentState!.validate()) {
             final snackBar = SnackBar(

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:perfect_childcare/components/my_button.dart';
 import 'package:perfect_childcare/screens/auth/blocs/register_bloc/register_bloc.dart';
 import 'package:perfect_childcare/components/my_text_field.dart';
 import 'package:user_repository/user_repository.dart';
@@ -126,7 +127,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget _button() {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.5,
-      child: TextButton(
+      child: MyTextButton(
         onPressed: () {
           if (_formKey.currentState!.validate()) {
             MyUser myUser = MyUser.empty;
@@ -141,23 +142,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             });
           }
         },
-        style: TextButton.styleFrom(
-          backgroundColor: Colors.green,
-          foregroundColor: Colors.black,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(80),
-          ),
-        ),
-        child: const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-          child: Text('Register',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              )),
-        ),
+        text: 'Register',
       ),
     );
   }
