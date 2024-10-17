@@ -32,6 +32,7 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<ChildrenBloc>(
             create: (context) => ChildrenBloc(
+              childRepository: context.read<ChildRepository>(),
               userRepository: context.read<UserRepository>(),
             ),
           ),

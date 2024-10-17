@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:child_repository/child_repository.dart';
-import 'package:user_repository/user_repository.dart';
 
 abstract class ChildrenManagementEvent extends Equatable {
   const ChildrenManagementEvent();

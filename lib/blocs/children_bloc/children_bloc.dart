@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:child_repository/child_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:user_repository/user_repository.dart';
 
@@ -9,13 +10,15 @@ part 'children_state.dart';
 
 class ChildrenBloc extends Bloc<ChildrenEvent, ChildrenState> {
   final UserRepository userRepository;
+  final ChildRepository childRepository;
   late final StreamSubscription<MyUser?> _userSubscription;
 
-  ChildrenBloc({required this.userRepository})
-      : super(const ChildrenState.unknown()) {
+  ChildrenBloc({
+    required this.userRepository,
+    required this.childRepository,
+  }) : super(const ChildrenState.unknown()) {
     _userSubscription =
         userRepository.getCurrentUserDataStream().listen((myUser) {
-      print('ChildrenBloc: Received user data update: $myUser');
       add(ChildrenStatusChanged(myUser));
     });
     on<ChildrenStatusChanged>(_onStatusChanged);
@@ -24,12 +27,17 @@ class ChildrenBloc extends Bloc<ChildrenEvent, ChildrenState> {
   Future<void> _onStatusChanged(
       ChildrenStatusChanged event, Emitter<ChildrenState> emit) async {
     final user = event.user;
-    print('ChildrenBloc: Processing user data: $user');
     if (user != null && user.children.isNotEmpty) {
-      print('ChildrenBloc: Emitting hasChildren state');
-      emit(const ChildrenState.hasChildren());
+      emit(const ChildrenState.loading());
+      try {
+        final children = await childRepository.getChildrenForUser(user.userId);
+        if (children.isNotEmpty) {
+          emit(ChildrenState.hasChildren(children));
+        }
+      } catch (e) {
+        emit(ChildrenState.failure(e.toString()));
+      }
     } else {
-      print('ChildrenBloc: Emitting childless state');
       emit(const ChildrenState.childless());
     }
   }
