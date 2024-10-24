@@ -31,11 +31,9 @@ class _AddChildScreenState extends State<AddChildScreen> {
     }
 
     return text
-        .split(' ') // Podziel tekst na słowa
-        .map((word) =>
-            word[0].toUpperCase() +
-            word.substring(1).toLowerCase()) // Zmieniaj każde słowo
-        .join(' '); // Połącz z powrotem w jedno zdanie
+        .split(' ')
+        .map((word) => word[0].toUpperCase() + word.substring(1).toLowerCase())
+        .join(' ');
   }
 
   void _addChild() {

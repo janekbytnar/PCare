@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:session_repository/session_repository.dart';
 import 'package:user_repository/user_repository.dart';
 
 class FirebaseUserRepo implements UserRepository {
@@ -73,7 +74,7 @@ class FirebaseUserRepo implements UserRepository {
   }
 
   @override
-  Future<void> addChildToUser(String userId, String childId) async {
+  Future<void> connectChildToUser(String userId, String childId) async {
     try {
       await usersCollection.doc(userId).update({
         'children': FieldValue.arrayUnion([childId]),
@@ -108,12 +109,31 @@ class FirebaseUserRepo implements UserRepository {
   }
 
   @override
+  Future<List<Session>> getSessions(List<String> sessionIds) async {
+    List<Session> sessions = [];
+    for (String sessionId in sessionIds) {
+      DocumentSnapshot sessionSnapshot = await FirebaseFirestore.instance
+          .collection('sessions')
+          .doc(sessionId)
+          .get();
+
+      if (sessionSnapshot.exists) {
+        final data = sessionSnapshot.data() as Map<String, dynamic>;
+        SessionEntity sessionEntity = SessionEntity.fromDocument(data);
+        Session session = Session.fromEntity(sessionEntity);
+        sessions.add(session);
+      }
+    }
+    return sessions;
+  }
+
+  @override
   Stream<MyUser?> getCurrentUserDataStream() {
     final userId = _firebaseAuth.currentUser?.uid;
     if (userId != null) {
       return usersCollection.doc(userId).snapshots().map((snapshot) {
-        if (snapshot.exists) {
-          final data = snapshot.data() as Map<String, dynamic>;
+        final data = snapshot.data() as Map<String, dynamic>?;
+        if (data != null) {
           return MyUser.fromEntity(MyUserEntity.fromDocument(data));
         } else {
           return null;

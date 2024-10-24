@@ -9,6 +9,7 @@ class MyUserEntity extends Equatable {
   final bool isNanny;
   final String linkedPerson;
   final List<String> children;
+  final List<String> sessions;
 
   const MyUserEntity({
     required this.userId,
@@ -19,6 +20,7 @@ class MyUserEntity extends Equatable {
     required this.isNanny,
     required this.linkedPerson,
     required this.children,
+    required this.sessions,
   });
 
   Map<String, Object?> toDocument() {
@@ -31,6 +33,7 @@ class MyUserEntity extends Equatable {
       'nanny': isNanny,
       'linkedPerson': linkedPerson,
       'children': children,
+      'sessions': sessions,
     };
   }
 
@@ -43,7 +46,14 @@ class MyUserEntity extends Equatable {
       imgUrl: doc['imgUrl'] ?? '',
       isNanny: doc['isNanny'] ?? false,
       linkedPerson: doc['linkedPerson'] ?? '',
-      children: List<String>.from(doc['children']),
+      children: (doc['children'] as List<dynamic>?)
+              ?.map((childId) => childId as String)
+              .toList() ??
+          [],
+      sessions: (doc['sessions'] as List<dynamic>?)
+              ?.map((sessionId) => sessionId as String)
+              .toList() ??
+          [],
     );
   }
 
@@ -57,5 +67,6 @@ class MyUserEntity extends Equatable {
         isNanny,
         linkedPerson,
         children,
+        sessions,
       ];
 }
