@@ -14,7 +14,6 @@ class ChildEntity {
     required this.dateOfBirth,
   });
 
-  // Tworzenie dokumentu Firestore
   Map<String, Object> toDocument() {
     return {
       'id': id,

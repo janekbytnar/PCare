@@ -5,12 +5,14 @@ class Meal extends Equatable {
   final String mealId;
   final String mealName;
   final String mealDescription;
+  final bool isCompleted;
   final DateTime mealTime;
 
   const Meal({
     required this.mealId,
     required this.mealName,
     required this.mealDescription,
+    required this.isCompleted,
     required this.mealTime,
   });
 
@@ -18,6 +20,7 @@ class Meal extends Equatable {
     mealId: '',
     mealName: '',
     mealDescription: '',
+    isCompleted: false,
     mealTime: DateTime(1970, 1, 1, 0, 0, 0),
   );
 
@@ -25,12 +28,14 @@ class Meal extends Equatable {
     String? mealId,
     String? mealName,
     String? mealDescription,
+    bool? isCompleted,
     DateTime? mealTime,
   }) {
     return Meal(
       mealId: mealId ?? this.mealId,
       mealName: mealName ?? this.mealName,
       mealDescription: mealDescription ?? this.mealDescription,
+      isCompleted: isCompleted ?? this.isCompleted,
       mealTime: mealTime ?? this.mealTime,
     );
   }
@@ -40,6 +45,7 @@ class Meal extends Equatable {
       mealId: mealId,
       mealName: mealName,
       mealDescription: mealDescription,
+      isCompleted: isCompleted,
       mealTime: mealTime,
     );
   }
@@ -49,6 +55,7 @@ class Meal extends Equatable {
       mealId: entity.mealId,
       mealName: entity.mealName,
       mealDescription: entity.mealDescription,
+      isCompleted: entity.isCompleted,
       mealTime: entity.mealTime,
     );
   }
@@ -58,6 +65,7 @@ class Meal extends Equatable {
         mealId,
         mealName,
         mealDescription,
+        isCompleted,
         mealTime,
       ];
 }

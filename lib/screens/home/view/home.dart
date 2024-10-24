@@ -1,34 +1,21 @@
-// lib/screens/children/views/children_screen.dart
-
 import 'package:child_repository/child_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:perfect_childcare/blocs/children_bloc/children_bloc.dart';
+import 'package:perfect_childcare/blocs/active_session_bloc/session_bloc.dart';
 import 'package:perfect_childcare/components/my_button.dart';
-import 'package:perfect_childcare/screens/children/blocs/children_management_bloc/children_management_bloc.dart';
-import 'package:perfect_childcare/screens/children/views/add_child.dart';
+import 'package:perfect_childcare/screens/home/view/add_session.dart';
+import 'package:perfect_childcare/screens/session/blocs/session_management_bloc/session_management_bloc.dart';
+import 'package:session_repository/session_repository.dart';
 import 'package:user_repository/user_repository.dart';
 
-class ChildrenScreen extends StatefulWidget {
-  const ChildrenScreen({Key? key}) : super(key: key);
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<ChildrenScreen> createState() => _ChildrenScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _ChildrenScreenState extends State<ChildrenScreen> {
-  int calculateAge(DateTime dateOfBirth) {
-    DateTime today = DateTime.now();
-
-    int age = today.year - dateOfBirth.year;
-    if (today.month < dateOfBirth.month ||
-        (today.month == dateOfBirth.month && today.day < dateOfBirth.day)) {
-      age--;
-    }
-
-    return age;
-  }
-
+class _HomeScreenState extends State<HomeScreen> {
   Widget _addButton() {
     return MyTextButton(
       onPressed: () {
@@ -36,29 +23,30 @@ class _ChildrenScreenState extends State<ChildrenScreen> {
           context,
           MaterialPageRoute(
               builder: (context) => BlocProvider(
-                    create: (context) => ChildrenManagementBloc(
+                    create: (context) => SessionManagementBloc(
+                      sessionRepository: context.read<SessionRepository>(),
                       childRepository: context.read<ChildRepository>(),
                       userRepository: context.read<UserRepository>(),
                     ),
-                    child: const AddChildScreen(),
+                    child: const AddSessionScreen(),
                   )),
         );
       },
-      text: 'Add Child',
+      text: 'Add Session',
     );
   }
 
   Widget _listTiles(state) {
     return ListView.builder(
-      itemCount: state.children.length,
+      itemCount: state.session.length,
       itemBuilder: (context, index) {
-        final child = state.children[index];
-        return _tile(child);
+        final session = state.session[index];
+        return _tile(session);
       },
     );
   }
 
-  Widget _tile(child) {
+  Widget _tile(session) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
@@ -69,24 +57,23 @@ class _ChildrenScreenState extends State<ChildrenScreen> {
       ),
       color: Colors.blue,
       margin: const EdgeInsets.fromLTRB(20.0, 13.0, 20.0, 0),
-      child: ListTile(
+      child: const ListTile(
           title: Row(
         children: [
           Expanded(
               flex: 3,
               child: Text(
-                child.name,
+                'imie dziecka',
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               )),
           const SizedBox(width: 10),
-          Text('Age: ${calculateAge(child.dateOfBirth)}'),
+          Text('Wstawic Daty'),
         ],
       )),
     );
   }
 
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -95,14 +82,13 @@ class _ChildrenScreenState extends State<ChildrenScreen> {
       body: Column(
         children: [
           Expanded(
-            child: BlocBuilder<ChildrenBloc, ChildrenState>(
+            child: BlocBuilder<SessionBloc, SessionState>(
               builder: (context, state) {
-                if (state.status == ChildrenStatus.hasChildren) {
+                if (state.status == SessionStatus.active) {
                   return _listTiles(state);
-                } else if (state.status == ChildrenStatus.childless) {
-                  return const Center(
-                      child: Text('User has no assigned children.'));
-                } else if (state.status == ChildrenStatus.failure) {
+                } else if (state.status == SessionStatus.inactive) {
+                  return const Center(child: Text('NO SESSION.'));
+                } else if (state.status == SessionStatus.failure) {
                   return Center(
                       child: Text('Failed to load children: ${state.error}'));
                 } else {

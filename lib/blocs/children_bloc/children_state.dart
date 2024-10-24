@@ -17,8 +17,9 @@ class ChildrenState extends Equatable {
 
   const ChildrenState.loading() : this._(status: ChildrenStatus.loading);
 
-  const ChildrenState.hasChildren(List<Child> children)
-      : this._(status: ChildrenStatus.hasChildren, children: children);
+  const ChildrenState.hasChildren(
+    List<Child> children,
+  ) : this._(status: ChildrenStatus.hasChildren, children: children);
 
   const ChildrenState.childless() : this._(status: ChildrenStatus.childless);
 

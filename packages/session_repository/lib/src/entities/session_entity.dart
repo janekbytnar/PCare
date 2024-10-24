@@ -4,6 +4,9 @@ import 'entities.dart';
 
 class SessionEntity extends Equatable {
   final String sessionId;
+  final List<String> parentId;
+  final String nannyId;
+  final List<String> childIds;
   final DateTime startDate;
   final DateTime endDate;
   final List<ActivityEntity> activities;
@@ -12,6 +15,9 @@ class SessionEntity extends Equatable {
 
   const SessionEntity({
     required this.sessionId,
+    required this.parentId,
+    required this.nannyId,
+    required this.childIds,
     required this.startDate,
     required this.endDate,
     this.activities = const [],
@@ -22,6 +28,9 @@ class SessionEntity extends Equatable {
   Map<String, Object?> toDocument() {
     return {
       'sessionId': sessionId,
+      'parentId': parentId,
+      'nannyId': nannyId,
+      'childIds': childIds,
       'startDate': Timestamp.fromDate(startDate),
       'endDate': Timestamp.fromDate(endDate),
       'activities':
@@ -35,6 +44,15 @@ class SessionEntity extends Equatable {
   static SessionEntity fromDocument(Map<String, dynamic> doc) {
     return SessionEntity(
       sessionId: doc['sessionId'] ?? '',
+      parentId: (doc['parentId'] as List<dynamic>?)
+              ?.map((parentId) => parentId as String)
+              .toList() ??
+          [],
+      nannyId: doc['nannyId'] ?? '',
+      childIds: (doc['childIds'] as List<dynamic>?)
+              ?.map((childId) => childId as String)
+              .toList() ??
+          [],
       startDate: (doc['startDate'] as Timestamp).toDate(),
       endDate: (doc['endDate'] as Timestamp).toDate(),
       activities: (doc['activities'] as List<dynamic>?)
@@ -58,6 +76,9 @@ class SessionEntity extends Equatable {
   @override
   List<Object?> get props => [
         sessionId,
+        parentId,
+        nannyId,
+        childIds,
         startDate,
         endDate,
         activities,

@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:perfect_childcare/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:perfect_childcare/components/my_button.dart';
 import 'package:perfect_childcare/components/my_text_field.dart';
-import 'package:perfect_childcare/screens/children/blocs/children_management_bloc/children_management_bloc_bloc.dart';
-import 'package:perfect_childcare/screens/children/blocs/children_management_bloc/children_management_bloc_event.dart';
+import 'package:perfect_childcare/screens/children/blocs/children_management_bloc/children_management_bloc.dart';
+import 'package:perfect_childcare/screens/children/blocs/children_management_bloc/children_management_event.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 

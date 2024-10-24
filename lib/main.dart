@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:perfect_childcare/app.dart';
 import 'package:perfect_childcare/firebase_options.dart';
 import 'package:perfect_childcare/simple_bloc_observer.dart';
+import 'package:session_repository/session_repository.dart';
 import 'package:user_repository/user_repository.dart';
 
 Future<void> main() async {
@@ -13,5 +14,9 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   Bloc.observer = SimpleBlocObserver();
-  runApp(MyApp(FirebaseUserRepo(), FirebaseChildRepo()));
+  runApp(MyApp(
+    FirebaseUserRepo(),
+    FirebaseChildRepo(),
+    FirebaseSessionRepo(),
+  ));
 }

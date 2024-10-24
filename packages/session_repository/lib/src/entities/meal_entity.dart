@@ -5,12 +5,14 @@ class MealEntity extends Equatable {
   final String mealId;
   final String mealName;
   final String mealDescription;
+  final bool isCompleted;
   final DateTime mealTime;
 
   const MealEntity({
     required this.mealId,
     required this.mealName,
     required this.mealDescription,
+    required this.isCompleted,
     required this.mealTime,
   });
 
@@ -19,6 +21,7 @@ class MealEntity extends Equatable {
       'mealId': mealId,
       'mealName': mealName,
       'mealDescription': mealDescription,
+      'isCompleted': isCompleted,
       'mealTime': Timestamp.fromDate(mealTime),
     };
   }
@@ -28,6 +31,7 @@ class MealEntity extends Equatable {
       mealId: doc['mealId'] ?? '',
       mealName: doc['mealName'] ?? '',
       mealDescription: doc['mealDescription'] ?? '',
+      isCompleted: doc['isCompleted'] ?? false,
       mealTime: (doc['mealTime'] as Timestamp).toDate(),
     );
   }
@@ -37,6 +41,7 @@ class MealEntity extends Equatable {
         mealId,
         mealName,
         mealDescription,
+        isCompleted,
         mealTime,
       ];
 }

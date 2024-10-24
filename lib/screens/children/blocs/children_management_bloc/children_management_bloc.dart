@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:child_repository/child_repository.dart';
-import 'package:perfect_childcare/screens/children/blocs/children_management_bloc/children_management_bloc_event.dart';
-import 'package:perfect_childcare/screens/children/blocs/children_management_bloc/children_management_bloc_state.dart';
+import 'package:perfect_childcare/screens/children/blocs/children_management_bloc/children_management_event.dart';
+import 'package:perfect_childcare/screens/children/blocs/children_management_bloc/children_management_state.dart';
 import 'package:user_repository/user_repository.dart';
 
 class ChildrenManagementBloc
@@ -9,9 +9,10 @@ class ChildrenManagementBloc
   final ChildRepository childRepository;
   final UserRepository userRepository;
 
-  ChildrenManagementBloc(
-      {required this.childRepository, required this.userRepository})
-      : super(ChildrenManagementInitial()) {
+  ChildrenManagementBloc({
+    required this.childRepository,
+    required this.userRepository,
+  }) : super(ChildrenManagementInitial()) {
     on<AddChildEvent>(_onAddChild);
     on<RemoveChildEvent>(_onRemoveChild);
   }
@@ -22,7 +23,7 @@ class ChildrenManagementBloc
     try {
       await childRepository.addChild(event.child);
       // Update user's children list
-      await userRepository.addChildToUser(event.userId, event.child.id);
+      await userRepository.connectChildToUser(event.userId, event.child.id);
       emit(ChildrenManagementSuccess());
     } catch (e) {
       emit(ChildrenManagementFailure(e.toString()));

@@ -4,10 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:perfect_childcare/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:perfect_childcare/components/side_bar.dart';
 import 'package:perfect_childcare/screens/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
-import 'package:perfect_childcare/screens/home/views/activity.dart';
-import 'package:perfect_childcare/screens/home/views/meals.dart';
-import 'package:perfect_childcare/screens/home/views/notes.dart';
-import 'package:perfect_childcare/screens/home/views/payments.dart';
+import 'package:perfect_childcare/screens/session/views/activity.dart';
+import 'package:perfect_childcare/screens/session/views/meals.dart';
+import 'package:perfect_childcare/screens/session/views/notes.dart';
+import 'package:perfect_childcare/screens/session/views/payments.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 class PersistentTabScreen extends StatefulWidget {
