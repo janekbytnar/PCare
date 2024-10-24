@@ -10,6 +10,7 @@ class MyUser extends Equatable {
   final bool isNanny;
   final String linkedPerson;
   final List<String> children;
+  final List<String> sessions;
 
   const MyUser({
     required this.userId,
@@ -20,6 +21,7 @@ class MyUser extends Equatable {
     required this.isNanny,
     required this.linkedPerson,
     required this.children,
+    required this.sessions,
   });
 
   static const empty = MyUser(
@@ -31,6 +33,7 @@ class MyUser extends Equatable {
     isNanny: false,
     linkedPerson: '',
     children: [],
+    sessions: [],
   );
 
   MyUser copyWith({
@@ -42,6 +45,7 @@ class MyUser extends Equatable {
     bool? isNanny,
     String? linkedPerson,
     List<String>? children,
+    List<String>? sessions,
   }) {
     return MyUser(
       userId: userId ?? this.userId,
@@ -52,6 +56,7 @@ class MyUser extends Equatable {
       isNanny: isNanny ?? this.isNanny,
       linkedPerson: linkedPerson ?? this.linkedPerson,
       children: children ?? this.children,
+      sessions: sessions ?? this.sessions,
     );
   }
 
@@ -65,6 +70,7 @@ class MyUser extends Equatable {
       isNanny: isNanny,
       linkedPerson: linkedPerson,
       children: children,
+      sessions: sessions,
     );
   }
 
@@ -78,6 +84,7 @@ class MyUser extends Equatable {
       isNanny: entity.isNanny,
       linkedPerson: entity.linkedPerson,
       children: entity.children,
+      sessions: entity.sessions,
     );
   }
 
@@ -91,5 +98,6 @@ class MyUser extends Equatable {
         isNanny,
         linkedPerson,
         children,
+        sessions,
       ];
 }

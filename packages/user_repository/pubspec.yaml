@@ -17,6 +17,8 @@ dependencies:
 # custom 
   child_repository:
     path: ../child_repository
+  session_repository:
+    path: ../session_repository
 
 dev_dependencies:
   flutter_test:
