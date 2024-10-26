@@ -6,12 +6,14 @@ class Child extends Equatable {
   final String name;
   final List<String> parentIds;
   final DateTime dateOfBirth;
+  final List<String> sessionIds;
 
   const Child({
     required this.id,
     required this.name,
     required this.parentIds,
     required this.dateOfBirth,
+    required this.sessionIds,
   });
 
   static final empty = Child(
@@ -19,6 +21,7 @@ class Child extends Equatable {
     name: '',
     parentIds: const [],
     dateOfBirth: DateTime(1970, 1, 1, 0, 0, 0),
+    sessionIds: const [],
   );
 
   Child copyWith({
@@ -32,6 +35,7 @@ class Child extends Equatable {
       name: name ?? this.name,
       parentIds: parentIds ?? this.parentIds,
       dateOfBirth: dateOfBirth ?? this.dateOfBirth,
+      sessionIds: sessionIds,
     );
   }
 
@@ -41,6 +45,7 @@ class Child extends Equatable {
       name: name,
       parentIds: parentIds,
       dateOfBirth: dateOfBirth,
+      sessionIds: sessionIds,
     );
   }
 
@@ -50,6 +55,7 @@ class Child extends Equatable {
       name: entity.name,
       parentIds: entity.parentIds,
       dateOfBirth: entity.dateOfBirth,
+      sessionIds: entity.sessionIds,
     );
   }
 
@@ -59,5 +65,6 @@ class Child extends Equatable {
         name,
         parentIds,
         dateOfBirth,
+        sessionIds,
       ];
 }

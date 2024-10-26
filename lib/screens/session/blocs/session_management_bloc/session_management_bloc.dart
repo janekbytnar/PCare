@@ -26,12 +26,22 @@ class SessionManagementBloc
       AddSessionEvent event, Emitter<SessionManagementState> emit) async {
     emit(SessionManagementLoading());
     try {
-      await sessionRepository.addSession(
-        event.session,
-        event.parents,
-        event.childId,
-        event.nannyId,
-      );
+      await sessionRepository.addSession(event.session);
+
+      for (var parentId in event.session.parentsId) {
+        await userRepository.connectSessionToUser(
+          parentId,
+          event.session.sessionId,
+        );
+      }
+
+      for (var childId in event.session.childsId) {
+        await childRepository.connectSessionToChild(
+          childId,
+          event.session.sessionId,
+        );
+      }
+
       emit(SessionManagementSuccess());
     } catch (e) {
       emit(SessionManagementFailure(e.toString()));

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:perfect_childcare/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:perfect_childcare/blocs/internet_connection_bloc/internet_connection_bloc.dart';
-import 'package:perfect_childcare/components/persistent_nav.dart';
 import 'package:perfect_childcare/screens/auth/error_screen/no_internet_screen.dart';
 import 'package:perfect_childcare/screens/auth/views/welcome_screen.dart';
+import 'package:perfect_childcare/screens/home/view/home.dart';
 
 class MyAppView extends StatelessWidget {
   const MyAppView({super.key});
@@ -26,7 +26,7 @@ class MyAppView extends StatelessWidget {
             return BlocBuilder<AuthenticationBloc, AuthenticationState>(
               builder: (context, state) {
                 if (state.status == AuthenticationStatus.authenticated) {
-                  return const PersistentTabScreen();
+                  return const HomeScreen();
                 } else {
                   return const WelcomeScreen();
                 }

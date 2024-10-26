@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:session_repository/session_repository.dart';
 
 class ActivityEntity extends Equatable {
   final String activityId;
@@ -33,6 +34,16 @@ class ActivityEntity extends Equatable {
       activityDescription: doc['activityDescription'] ?? '',
       isCompleted: doc['isCompleted'] ?? false,
       activityTime: (doc['activityTime'] as Timestamp).toDate(),
+    );
+  }
+
+  Activity toModel() {
+    return Activity(
+      activityId: activityId,
+      activityName: activityName,
+      activityDescription: activityDescription,
+      isCompleted: isCompleted,
+      activityTime: activityTime,
     );
   }
 

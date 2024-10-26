@@ -4,9 +4,11 @@ enum SessionStatus { active, inactive, unknown, loading, failure }
 
 class SessionState extends Equatable {
   final SessionStatus status;
+  final List<Session> sessions;
   final String? error;
 
   const SessionState._({
+    this.sessions = const [],
     this.status = SessionStatus.unknown,
     this.error,
   });
@@ -17,7 +19,7 @@ class SessionState extends Equatable {
 
   const SessionState.active(
     List<Session> sessions,
-  ) : this._(status: SessionStatus.active);
+  ) : this._(status: SessionStatus.active, sessions: sessions);
 
   const SessionState.inactive() : this._(status: SessionStatus.inactive);
 

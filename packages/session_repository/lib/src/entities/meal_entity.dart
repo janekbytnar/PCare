@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:session_repository/session_repository.dart';
 
 class MealEntity extends Equatable {
   final String mealId;
@@ -33,6 +34,16 @@ class MealEntity extends Equatable {
       mealDescription: doc['mealDescription'] ?? '',
       isCompleted: doc['isCompleted'] ?? false,
       mealTime: (doc['mealTime'] as Timestamp).toDate(),
+    );
+  }
+
+  Meal toModel() {
+    return Meal(
+      mealId: mealId,
+      mealName: mealName,
+      mealDescription: mealDescription,
+      isCompleted: isCompleted,
+      mealTime: mealTime,
     );
   }
 

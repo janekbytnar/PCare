@@ -10,10 +10,12 @@ part 'session_state.dart';
 
 class SessionBloc extends Bloc<SessionEvent, SessionState> {
   final UserRepository userRepository;
+  final SessionRepository sessionRepository;
   late final StreamSubscription<MyUser?> _userSubscription;
 
   SessionBloc({
     required this.userRepository,
+    required this.sessionRepository,
   }) : super(const SessionState.unknown()) {
     _userSubscription =
         userRepository.getCurrentUserDataStream().listen((myUser) {
@@ -29,7 +31,7 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
       emit(const SessionState.loading());
       try {
         List<Session> sessions =
-            await userRepository.getSessions(user.sessions);
+            await sessionRepository.getSessions(user.sessions);
         final today = DateTime.now();
         final hasSessionToday = sessions.any((session) {
           return session.startDate.year == today.year &&

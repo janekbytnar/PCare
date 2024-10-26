@@ -43,4 +43,16 @@ class FirebaseChildRepo implements ChildRepository {
       rethrow;
     }
   }
+
+  @override
+  Future<void> connectSessionToChild(String childId, String sessionId) async {
+    try {
+      await childrenCollection.doc(childId).update({
+        'session_ids': FieldValue.arrayUnion([sessionId])
+      });
+    } catch (e) {
+      log('Error connecting session to child: ${e.toString()}');
+      rethrow;
+    }
+  }
 }

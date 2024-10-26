@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:session_repository/session_repository.dart';
 import 'models/models.dart';
 
 abstract class UserRepository {
@@ -15,11 +14,9 @@ abstract class UserRepository {
 
   Future<void> connectChildToUser(String userId, String childId);
 
+  Future<void> connectSessionToUser(String userId, String sessionId);
+
   Future<MyUser?> getCurrentUserData();
 
-  Future<List<Session>> getSessions(List<String> sessionIds);
-
   Stream<MyUser?> getCurrentUserDataStream();
-
-  getCurrentUserId() {}
 }

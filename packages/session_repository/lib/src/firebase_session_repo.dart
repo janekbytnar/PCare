@@ -11,12 +11,7 @@ class FirebaseSessionRepo implements SessionRepository {
   FirebaseSessionRepo();
 
   @override
-  Future<void> addSession(
-    Session session,
-    List<String> parents,
-    String childId,
-    String nannyId,
-  ) async {
+  Future<void> addSession(Session session) async {
     try {
       await sessionCollection
           .doc(session.sessionId)
@@ -35,5 +30,47 @@ class FirebaseSessionRepo implements SessionRepository {
       log('Error removing session: ${e.toString()}');
       rethrow;
     }
+  }
+
+  @override
+  Future<List<Session>> checkSessionConflict(
+    String parentId,
+    DateTime startDate,
+    DateTime endDate,
+  ) async {
+    try {
+      final querySnapshot = await sessionCollection
+          .where('parentsId', arrayContains: parentId)
+          .where('startDate', isLessThan: endDate)
+          .where('endDate', isGreaterThan: startDate)
+          .get();
+
+      return querySnapshot.docs
+          .map((doc) => SessionEntity.fromDocument(doc).toModel())
+          .toList();
+    } catch (e) {
+      log('Error getting sessions for parent: ${e.toString()}');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<Session>> getSessions(
+    List<String> sessionIds,
+  ) async {
+    List<Session> sessions = [];
+
+    for (String sessionId in sessionIds) {
+      DocumentSnapshot sessionSnapshot = await FirebaseFirestore.instance
+          .collection('sessions')
+          .doc(sessionId)
+          .get();
+
+      if (sessionSnapshot.exists) {
+        Session session = SessionEntity.fromDocument(sessionSnapshot).toModel();
+        sessions.add(session);
+      }
+    }
+    return sessions;
   }
 }

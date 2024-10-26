@@ -1,8 +1,10 @@
 import 'package:child_repository/child_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:perfect_childcare/blocs/active_session_bloc/session_bloc.dart';
+import 'package:perfect_childcare/blocs/session_bloc/session_bloc.dart';
+import 'package:perfect_childcare/components/date_selector.dart';
 import 'package:perfect_childcare/components/my_button.dart';
+import 'package:perfect_childcare/components/side_bar.dart';
 import 'package:perfect_childcare/screens/home/view/add_session.dart';
 import 'package:perfect_childcare/screens/session/blocs/session_management_bloc/session_management_bloc.dart';
 import 'package:session_repository/session_repository.dart';
@@ -16,6 +18,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  DateTime selectedDate = DateTime.now();
+
   Widget _addButton() {
     return MyTextButton(
       onPressed: () {
@@ -28,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       childRepository: context.read<ChildRepository>(),
                       userRepository: context.read<UserRepository>(),
                     ),
-                    child: const AddSessionScreen(),
+                    child: AddSessionScreen(selectedDate: selectedDate),
                   )),
         );
       },
@@ -38,9 +42,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _listTiles(state) {
     return ListView.builder(
-      itemCount: state.session.length,
+      itemCount: state.sessions.length,
       itemBuilder: (context, index) {
-        final session = state.session[index];
+        final session = state.sessions[index];
         return _tile(session);
       },
     );
@@ -77,10 +81,19 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Children'),
+        title: const Text('Home'),
       ),
+      drawer: const SideBar(),
       body: Column(
         children: [
+          DateSelector(
+            selectedDate: selectedDate,
+            onDateChanged: (newDate) {
+              setState(() {
+                selectedDate = newDate;
+              });
+            },
+          ),
           Expanded(
             child: BlocBuilder<SessionBloc, SessionState>(
               builder: (context, state) {

@@ -1,12 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:session_repository/session_repository.dart';
 import 'entities.dart';
 
 class SessionEntity extends Equatable {
   final String sessionId;
-  final List<String> parentId;
+  final List<String> parentsId;
   final String nannyId;
-  final List<String> childIds;
+  final List<String> childsId;
   final DateTime startDate;
   final DateTime endDate;
   final List<ActivityEntity> activities;
@@ -15,9 +16,9 @@ class SessionEntity extends Equatable {
 
   const SessionEntity({
     required this.sessionId,
-    required this.parentId,
+    required this.parentsId,
     required this.nannyId,
-    required this.childIds,
+    required this.childsId,
     required this.startDate,
     required this.endDate,
     this.activities = const [],
@@ -28,9 +29,9 @@ class SessionEntity extends Equatable {
   Map<String, Object?> toDocument() {
     return {
       'sessionId': sessionId,
-      'parentId': parentId,
+      'parentsId': parentsId,
       'nannyId': nannyId,
-      'childIds': childIds,
+      'childsId': childsId,
       'startDate': Timestamp.fromDate(startDate),
       'endDate': Timestamp.fromDate(endDate),
       'activities':
@@ -41,15 +42,15 @@ class SessionEntity extends Equatable {
     };
   }
 
-  static SessionEntity fromDocument(Map<String, dynamic> doc) {
+  static SessionEntity fromDocument(DocumentSnapshot doc) {
     return SessionEntity(
       sessionId: doc['sessionId'] ?? '',
-      parentId: (doc['parentId'] as List<dynamic>?)
+      parentsId: (doc['parentsId'] as List<dynamic>?)
               ?.map((parentId) => parentId as String)
               .toList() ??
           [],
       nannyId: doc['nannyId'] ?? '',
-      childIds: (doc['childIds'] as List<dynamic>?)
+      childsId: (doc['childsId'] as List<dynamic>?)
               ?.map((childId) => childId as String)
               .toList() ??
           [],
@@ -73,12 +74,27 @@ class SessionEntity extends Equatable {
     );
   }
 
+  Session toModel() {
+    return Session(
+      sessionId: sessionId,
+      parentsId: parentsId,
+      nannyId: nannyId,
+      childsId: childsId,
+      startDate: startDate,
+      endDate: endDate,
+      activities: activities.map((activity) => activity.toModel()).toList(),
+      meals: meals.map((meal) => meal.toModel()).toList(),
+      observations:
+          observations.map((observation) => observation.toModel()).toList(),
+    );
+  }
+
   @override
   List<Object?> get props => [
         sessionId,
-        parentId,
+        parentsId,
         nannyId,
-        childIds,
+        childsId,
         startDate,
         endDate,
         activities,

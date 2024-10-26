@@ -9,15 +9,9 @@ sealed class SessionManagementEvent extends Equatable {
 
 class AddSessionEvent extends SessionManagementEvent {
   final Session session;
-  final List<String> parents;
-  final String childId;
-  final String nannyId;
 
   const AddSessionEvent(
     this.session,
-    this.parents,
-    this.childId,
-    this.nannyId,
   );
 
   @override

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:session_repository/session_repository.dart';
 
 class ObservationEntity extends Equatable {
   final String observationId;
@@ -29,6 +30,15 @@ class ObservationEntity extends Equatable {
       observationName: doc['observationName'] ?? '',
       observationDescription: doc['observationDescription'] ?? '',
       observationTime: (doc['observationTime'] as Timestamp).toDate(),
+    );
+  }
+
+  Observation toModel() {
+    return Observation(
+      observationId: observationId,
+      observationName: observationName,
+      observationDescription: observationDescription,
+      observationTime: observationTime,
     );
   }
 

@@ -4,9 +4,9 @@ import 'models.dart';
 
 class Session extends Equatable {
   final String sessionId;
-  final List<String> parentId;
+  final List<String> parentsId;
   final String nannyId;
-  final List<String> childIds;
+  final List<String> childsId;
   final DateTime startDate;
   final DateTime endDate;
   final List<Activity> activities;
@@ -15,9 +15,9 @@ class Session extends Equatable {
 
   const Session({
     required this.sessionId,
-    required this.parentId,
-    required this.nannyId,
-    required this.childIds,
+    required this.parentsId,
+    this.nannyId = '',
+    required this.childsId,
     required this.startDate,
     required this.endDate,
     this.activities = const [],
@@ -27,9 +27,9 @@ class Session extends Equatable {
 
   static final empty = Session(
     sessionId: '',
-    parentId: const [],
+    parentsId: const [],
     nannyId: '',
-    childIds: const [],
+    childsId: const [],
     startDate: DateTime(1970, 1, 1),
     endDate: DateTime(1970, 1, 1),
     activities: const [],
@@ -39,9 +39,9 @@ class Session extends Equatable {
 
   Session copyWith({
     String? sessionId,
-    List<String>? parentId,
+    List<String>? parentsId,
     String? nannyId,
-    List<String>? childIds,
+    List<String>? childsId,
     DateTime? startDate,
     DateTime? endDate,
     List<Activity>? activities,
@@ -50,9 +50,9 @@ class Session extends Equatable {
   }) {
     return Session(
       sessionId: sessionId ?? this.sessionId,
-      parentId: parentId ?? this.parentId,
+      parentsId: parentsId ?? this.parentsId,
       nannyId: nannyId ?? this.nannyId,
-      childIds: childIds ?? this.childIds,
+      childsId: childsId ?? this.childsId,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
       activities: activities ?? this.activities,
@@ -64,9 +64,9 @@ class Session extends Equatable {
   SessionEntity toEntity() {
     return SessionEntity(
       sessionId: sessionId,
-      parentId: parentId,
+      parentsId: parentsId,
       nannyId: nannyId,
-      childIds: childIds,
+      childsId: childsId,
       startDate: startDate,
       endDate: endDate,
       activities: activities.map((activity) => activity.toEntity()).toList(),
@@ -79,9 +79,9 @@ class Session extends Equatable {
   static Session fromEntity(SessionEntity entity) {
     return Session(
       sessionId: entity.sessionId,
-      parentId: entity.parentId,
+      parentsId: entity.parentsId,
       nannyId: entity.nannyId,
-      childIds: entity.childIds,
+      childsId: entity.childsId,
       startDate: entity.startDate,
       endDate: entity.endDate,
       activities: entity.activities
@@ -99,9 +99,9 @@ class Session extends Equatable {
   @override
   List<Object?> get props => [
         sessionId,
-        parentId,
+        parentsId,
         nannyId,
-        childIds,
+        childsId,
         startDate,
         endDate,
         activities,

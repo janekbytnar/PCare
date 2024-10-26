@@ -46,7 +46,8 @@ class _AddChildScreenState extends State<AddChildScreen> {
           id: UniqueKey().toString(),
           name: childName,
           parentIds: [currentUserId],
-          dateOfBirth: _selectedDate!);
+          dateOfBirth: _selectedDate!,
+          sessionIds: const []);
 
       context.read<ChildrenManagementBloc>().add(AddChildEvent(
             newChild,
