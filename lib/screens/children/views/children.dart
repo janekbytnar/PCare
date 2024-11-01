@@ -10,7 +10,7 @@ import 'package:perfect_childcare/screens/children/views/add_child.dart';
 import 'package:user_repository/user_repository.dart';
 
 class ChildrenScreen extends StatefulWidget {
-  const ChildrenScreen({Key? key}) : super(key: key);
+  const ChildrenScreen({super.key});
 
   @override
   State<ChildrenScreen> createState() => _ChildrenScreenState();

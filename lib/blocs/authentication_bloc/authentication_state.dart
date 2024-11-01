@@ -20,6 +20,5 @@ class AuthenticationState extends Equatable {
       : this._(status: AuthenticationStatus.unauthenticated);
 
   @override
-  // TODO: implement props
   List<Object?> get props => [status, user];
 }

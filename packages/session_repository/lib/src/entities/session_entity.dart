@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:session_repository/session_repository.dart';
-import 'entities.dart';
 
 class SessionEntity extends Equatable {
   final String sessionId;

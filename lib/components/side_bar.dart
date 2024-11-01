@@ -72,18 +72,23 @@ class SideBar extends StatelessWidget {
               Navigator.pop(context);
             },
           ),
-          ListTile(
-            leading: const Icon(Icons.child_care),
-            title: const Text("Children"),
-            onTap: () {
-              Navigator.push(
-                context,
-                CupertinoPageRoute(
-                  builder: (context) => BlocProvider.value(
-                    value: context.read<ChildrenBloc>(),
-                    child: const ChildrenScreen(),
-                  ),
-                ),
+          Builder(
+            builder: (context) {
+              final childrenBloc = context.read<ChildrenBloc>();
+              return ListTile(
+                leading: const Icon(Icons.child_care),
+                title: const Text("Children"),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                      builder: (context) => BlocProvider.value(
+                        value: childrenBloc,
+                        child: const ChildrenScreen(),
+                      ),
+                    ),
+                  );
+                },
               );
             },
           ),

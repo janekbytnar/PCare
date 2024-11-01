@@ -3,8 +3,6 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:session_repository/session_repository.dart';
 
-import 'models/models.dart';
-
 class FirebaseSessionRepo implements SessionRepository {
   final sessionCollection = FirebaseFirestore.instance.collection('sessions');
 
@@ -42,14 +40,17 @@ class FirebaseSessionRepo implements SessionRepository {
       final querySnapshot = await sessionCollection
           .where('parentsId', arrayContains: parentId)
           .where('startDate', isLessThan: endDate)
-          .where('endDate', isGreaterThan: startDate)
           .get();
 
-      return querySnapshot.docs
+      // Filter results based on endDate
+      List<Session> conflictingSessions = querySnapshot.docs
           .map((doc) => SessionEntity.fromDocument(doc).toModel())
+          .where((session) => session.endDate.isAfter(startDate))
           .toList();
+
+      return conflictingSessions;
     } catch (e) {
-      log('Error getting sessions for parent: ${e.toString()}');
+      log('Error checking session conflicts: ${e.toString()}');
       rethrow;
     }
   }
@@ -61,10 +62,8 @@ class FirebaseSessionRepo implements SessionRepository {
     List<Session> sessions = [];
 
     for (String sessionId in sessionIds) {
-      DocumentSnapshot sessionSnapshot = await FirebaseFirestore.instance
-          .collection('sessions')
-          .doc(sessionId)
-          .get();
+      DocumentSnapshot sessionSnapshot =
+          await sessionCollection.doc(sessionId).get();
 
       if (sessionSnapshot.exists) {
         Session session = SessionEntity.fromDocument(sessionSnapshot).toModel();

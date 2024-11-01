@@ -84,6 +84,7 @@ class FirebaseUserRepo implements UserRepository {
     }
   }
 
+  @override
   Future<void> connectSessionToUser(String userId, String sessionId) async {
     try {
       await usersCollection.doc(userId).update({
@@ -118,7 +119,7 @@ class FirebaseUserRepo implements UserRepository {
     final userId = _firebaseAuth.currentUser?.uid;
     if (userId != null) {
       return usersCollection.doc(userId).snapshots().map((snapshot) {
-        final data = snapshot.data() as Map<String, dynamic>?;
+        final data = snapshot.data();
         if (data != null) {
           return MyUser.fromEntity(MyUserEntity.fromDocument(data));
         } else {

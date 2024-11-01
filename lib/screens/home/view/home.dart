@@ -1,6 +1,7 @@
 import 'package:child_repository/child_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:perfect_childcare/blocs/session_bloc/session_bloc.dart';
 import 'package:perfect_childcare/components/date_selector.dart';
 import 'package:perfect_childcare/components/my_button.dart';
@@ -20,22 +21,41 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   DateTime selectedDate = DateTime.now();
 
+  bool get isButtonEnabled {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final selectedDay =
+        DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
+
+    return selectedDay.isAfter(today) || selectedDay.isAtSameMomentAs(today);
+  }
+
+  void _onDateSelected(DateTime date) {
+    setState(() {
+      selectedDate = date;
+    });
+    context.read<SessionBloc>().add(LoadSessionsForDate(selectedDate));
+  }
+
   Widget _addButton() {
     return MyTextButton(
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => BlocProvider(
-                    create: (context) => SessionManagementBloc(
-                      sessionRepository: context.read<SessionRepository>(),
-                      childRepository: context.read<ChildRepository>(),
-                      userRepository: context.read<UserRepository>(),
-                    ),
-                    child: AddSessionScreen(selectedDate: selectedDate),
-                  )),
-        );
-      },
+      onPressed: isButtonEnabled
+          ? () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => BlocProvider(
+                          create: (context) => SessionManagementBloc(
+                            sessionRepository:
+                                context.read<SessionRepository>(),
+                            childRepository: context.read<ChildRepository>(),
+                            userRepository: context.read<UserRepository>(),
+                          ),
+                          child: AddSessionScreen(selectedDate: selectedDate),
+                        )),
+              );
+            }
+          : null,
       text: 'Add Session',
     );
   }
@@ -61,23 +81,25 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       color: Colors.blue,
       margin: const EdgeInsets.fromLTRB(20.0, 13.0, 20.0, 0),
-      child: const ListTile(
+      child: ListTile(
           title: Row(
         children: [
           Expanded(
               flex: 3,
               child: Text(
-                'imie dziecka',
+                session.sessionId,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               )),
           const SizedBox(width: 10),
-          Text('Wstawic Daty'),
+          Text(
+              '${DateFormat('HH:mm').format(session.startDate)} - ${DateFormat('HH:mm').format(session.endDate)}'),
         ],
       )),
     );
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -89,6 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
           DateSelector(
             selectedDate: selectedDate,
             onDateChanged: (newDate) {
+              _onDateSelected(newDate);
               setState(() {
                 selectedDate = newDate;
               });
@@ -100,10 +123,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (state.status == SessionStatus.active) {
                   return _listTiles(state);
                 } else if (state.status == SessionStatus.inactive) {
-                  return const Center(child: Text('NO SESSION.'));
+                  return Center(
+                      child: Text(
+                          'No sessions on ${DateFormat.yMMMd().format(state.selectedDate!)}'));
                 } else if (state.status == SessionStatus.failure) {
                   return Center(
-                      child: Text('Failed to load children: ${state.error}'));
+                      child: Text('Failed to load sessions: ${state.error}'));
                 } else {
                   return const Center(child: CircularProgressIndicator());
                 }

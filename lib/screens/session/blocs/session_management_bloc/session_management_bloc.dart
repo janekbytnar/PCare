@@ -25,7 +25,34 @@ class SessionManagementBloc
   Future<void> _onAddSession(
       AddSessionEvent event, Emitter<SessionManagementState> emit) async {
     emit(SessionManagementLoading());
+    if (event.session.startDate.isAfter(event.session.endDate) ||
+        event.session.startDate.isAtSameMomentAs(event.session.endDate)) {
+      emit(const SessionManagementFailure(
+          'Start date cannot be the same as or after end date.'));
+      return;
+    } else if (event.session.startDate.isBefore(DateTime.now())) {
+      emit(const SessionManagementFailure(
+          'Start date cannot be before the current date.'));
+      return;
+    }
+
     try {
+      // Check for session conflicts for each parent
+      for (var parentId in event.session.parentsId) {
+        final conflicts = await sessionRepository.checkSessionConflict(
+          parentId,
+          event.session.startDate,
+          event.session.endDate,
+        );
+
+        if (conflicts.isNotEmpty) {
+          emit(const SessionManagementFailure(
+              'You got another session that time.'));
+          return; // Exit early due to conflict
+        }
+      }
+
+      // Proceed to add the session since there are no conflicts
       await sessionRepository.addSession(event.session);
 
       for (var parentId in event.session.parentsId) {

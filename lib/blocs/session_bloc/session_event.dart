@@ -15,3 +15,11 @@ class SessionStatusChanged extends SessionEvent {
   @override
   List<Object?> get props => [user];
 }
+
+class LoadSessionsForDate extends SessionEvent {
+  final DateTime selectedDate;
+  const LoadSessionsForDate(this.selectedDate);
+
+  @override
+  List<Object?> get props => [selectedDate];
+}

@@ -5,17 +5,17 @@ class DateSelector extends StatelessWidget {
   final ValueChanged<DateTime> onDateChanged;
 
   const DateSelector({
-    Key? key,
+    super.key,
     required this.selectedDate,
     required this.onDateChanged,
-  }) : super(key: key);
+  });
 
   void _incrementDate() {
-    onDateChanged(selectedDate.add(Duration(days: 1)));
+    onDateChanged(selectedDate.add(const Duration(days: 1)));
   }
 
   void _decrementDate() {
-    onDateChanged(selectedDate.subtract(Duration(days: 1)));
+    onDateChanged(selectedDate.subtract(const Duration(days: 1)));
   }
 
   void _selectDate(BuildContext context) async {

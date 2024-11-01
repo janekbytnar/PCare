@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:perfect_childcare/components/my_button.dart';
 import 'package:perfect_childcare/components/my_text_field.dart';
 import 'package:perfect_childcare/screens/session/blocs/session_management_bloc/session_management_bloc.dart';
-import 'package:provider/provider.dart';
 import 'package:session_repository/session_repository.dart';
 import 'package:user_repository/user_repository.dart';
 
@@ -42,7 +42,7 @@ class _AddSessionScreenState extends State<AddSessionScreen> {
       width: MediaQuery.of(context).size.width * 0.9,
       child: MyTextField(
         controller: timeControllerStart,
-        hintText: 'Child\'s Date of Birth',
+        hintText: 'Start time',
         obscureText: false,
         onTap: () => _timePicker(timeControllerStart, true),
         readOnly: true,
@@ -51,7 +51,7 @@ class _AddSessionScreenState extends State<AddSessionScreen> {
         errorMsg: _errorMsg,
         validator: (val) {
           if (val!.isEmpty) {
-            return 'Please select a date';
+            return 'Please select a start time';
           }
           return null;
         },
@@ -64,7 +64,7 @@ class _AddSessionScreenState extends State<AddSessionScreen> {
       width: MediaQuery.of(context).size.width * 0.9,
       child: MyTextField(
         controller: timeControllerEnd,
-        hintText: 'Child\'s Date of Birth',
+        hintText: 'Finish time',
         obscureText: false,
         onTap: () => _timePicker(timeControllerEnd, false),
         readOnly: true,
@@ -73,7 +73,7 @@ class _AddSessionScreenState extends State<AddSessionScreen> {
         errorMsg: _errorMsg,
         validator: (val) {
           if (val!.isEmpty) {
-            return 'Please select a date';
+            return 'Please select a finish time';
           }
           return null;
         },
@@ -133,7 +133,9 @@ class _AddSessionScreenState extends State<AddSessionScreen> {
   }
 
   TimeOfDay _getInitialTime() {
-    bool isToday = DateTime.now().difference(selectedDate).inDays == 0;
+    bool isToday = DateTime.now().year == selectedDate.year &&
+        DateTime.now().month == selectedDate.month &&
+        DateTime.now().day == selectedDate.day;
     DateTime now = DateTime.now();
 
     int remainder = (15 - now.minute % 15) % 15;
@@ -160,7 +162,6 @@ class _AddSessionScreenState extends State<AddSessionScreen> {
               parentsId, childsId, _selectedStartTime!, _selectedEndTime!)
           .then((newSession) {
         context.read<SessionManagementBloc>().add(AddSessionEvent(newSession));
-        Navigator.pop(context);
       });
     }
   }
@@ -194,23 +195,36 @@ class _AddSessionScreenState extends State<AddSessionScreen> {
       appBar: AppBar(
         title: const Text('Add a Session'),
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                const Text('Start Session:'),
-                const SizedBox(height: 20),
-                _timeFieldStart(),
-                const SizedBox(height: 20),
-                const Text('End Session:'),
-                const SizedBox(height: 20),
-                _timeFieldEnd(),
-                const SizedBox(height: 20),
-                _submitButton(),
-              ],
+      body: BlocListener<SessionManagementBloc, SessionManagementState>(
+        listener: (context, state) {
+          if (state is SessionManagementFailure) {
+            // Display the error message to the user
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.error)),
+            );
+          } else if (state is SessionManagementSuccess) {
+            // Optionally navigate back or show success message
+            Navigator.pop(context);
+          }
+        },
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  const Text('Start Session:'),
+                  const SizedBox(height: 20),
+                  _timeFieldStart(),
+                  const SizedBox(height: 20),
+                  const Text('End Session:'),
+                  const SizedBox(height: 20),
+                  _timeFieldEnd(),
+                  const SizedBox(height: 20),
+                  _submitButton(),
+                ],
+              ),
             ),
           ),
         ),
