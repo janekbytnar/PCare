@@ -16,4 +16,14 @@ abstract class SessionRepository {
   Future<void> updateActivity(String sessionId, Activity activity);
   Future<void> deleteActivity(String sessionId, String activityId);
   Stream<List<Activity>> getActivities(String sessionId);
+//MEAL
+  Future<void> addMeal(String sessionId, Meal meal);
+  Future<void> updateMeal(String sessionId, Meal meal);
+  Future<void> deleteMeal(String sessionId, String mealId);
+  Stream<List<Meal>> getMeals(String sessionId);
+//Note
+  Future<void> addNote(String sessionId, Note note);
+  Future<void> updateNote(String sessionId, Note note);
+  Future<void> deleteNote(String sessionId, String noteId);
+  Stream<List<Note>> getNotes(String sessionId);
 }

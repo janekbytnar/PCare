@@ -128,4 +128,116 @@ class FirebaseSessionRepo implements SessionRepository {
               return Activity.fromEntity(ActivityEntity.fromDocument(doc));
             }).toList());
   }
+
+//MEAL
+
+  @override
+  Future<void> addMeal(String sessionId, Meal meal) async {
+    try {
+      final docRef = await sessionCollection
+          .doc(sessionId)
+          .collection('meals')
+          .add(meal.toEntity().toDocument());
+
+      await docRef.update({'mealId': docRef.id});
+    } catch (e) {
+      log('Error adding meal: ${e.toString()}');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> updateMeal(String sessionId, Meal meal) async {
+    try {
+      await sessionCollection
+          .doc(sessionId)
+          .collection('meals')
+          .doc(meal.mealId)
+          .update(meal.toEntity().toDocument());
+    } catch (e) {
+      log('Error updating meal: ${e.toString()}');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> deleteMeal(String sessionId, String mealId) async {
+    try {
+      await sessionCollection
+          .doc(sessionId)
+          .collection('meals')
+          .doc(mealId)
+          .delete();
+    } catch (e) {
+      log('Error deleting meal: ${e.toString()}');
+      rethrow;
+    }
+  }
+
+  @override
+  Stream<List<Meal>> getMeals(String sessionId) {
+    return sessionCollection
+        .doc(sessionId)
+        .collection('meals')
+        .snapshots()
+        .map((snapshot) => snapshot.docs.map((doc) {
+              return Meal.fromEntity(MealEntity.fromDocument(doc));
+            }).toList());
+  }
+
+// NOTES
+
+  @override
+  Future<void> addNote(String sessionId, Note note) async {
+    try {
+      final docRef = await sessionCollection
+          .doc(sessionId)
+          .collection('note')
+          .add(note.toEntity().toDocument());
+
+      await docRef.update({'noteId': docRef.id});
+    } catch (e) {
+      log('Error adding note: ${e.toString()}');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> updateNote(String sessionId, Note note) async {
+    try {
+      await sessionCollection
+          .doc(sessionId)
+          .collection('notes')
+          .doc(note.noteId)
+          .update(note.toEntity().toDocument());
+    } catch (e) {
+      log('Error updating note: ${e.toString()}');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> deleteNote(String sessionId, String noteId) async {
+    try {
+      await sessionCollection
+          .doc(sessionId)
+          .collection('note')
+          .doc(noteId)
+          .delete();
+    } catch (e) {
+      log('Error deleting note: ${e.toString()}');
+      rethrow;
+    }
+  }
+
+  @override
+  Stream<List<Note>> getNotes(String sessionId) {
+    return sessionCollection
+        .doc(sessionId)
+        .collection('note')
+        .snapshots()
+        .map((snapshot) => snapshot.docs.map((doc) {
+              return Note.fromEntity(NoteEntity.fromDocument(doc));
+            }).toList());
+  }
 }

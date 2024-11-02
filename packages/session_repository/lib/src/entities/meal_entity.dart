@@ -27,13 +27,14 @@ class MealEntity extends Equatable {
     };
   }
 
-  static MealEntity fromDocument(Map<String, dynamic> doc) {
+  static MealEntity fromDocument(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
     return MealEntity(
-      mealId: doc['mealId'] ?? '',
-      mealName: doc['mealName'] ?? '',
-      mealDescription: doc['mealDescription'] ?? '',
-      isCompleted: doc['isCompleted'] ?? false,
-      mealTime: (doc['mealTime'] as Timestamp).toDate(),
+      mealId: data['mealId'] ?? '',
+      mealName: data['mealName'] ?? '',
+      mealDescription: data['mealDescription'] ?? '',
+      isCompleted: data['isCompleted'] ?? false,
+      mealTime: (data['mealTime'] as Timestamp).toDate(),
     );
   }
 

@@ -11,7 +11,7 @@ class Session extends Equatable {
   final DateTime endDate;
   final List<Activity> activities;
   final List<Meal> meals;
-  final List<Observation> observations;
+  final List<Note> notes;
 
   const Session({
     required this.sessionId,
@@ -22,7 +22,7 @@ class Session extends Equatable {
     required this.endDate,
     this.activities = const [],
     this.meals = const [],
-    this.observations = const [],
+    this.notes = const [],
   });
 
   static final empty = Session(
@@ -34,7 +34,7 @@ class Session extends Equatable {
     endDate: DateTime(1970, 1, 1),
     activities: const [],
     meals: const [],
-    observations: const [],
+    notes: const [],
   );
 
   Session copyWith({
@@ -46,7 +46,7 @@ class Session extends Equatable {
     DateTime? endDate,
     List<Activity>? activities,
     List<Meal>? meals,
-    List<Observation>? observations,
+    List<Note>? observations,
   }) {
     return Session(
       sessionId: sessionId ?? this.sessionId,
@@ -57,7 +57,7 @@ class Session extends Equatable {
       endDate: endDate ?? this.endDate,
       activities: activities ?? this.activities,
       meals: meals ?? this.meals,
-      observations: observations ?? this.observations,
+      notes: observations ?? this.notes,
     );
   }
 
@@ -71,8 +71,7 @@ class Session extends Equatable {
       endDate: endDate,
       activities: activities.map((activity) => activity.toEntity()).toList(),
       meals: meals.map((meal) => meal.toEntity()).toList(),
-      observations:
-          observations.map((observation) => observation.toEntity()).toList(),
+      notes: notes.map((note) => note.toEntity()).toList(),
     );
   }
 
@@ -90,8 +89,8 @@ class Session extends Equatable {
       meals: entity.meals
           .map((mealEntity) => Meal.fromEntity(mealEntity))
           .toList(),
-      observations: entity.observations
-          .map((observationEntity) => Observation.fromEntity(observationEntity))
+      notes: entity.notes
+          .map((noteEntity) => Note.fromEntity(noteEntity))
           .toList(),
     );
   }
@@ -106,6 +105,6 @@ class Session extends Equatable {
         endDate,
         activities,
         meals,
-        observations,
+        notes,
       ];
 }
