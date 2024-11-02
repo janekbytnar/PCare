@@ -1,30 +1,21 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
-class TileActivity extends StatefulWidget {
+class TileActivity extends StatelessWidget {
   final String title;
   final String? subtitle;
   final bool done;
+  final VoidCallback? onToggleDone;
+  final VoidCallback? onDelete;
 
   const TileActivity({
-    super.key,
+    Key? key,
     required this.title,
     required this.done,
     this.subtitle,
-  });
-
-  @override
-  State<TileActivity> createState() => _TileActivityState();
-}
-
-class _TileActivityState extends State<TileActivity> {
-  late bool done;
-
-  @override
-  void initState() {
-    super.initState();
-    done = widget.done;
-  }
+    this.onToggleDone,
+    this.onDelete,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -41,20 +32,20 @@ class _TileActivityState extends State<TileActivity> {
       child: ListTile(
         title: Center(
           child: AutoSizeText(
-            widget.title,
+            title,
             style: const TextStyle(fontSize: 24),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        subtitle: widget.subtitle != null && widget.subtitle!.isNotEmpty
-            ? Center(child: Text(widget.subtitle!))
+        subtitle: subtitle != null && subtitle!.isNotEmpty
+            ? Center(child: Text(subtitle!))
             : null,
-        onTap: () {
-          setState(() {
-            done = !done;
-          });
-        },
+        trailing: IconButton(
+          icon: const Icon(Icons.delete),
+          onPressed: onDelete,
+        ),
+        onTap: onToggleDone,
       ),
     );
   }

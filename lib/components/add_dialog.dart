@@ -2,16 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:perfect_childcare/components/my_text_field.dart';
 
 class AddDialog extends StatefulWidget {
-  const AddDialog({super.key});
+  final Function(String name, String? description) onAdd;
+  const AddDialog({super.key, required this.onAdd});
 
   @override
   State<AddDialog> createState() => _AddDialogState();
 }
 
 class _AddDialogState extends State<AddDialog> {
-  final activityController = TextEditingController();
+  final nameController = TextEditingController();
   final descriptionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    descriptionController.dispose();
+    super.dispose();
+  }
 
   Widget _activity() {
     return Column(
@@ -24,7 +32,7 @@ class _AddDialogState extends State<AddDialog> {
         ),
         const SizedBox(height: 6),
         MyTextField(
-          controller: activityController,
+          controller: nameController,
           hintText: '',
           obscureText: false,
           keyboardType: TextInputType.text,
@@ -71,16 +79,7 @@ class _AddDialogState extends State<AddDialog> {
 
   Widget _button() {
     return TextButton(
-      onPressed: () {
-        if (_formKey.currentState!.validate()) {
-          const snackBar = SnackBar(
-            content: Text('Activity added'),
-            showCloseIcon: true,
-          );
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          Navigator.of(context).pop();
-        }
-      },
+      onPressed: _submit,
       child: const Text(
         'Add',
         textAlign: TextAlign.center,
@@ -91,6 +90,19 @@ class _AddDialogState extends State<AddDialog> {
         ),
       ),
     );
+  }
+
+  void _submit() {
+    if (_formKey.currentState!.validate()) {
+      widget.onAdd(
+          nameController.text.trim(), descriptionController.text.trim());
+      const snackBar = SnackBar(
+        content: Text('Activity added'),
+        showCloseIcon: true,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Navigator.of(context).pop();
+    }
   }
 
   Widget _cancelButton() {

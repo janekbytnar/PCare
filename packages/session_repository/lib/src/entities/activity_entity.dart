@@ -27,13 +27,14 @@ class ActivityEntity extends Equatable {
     };
   }
 
-  static ActivityEntity fromDocument(Map<String, dynamic> doc) {
+  static ActivityEntity fromDocument(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
     return ActivityEntity(
-      activityId: doc['activityId'] ?? '',
-      activityName: doc['activityName'] ?? '',
-      activityDescription: doc['activityDescription'] ?? '',
-      isCompleted: doc['isCompleted'] ?? false,
-      activityTime: (doc['activityTime'] as Timestamp).toDate(),
+      activityId: data['activityId'] ?? '',
+      activityName: data['activityName'] ?? '',
+      activityDescription: data['activityDescription'] ?? '',
+      isCompleted: data['isCompleted'] ?? false,
+      activityTime: (data['activityTime'] as Timestamp).toDate(),
     );
   }
 

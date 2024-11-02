@@ -57,7 +57,7 @@ class SessionEntity extends Equatable {
       endDate: (doc['endDate'] as Timestamp).toDate(),
       activities: (doc['activities'] as List<dynamic>?)
               ?.map((activityData) => ActivityEntity.fromDocument(
-                  activityData as Map<String, dynamic>))
+                  activityData as DocumentSnapshot<Object?>))
               .toList() ??
           [],
       meals: (doc['meals'] as List<dynamic>?)

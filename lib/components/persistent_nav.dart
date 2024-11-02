@@ -1,13 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:perfect_childcare/blocs/authentication_bloc/authentication_bloc.dart';
-import 'package:perfect_childcare/components/side_bar.dart';
-import 'package:perfect_childcare/screens/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
+import 'package:intl/intl.dart';
+import 'package:perfect_childcare/screens/session/blocs/activity_management_bloc/activity_management_bloc.dart';
+
 import 'package:perfect_childcare/screens/session/views/activity.dart';
 import 'package:perfect_childcare/screens/session/views/meals.dart';
 import 'package:perfect_childcare/screens/session/views/notes.dart';
-import 'package:perfect_childcare/screens/session/views/payments.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:session_repository/session_repository.dart';
 
@@ -27,13 +26,15 @@ class _PersistentTabScreenState extends State<PersistentTabScreen> {
   List<Widget> _buildScreens() {
     return [
       BlocProvider(
-        create: (context) => SignInBloc(
-            userRepository: context.read<AuthenticationBloc>().userRepository),
-        child: const ActivityScreen(),
+        create: (context) => ActivityManagementBloc(
+          sessionRepository: context.read<SessionRepository>(),
+        )..add(LoadActivities(widget.session!.sessionId)),
+        child: ActivityScreen(
+            activity: widget.session?.activities,
+            sessionId: widget.session!.sessionId),
       ),
       const MealsScreen(),
       const NotesScreen(),
-      const PaymentScreen(),
     ];
   }
 
@@ -41,7 +42,7 @@ class _PersistentTabScreenState extends State<PersistentTabScreen> {
     return [
       PersistentBottomNavBarItem(
         icon: const Icon(Icons.local_activity),
-        title: ("Home"),
+        title: ("Activity"),
         activeColorPrimary: CupertinoColors.activeBlue,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
@@ -57,12 +58,6 @@ class _PersistentTabScreenState extends State<PersistentTabScreen> {
         activeColorPrimary: CupertinoColors.activeOrange,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
-      PersistentBottomNavBarItem(
-        icon: const Icon(CupertinoIcons.money_pound_circle_fill),
-        title: ("Payments"),
-        activeColorPrimary: CupertinoColors.systemRed,
-        inactiveColorPrimary: CupertinoColors.systemGrey,
-      ),
     ];
   }
 
@@ -70,10 +65,21 @@ class _PersistentTabScreenState extends State<PersistentTabScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Row(
+        title: Row(
           mainAxisAlignment: MainAxisAlignment.end, // align to right
           children: [
-            Text('Perfect childcare'),
+            Row(
+              children: [
+                Text(
+                  DateFormat('dd/MM/yyyy').format(widget.session!.startDate),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+                const SizedBox(width: 10),
+                Text(
+                    '${DateFormat('HH:mm').format(widget.session!.startDate)} - ${DateFormat('HH:mm').format(widget.session!.endDate)}'),
+              ],
+            ),
           ],
         ),
         backgroundColor: Theme.of(context).colorScheme.background,
