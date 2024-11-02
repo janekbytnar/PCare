@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:perfect_childcare/screens/session/blocs/activity_management_bloc/activity_management_bloc.dart';
+import 'package:perfect_childcare/screens/session/blocs/meal_management_bloc/meal_management_bloc.dart';
+import 'package:perfect_childcare/screens/session/blocs/note_management_bloc/note_management_bloc.dart';
 
 import 'package:perfect_childcare/screens/session/views/activity.dart';
 import 'package:perfect_childcare/screens/session/views/meal.dart';
@@ -33,8 +35,22 @@ class _PersistentTabScreenState extends State<PersistentTabScreen> {
             activity: widget.session?.activities,
             sessionId: widget.session!.sessionId),
       ),
-      const MealsScreen(),
-      const NotesScreen(),
+      BlocProvider(
+        create: (context) => MealManagementBloc(
+          sessionRepository: context.read<SessionRepository>(),
+        )..add(LoadMeals(widget.session!.sessionId)),
+        child: MealScreen(
+            meal: widget.session?.meals, sessionId: widget.session!.sessionId),
+      ),
+      BlocProvider(
+        create: (context) => NoteManagementBloc(
+          sessionRepository: context.read<SessionRepository>(),
+        )..add(LoadNotes(widget.session!.sessionId)),
+        child: NoteScreen(
+          note: widget.session?.notes,
+          sessionId: widget.session!.sessionId,
+        ),
+      ),
     ];
   }
 

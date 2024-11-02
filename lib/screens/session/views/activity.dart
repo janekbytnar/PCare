@@ -45,7 +45,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
               itemCount: activities.length,
               itemBuilder: (context, index) {
                 final activity = activities[index];
-                return TileActivity(
+                return CustomTile(
                   title: activity.activityName,
                   done: activity.isCompleted,
                   subtitle: activity.activityDescription,
@@ -104,6 +104,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
       context: context,
       builder: (BuildContext dialogContext) {
         return AddDialog(
+          title: 'Activity',
           onAdd: (name, description) {
             final newActivity = Activity(
               activityId: '',

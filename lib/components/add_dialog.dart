@@ -3,7 +3,12 @@ import 'package:perfect_childcare/components/my_text_field.dart';
 
 class AddDialog extends StatefulWidget {
   final Function(String name, String? description) onAdd;
-  const AddDialog({super.key, required this.onAdd});
+  final String title;
+  const AddDialog({
+    super.key,
+    required this.onAdd,
+    required this.title,
+  });
 
   @override
   State<AddDialog> createState() => _AddDialogState();
@@ -21,12 +26,12 @@ class _AddDialogState extends State<AddDialog> {
     super.dispose();
   }
 
-  Widget _activity() {
+  Widget _title() {
     return Column(
       children: [
-        const Text(
-          'Activity name',
-          style: TextStyle(
+        Text(
+          '${widget.title} name',
+          style: const TextStyle(
             fontSize: 24,
           ),
         ),
@@ -38,7 +43,7 @@ class _AddDialogState extends State<AddDialog> {
           keyboardType: TextInputType.text,
           validator: (val) {
             if (val!.isEmpty) {
-              return 'Activity name can\'t be empty';
+              return '${widget.title} name can\'t be empty';
             }
             return null;
           },
@@ -68,7 +73,7 @@ class _AddDialogState extends State<AddDialog> {
               const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
           validator: (val) {
             if (val!.isEmpty) {
-              return 'Activity description can\'t be empty';
+              return '${widget.title} description can\'t be empty';
             }
             return null;
           },
@@ -96,8 +101,8 @@ class _AddDialogState extends State<AddDialog> {
     if (_formKey.currentState!.validate()) {
       widget.onAdd(
           nameController.text.trim(), descriptionController.text.trim());
-      const snackBar = SnackBar(
-        content: Text('Activity added'),
+      final snackBar = SnackBar(
+        content: Text('${widget.title} added'),
         showCloseIcon: true,
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -130,12 +135,15 @@ class _AddDialogState extends State<AddDialog> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const SizedBox(height: 12),
-              const Text(
-                'Add activity',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+              Text(
+                'Add ${widget.title.toLowerCase()}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30,
+                ),
               ),
               const SizedBox(height: 12),
-              _activity(),
+              _title(),
               const SizedBox(height: 12),
               _description(),
               const SizedBox(height: 12),
