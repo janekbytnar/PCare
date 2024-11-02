@@ -9,9 +9,11 @@ import 'package:perfect_childcare/screens/session/views/meals.dart';
 import 'package:perfect_childcare/screens/session/views/notes.dart';
 import 'package:perfect_childcare/screens/session/views/payments.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:session_repository/session_repository.dart';
 
 class PersistentTabScreen extends StatefulWidget {
-  const PersistentTabScreen({super.key});
+  final Session? session;
+  const PersistentTabScreen({super.key, this.session});
 
   @override
   State<PersistentTabScreen> createState() => _PersistentTabScreenState();
@@ -76,7 +78,6 @@ class _PersistentTabScreenState extends State<PersistentTabScreen> {
         ),
         backgroundColor: Theme.of(context).colorScheme.background,
       ),
-      drawer: const SideBar(),
       body: PersistentTabView(
         context,
         controller: _controller,

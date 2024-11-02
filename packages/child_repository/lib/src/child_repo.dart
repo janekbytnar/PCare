@@ -5,9 +5,11 @@ abstract class ChildRepository {
 
   Future<void> removeChild(String childId); //Delete child
 
+  Future<void> updateChild(Child child); //Update child
+
   Future<void> connectSessionToChild(
       String childId, String sessionId); //Connect session to child
 
-  Future<List<Child>> getChildrenForUser(
+  Stream<List<Child>> getChildrenForUserStream(
       String userId); // Dowload child for user
 }

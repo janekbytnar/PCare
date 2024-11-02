@@ -15,6 +15,7 @@ class ChildrenManagementBloc
   }) : super(ChildrenManagementInitial()) {
     on<AddChildEvent>(_onAddChild);
     on<RemoveChildEvent>(_onRemoveChild);
+    on<UpdateChildEvent>(_onUpdateChild);
   }
 
   Future<void> _onAddChild(
@@ -34,7 +35,20 @@ class ChildrenManagementBloc
       RemoveChildEvent event, Emitter<ChildrenManagementState> emit) async {
     emit(ChildrenManagementLoading());
     try {
+      await userRepository.disconnectChildFromUser(event.childId);
       await childRepository.removeChild(event.childId);
+
+      emit(ChildrenManagementSuccess());
+    } catch (e) {
+      emit(ChildrenManagementFailure(e.toString()));
+    }
+  }
+
+  Future<void> _onUpdateChild(
+      UpdateChildEvent event, Emitter<ChildrenManagementState> emit) async {
+    emit(ChildrenManagementLoading());
+    try {
+      await childRepository.updateChild(event.child);
       emit(ChildrenManagementSuccess());
     } catch (e) {
       emit(ChildrenManagementFailure(e.toString()));

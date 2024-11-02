@@ -27,12 +27,13 @@ class ChildEntity {
   }
 
   static ChildEntity fromDocument(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
     return ChildEntity(
       id: doc['id'] ?? '',
       name: doc['name'] ?? '',
-      parentIds: List<String>.from(doc['parent_ids']),
-      dateOfBirth: (doc['date_of_birth'] as Timestamp).toDate(),
-      sessionIds: List<String>.from(doc['session_ids']),
+      parentIds: List<String>.from(data['parent_ids'] ?? []),
+      dateOfBirth: (data['date_of_birth'] as Timestamp).toDate(),
+      sessionIds: List<String>.from(data['session_ids'] ?? []),
     );
   }
 

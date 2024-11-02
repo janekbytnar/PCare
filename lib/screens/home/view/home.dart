@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:perfect_childcare/blocs/session_bloc/session_bloc.dart';
 import 'package:perfect_childcare/components/date_selector.dart';
 import 'package:perfect_childcare/components/my_button.dart';
+import 'package:perfect_childcare/components/persistent_nav.dart';
 import 'package:perfect_childcare/components/side_bar.dart';
 import 'package:perfect_childcare/screens/home/view/add_session.dart';
 import 'package:perfect_childcare/screens/session/blocs/session_management_bloc/session_management_bloc.dart';
@@ -82,20 +83,36 @@ class _HomeScreenState extends State<HomeScreen> {
       color: Colors.blue,
       margin: const EdgeInsets.fromLTRB(20.0, 13.0, 20.0, 0),
       child: ListTile(
-          title: Row(
-        children: [
-          Expanded(
-              flex: 3,
-              child: Text(
-                session.sessionId,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-              )),
-          const SizedBox(width: 10),
-          Text(
-              '${DateFormat('HH:mm').format(session.startDate)} - ${DateFormat('HH:mm').format(session.endDate)}'),
-        ],
-      )),
+        title: Row(
+          children: [
+            Expanded(
+                flex: 3,
+                child: Text(
+                  session.sessionId,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                )),
+            const SizedBox(width: 10),
+            Text(
+                '${DateFormat('HH:mm').format(session.startDate)} - ${DateFormat('HH:mm').format(session.endDate)}'),
+          ],
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BlocProvider(
+                create: (context) => SessionManagementBloc(
+                  childRepository: context.read<ChildRepository>(),
+                  userRepository: context.read<UserRepository>(),
+                  sessionRepository: context.read<SessionRepository>(),
+                ),
+                child: PersistentTabScreen(session: session),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 

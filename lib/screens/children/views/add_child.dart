@@ -10,7 +10,8 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
 class AddChildScreen extends StatefulWidget {
-  const AddChildScreen({super.key});
+  final Child? child;
+  const AddChildScreen({super.key, this.child});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -24,6 +25,18 @@ class _AddChildScreenState extends State<AddChildScreen> {
   DateTime? _selectedDate;
   DateTime currentDate = DateTime.now();
   String? _errorMsg;
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.child != null) {
+      // We are in edit mode
+      nameController.text = widget.child!.name;
+      _selectedDate = widget.child!.dateOfBirth;
+      dateController.text = DateFormat('yyyy-MM-dd').format(_selectedDate!);
+    }
+  }
 
   String _capitalizeName(String text) {
     if (text.isEmpty) {
@@ -55,6 +68,30 @@ class _AddChildScreenState extends State<AddChildScreen> {
           ));
       Navigator.pop(context);
     }
+  }
+
+  void _updateChild() {
+    if (_formKey.currentState!.validate()) {
+      final childName = _capitalizeName(nameController.text.trim());
+
+      final updatedChild = widget.child!.copyWith(
+        name: childName,
+        dateOfBirth: _selectedDate!,
+      );
+
+      context
+          .read<ChildrenManagementBloc>()
+          .add(UpdateChildEvent(updatedChild));
+
+      Navigator.pop(context);
+    }
+  }
+
+  void _deleteChild() {
+    context
+        .read<ChildrenManagementBloc>()
+        .add(RemoveChildEvent(widget.child!.id));
+    Navigator.pop(context);
   }
 
   Widget _nameField() {
@@ -123,9 +160,19 @@ class _AddChildScreenState extends State<AddChildScreen> {
 
   Widget _submitButton() {
     return MyTextButton(
-      onPressed: _addChild,
-      text: 'Add Child',
+      onPressed: widget.child != null ? _updateChild : _addChild,
+      text: widget.child != null ? 'Update Child' : 'Add Child',
     );
+  }
+
+  Widget _deleteButton() {
+    return widget.child != null
+        ? MyTextButton(
+            onPressed: _deleteChild,
+            text: 'Delete Child',
+            backgroundColor: Colors.red,
+          )
+        : Container();
   }
 
   @override
@@ -146,6 +193,8 @@ class _AddChildScreenState extends State<AddChildScreen> {
                 _dateField(),
                 const SizedBox(height: 20),
                 _submitButton(),
+                const SizedBox(height: 10),
+                _deleteButton(),
               ],
             ),
           ),

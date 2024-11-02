@@ -29,3 +29,12 @@ class RemoveChildEvent extends ChildrenManagementEvent {
   @override
   List<Object?> get props => [childId];
 }
+
+class UpdateChildEvent extends ChildrenManagementEvent {
+  final Child child;
+
+  const UpdateChildEvent(this.child);
+
+  @override
+  List<Object> get props => [child];
+}

@@ -19,4 +19,6 @@ abstract class UserRepository {
   Future<MyUser?> getCurrentUserData();
 
   Stream<MyUser?> getCurrentUserDataStream();
+
+  Future<void> disconnectChildFromUser(String childId);
 }

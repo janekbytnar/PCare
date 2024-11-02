@@ -130,4 +130,20 @@ class FirebaseUserRepo implements UserRepository {
       return Stream.value(null);
     }
   }
+
+  @override
+  Future<void> disconnectChildFromUser(String childId) async {
+    final userId = _firebaseAuth.currentUser?.uid;
+    print('disconnectChildFromUser: userId = $userId, childId = $childId');
+    if (userId != null) {
+      try {
+        await usersCollection.doc(userId).update({
+          'children': FieldValue.arrayRemove([childId]),
+        });
+      } catch (e) {
+        log('Error disconnectChildFromUser: ${e.toString()}');
+        rethrow;
+      }
+    }
+  }
 }
