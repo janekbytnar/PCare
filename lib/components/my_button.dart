@@ -31,24 +31,27 @@ class MyTextButton extends StatelessWidget {
     final Color currentForegroundColor =
         onPressed == null ? disabledForegroundColor : foregroundColor;
 
-    return TextButton(
-      onPressed: onPressed,
-      style: TextButton.styleFrom(
-        backgroundColor: currentBackgroundColor,
-        foregroundColor: currentForegroundColor,
-        padding: padding,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(borderRadius),
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.8,
+      child: TextButton(
+        onPressed: onPressed,
+        style: TextButton.styleFrom(
+          backgroundColor: currentBackgroundColor,
+          foregroundColor: currentForegroundColor,
+          padding: padding,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(borderRadius),
+          ),
+          elevation: elevation,
         ),
-        elevation: elevation,
+        child: Text(text,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            )),
       ),
-      child: Text(text,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            color: Colors.black,
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          )),
     );
   }
 }

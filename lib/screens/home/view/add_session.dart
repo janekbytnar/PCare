@@ -204,7 +204,7 @@ class _AddSessionScreenState extends State<AddSessionScreen> {
             );
           } else if (state is SessionManagementSuccess) {
             // Optionally navigate back or show success message
-            Navigator.pop(context);
+            Navigator.pop(context, true);
           }
         },
         child: SafeArea(

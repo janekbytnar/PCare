@@ -27,6 +27,8 @@ dependencies:
     path: packages/child_repository
   session_repository:
     path: packages/session_repository
+  connections_repository:
+    path: packages/connections_repository
     
   
   syncfusion_flutter_sliders: ^26.1.35

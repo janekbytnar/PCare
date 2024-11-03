@@ -1,4 +1,5 @@
 import 'package:child_repository/child_repository.dart';
+import 'package:connections_repository/connections_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:perfect_childcare/app_view.dart';
@@ -11,7 +12,9 @@ class MyApp extends StatelessWidget {
   final UserRepository userRepository;
   final ChildRepository childRepository;
   final SessionRepository sessionRepository;
+  final ConnectionsRepository connectionsRepository;
   const MyApp(this.userRepository, this.childRepository, this.sessionRepository,
+      this.connectionsRepository,
       {super.key});
 
   @override
@@ -27,6 +30,9 @@ class MyApp extends StatelessWidget {
         RepositoryProvider<SessionRepository>(
           create: (_) => sessionRepository,
         ),
+        RepositoryProvider<ConnectionsRepository>(
+          create: (_) => connectionsRepository,
+        )
       ],
       child: MultiBlocProvider(
         providers: [

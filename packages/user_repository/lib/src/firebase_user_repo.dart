@@ -146,4 +146,46 @@ class FirebaseUserRepo implements UserRepository {
       }
     }
   }
+
+  @override
+  Future<String?> getUserIdByEmail(String email) async {
+    final querySnapshot =
+        await usersCollection.where('email', isEqualTo: email).get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      return querySnapshot.docs.first.id; // Return the user ID
+    } else {
+      return null; // Email not found
+    }
+  }
+
+  @override
+  Future<void> addLinkedPerson(String userId, String linkedPersonId) async {
+    try {
+      await usersCollection.doc(userId).update({
+        'linkedPerson': linkedPersonId,
+      });
+      await usersCollection.doc(linkedPersonId).update({
+        'linkedPerson': userId,
+      });
+    } catch (e) {
+      log('Error adding linkedPerson: ${e.toString()}');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> unlinkPerson(String userId, String linkedPersonId) async {
+    try {
+      await usersCollection.doc(userId).update({
+        'linkedPerson': '',
+      });
+      await usersCollection.doc(linkedPersonId).update({
+        'linkedPerson': '',
+      });
+    } catch (e) {
+      log('Error unlinkConnection: ${e.toString()}');
+      rethrow;
+    }
+  }
 }

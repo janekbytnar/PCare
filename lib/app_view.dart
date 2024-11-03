@@ -55,7 +55,7 @@ class MyAppView extends StatelessWidget {
               },
             );
           } else {
-            return NoInternetScreen();
+            return const NoInternetScreen();
           }
         },
       ),

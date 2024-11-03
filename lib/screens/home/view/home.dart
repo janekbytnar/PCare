@@ -20,7 +20,15 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  DateTime selectedDate = DateTime.now();
+  late DateTime selectedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedDate = DateTime.now();
+    // Optionally, load sessions for the initial date
+    context.read<SessionBloc>().add(LoadSessionsForDate(selectedDate));
+  }
 
   bool get isButtonEnabled {
     final now = DateTime.now();
@@ -41,20 +49,24 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _addButton() {
     return MyTextButton(
       onPressed: isButtonEnabled
-          ? () {
-              Navigator.push(
+          ? () async {
+              final sessionBloc = context.read<SessionBloc>();
+              final result = await Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => BlocProvider(
-                          create: (context) => SessionManagementBloc(
-                            sessionRepository:
-                                context.read<SessionRepository>(),
-                            childRepository: context.read<ChildRepository>(),
-                            userRepository: context.read<UserRepository>(),
-                          ),
-                          child: AddSessionScreen(selectedDate: selectedDate),
-                        )),
+                  builder: (context) => BlocProvider(
+                    create: (context) => SessionManagementBloc(
+                      sessionRepository: context.read<SessionRepository>(),
+                      childRepository: context.read<ChildRepository>(),
+                      userRepository: context.read<UserRepository>(),
+                    ),
+                    child: AddSessionScreen(selectedDate: selectedDate),
+                  ),
+                ),
               );
+              if (result == true) {
+                sessionBloc.add(LoadSessionsForDate(selectedDate));
+              }
             }
           : null,
       text: 'Add Session',
@@ -127,12 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           DateSelector(
             selectedDate: selectedDate,
-            onDateChanged: (newDate) {
-              _onDateSelected(newDate);
-              setState(() {
-                selectedDate = newDate;
-              });
-            },
+            onDateChanged: _onDateSelected,
           ),
           Expanded(
             child: BlocBuilder<SessionBloc, SessionState>(
