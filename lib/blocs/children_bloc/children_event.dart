@@ -15,3 +15,12 @@ class ChildrenStatusChanged extends ChildrenEvent {
   @override
   List<Object?> get props => [user];
 }
+
+class ChildrenUpdated extends ChildrenEvent {
+  final List<Child> children;
+
+  const ChildrenUpdated(this.children);
+
+  @override
+  List<Object?> get props => [children];
+}

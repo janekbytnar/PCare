@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:perfect_childcare/blocs/children_bloc/children_bloc.dart';
 import 'package:perfect_childcare/components/my_button.dart';
-import 'package:perfect_childcare/screens/children/blocs/children_management_bloc/children_management_bloc_bloc.dart';
+import 'package:perfect_childcare/screens/children/blocs/children_management_bloc/children_management_bloc.dart';
 import 'package:perfect_childcare/screens/children/views/add_child.dart';
 import 'package:user_repository/user_repository.dart';
 
 class ChildrenScreen extends StatefulWidget {
-  const ChildrenScreen({Key? key}) : super(key: key);
+  const ChildrenScreen({super.key});
 
   @override
   State<ChildrenScreen> createState() => _ChildrenScreenState();
@@ -35,13 +35,14 @@ class _ChildrenScreenState extends State<ChildrenScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => BlocProvider(
-                    create: (context) => ChildrenManagementBloc(
-                      childRepository: context.read<ChildRepository>(),
-                      userRepository: context.read<UserRepository>(),
-                    ),
-                    child: const AddChildScreen(),
-                  )),
+            builder: (context) => BlocProvider(
+              create: (context) => ChildrenManagementBloc(
+                childRepository: context.read<ChildRepository>(),
+                userRepository: context.read<UserRepository>(),
+              ),
+              child: const AddChildScreen(),
+            ),
+          ),
         );
       },
       text: 'Add Child',
@@ -70,19 +71,34 @@ class _ChildrenScreenState extends State<ChildrenScreen> {
       color: Colors.blue,
       margin: const EdgeInsets.fromLTRB(20.0, 13.0, 20.0, 0),
       child: ListTile(
-          title: Row(
-        children: [
-          Expanded(
-              flex: 3,
-              child: Text(
-                child.name,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-              )),
-          const SizedBox(width: 10),
-          Text('Age: ${calculateAge(child.dateOfBirth)}'),
-        ],
-      )),
+        title: Row(
+          children: [
+            Expanded(
+                flex: 3,
+                child: Text(
+                  child.name,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                )),
+            const SizedBox(width: 10),
+            Text('Age: ${calculateAge(child.dateOfBirth)}'),
+          ],
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BlocProvider(
+                create: (context) => ChildrenManagementBloc(
+                  childRepository: context.read<ChildRepository>(),
+                  userRepository: context.read<UserRepository>(),
+                ),
+                child: AddChildScreen(child: child),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 

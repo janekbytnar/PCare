@@ -6,41 +6,44 @@ class ChildEntity {
   final String name;
   final List<String> parentIds;
   final DateTime dateOfBirth;
+  final List<String> sessionIds;
 
   const ChildEntity({
     required this.id,
     required this.name,
     required this.parentIds,
     required this.dateOfBirth,
+    this.sessionIds = const [],
   });
 
-  // Tworzenie dokumentu Firestore
   Map<String, Object> toDocument() {
     return {
       'id': id,
       'name': name,
       'parent_ids': parentIds,
       'date_of_birth': Timestamp.fromDate(dateOfBirth),
+      'session_ids': sessionIds,
     };
   }
 
-  // Odtwarzanie encji z dokumentu Firestore
   static ChildEntity fromDocument(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
     return ChildEntity(
       id: doc['id'] ?? '',
       name: doc['name'] ?? '',
-      parentIds: List<String>.from(doc['parent_ids']),
-      dateOfBirth: (doc['date_of_birth'] as Timestamp).toDate(),
+      parentIds: List<String>.from(data['parent_ids'] ?? []),
+      dateOfBirth: (data['date_of_birth'] as Timestamp).toDate(),
+      sessionIds: List<String>.from(data['session_ids'] ?? []),
     );
   }
 
-  // Konwersja encji na model Child
   Child toModel() {
     return Child(
       id: id,
       name: name,
       parentIds: parentIds,
       dateOfBirth: dateOfBirth,
+      sessionIds: sessionIds,
     );
   }
 }

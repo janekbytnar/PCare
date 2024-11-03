@@ -1,3 +1,4 @@
+import 'package:connections_repository/connections_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,7 +8,9 @@ import 'package:perfect_childcare/screens/auth/blocs/sign_in_bloc/sign_in_bloc.d
 import 'package:perfect_childcare/screens/nannies/nannies/nannies.dart';
 import 'package:perfect_childcare/screens/children/views/children.dart';
 import 'package:perfect_childcare/screens/personal_information/views/personal_information_screen.dart';
+import 'package:perfect_childcare/screens/settings/blocs/connections_management_bloc/connections_management_bloc.dart';
 import 'package:perfect_childcare/screens/settings/views/settings.dart';
+import 'package:user_repository/user_repository.dart';
 
 class SideBar extends StatelessWidget {
   const SideBar({
@@ -72,18 +75,23 @@ class SideBar extends StatelessWidget {
               Navigator.pop(context);
             },
           ),
-          ListTile(
-            leading: const Icon(Icons.child_care),
-            title: const Text("Children"),
-            onTap: () {
-              Navigator.push(
-                context,
-                CupertinoPageRoute(
-                  builder: (context) => BlocProvider.value(
-                    value: context.read<ChildrenBloc>(),
-                    child: const ChildrenScreen(),
-                  ),
-                ),
+          Builder(
+            builder: (context) {
+              final childrenBloc = context.read<ChildrenBloc>();
+              return ListTile(
+                leading: const Icon(Icons.child_care),
+                title: const Text("Children"),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                      builder: (context) => BlocProvider.value(
+                        value: childrenBloc,
+                        child: const ChildrenScreen(),
+                      ),
+                    ),
+                  );
+                },
               );
             },
           ),
@@ -107,12 +115,30 @@ class SideBar extends StatelessWidget {
               Navigator.push(
                 context,
                 CupertinoPageRoute(
-                  builder: (context) => BlocProvider(
-                    create: (context) => SignInBloc(
-                        userRepository:
-                            context.read<AuthenticationBloc>().userRepository),
-                    child: const SettingsScreen(),
-                  ),
+                  builder: (context) {
+                    final userRepository = context.read<UserRepository>();
+                    final connectionsRepository =
+                        context.read<ConnectionsRepository>();
+
+                    return MultiBlocProvider(
+                      providers: [
+                        BlocProvider(
+                          create: (context) => SignInBloc(
+                            userRepository: context
+                                .read<AuthenticationBloc>()
+                                .userRepository,
+                          ),
+                        ),
+                        BlocProvider(
+                          create: (context) => ConnectionsManagementBloc(
+                            userRepository: userRepository,
+                            connectionsRepository: connectionsRepository,
+                          ),
+                        ),
+                      ],
+                      child: SettingsScreen(),
+                    );
+                  },
                 ),
               );
             },

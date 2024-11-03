@@ -2,35 +2,48 @@ import 'package:flutter/material.dart';
 import 'package:perfect_childcare/components/my_text_field.dart';
 
 class AddDialog extends StatefulWidget {
-  const AddDialog({super.key});
+  final Function(String name, String? description) onAdd;
+  final String title;
+  const AddDialog({
+    super.key,
+    required this.onAdd,
+    required this.title,
+  });
 
   @override
   State<AddDialog> createState() => _AddDialogState();
 }
 
 class _AddDialogState extends State<AddDialog> {
-  final activityController = TextEditingController();
+  final nameController = TextEditingController();
   final descriptionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  Widget _activity() {
+  @override
+  void dispose() {
+    nameController.dispose();
+    descriptionController.dispose();
+    super.dispose();
+  }
+
+  Widget _title() {
     return Column(
       children: [
-        const Text(
-          'Activity name',
-          style: TextStyle(
+        Text(
+          '${widget.title} name',
+          style: const TextStyle(
             fontSize: 24,
           ),
         ),
         const SizedBox(height: 6),
         MyTextField(
-          controller: activityController,
+          controller: nameController,
           hintText: '',
           obscureText: false,
           keyboardType: TextInputType.text,
           validator: (val) {
             if (val!.isEmpty) {
-              return 'Activity name can\'t be empty';
+              return '${widget.title} name can\'t be empty';
             }
             return null;
           },
@@ -60,7 +73,7 @@ class _AddDialogState extends State<AddDialog> {
               const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
           validator: (val) {
             if (val!.isEmpty) {
-              return 'Activity description can\'t be empty';
+              return '${widget.title} description can\'t be empty';
             }
             return null;
           },
@@ -71,16 +84,7 @@ class _AddDialogState extends State<AddDialog> {
 
   Widget _button() {
     return TextButton(
-      onPressed: () {
-        if (_formKey.currentState!.validate()) {
-          const snackBar = SnackBar(
-            content: Text('Activity added'),
-            showCloseIcon: true,
-          );
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          Navigator.of(context).pop();
-        }
-      },
+      onPressed: _submit,
       child: const Text(
         'Add',
         textAlign: TextAlign.center,
@@ -91,6 +95,19 @@ class _AddDialogState extends State<AddDialog> {
         ),
       ),
     );
+  }
+
+  void _submit() {
+    if (_formKey.currentState!.validate()) {
+      widget.onAdd(
+          nameController.text.trim(), descriptionController.text.trim());
+      final snackBar = SnackBar(
+        content: Text('${widget.title} added'),
+        showCloseIcon: true,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Navigator.of(context).pop();
+    }
   }
 
   Widget _cancelButton() {
@@ -118,12 +135,15 @@ class _AddDialogState extends State<AddDialog> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const SizedBox(height: 12),
-              const Text(
-                'Add activity',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+              Text(
+                'Add ${widget.title.toLowerCase()}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30,
+                ),
               ),
               const SizedBox(height: 12),
-              _activity(),
+              _title(),
               const SizedBox(height: 12),
               _description(),
               const SizedBox(height: 12),

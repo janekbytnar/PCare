@@ -29,17 +29,34 @@ class FirebaseChildRepo implements ChildRepository {
   }
 
   @override
-  Future<List<Child>> getChildrenForUser(String userId) async {
+  Future<void> updateChild(Child child) async {
     try {
-      final querySnapshot = await childrenCollection
-          .where('parent_ids', arrayContains: userId)
-          .get();
-
-      return querySnapshot.docs
-          .map((doc) => ChildEntity.fromDocument(doc).toModel())
-          .toList();
+      await childrenCollection
+          .doc(child.id)
+          .update(child.toEntity().toDocument());
     } catch (e) {
-      log('Error fetching children: ${e.toString()}');
+      throw Exception('Failed to update child: $e');
+    }
+  }
+
+  @override
+  Stream<List<Child>> getChildrenForUserStream(String userId) {
+    return childrenCollection
+        .where('parent_ids', arrayContains: userId)
+        .snapshots()
+        .map((snapshot) => snapshot.docs.map((doc) {
+              return Child.fromEntity(ChildEntity.fromDocument(doc));
+            }).toList());
+  }
+
+  @override
+  Future<void> connectSessionToChild(String childId, String sessionId) async {
+    try {
+      await childrenCollection.doc(childId).update({
+        'session_ids': FieldValue.arrayUnion([sessionId])
+      });
+    } catch (e) {
+      log('Error connecting session to child: ${e.toString()}');
       rethrow;
     }
   }
