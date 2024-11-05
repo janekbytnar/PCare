@@ -132,7 +132,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           if (_formKey.currentState!.validate()) {
             MyUser myUser = MyUser.empty;
             myUser = myUser.copyWith(
-              email: emailController.text,
+              email: emailController.text.toLowerCase(),
             );
             setState(() {
               context.read<RegisterBloc>().add(RegisterRequired(

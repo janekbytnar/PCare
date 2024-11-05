@@ -10,6 +10,7 @@ abstract class SessionRepository {
     DateTime endDate,
   );
   Future<List<Session>> getSessions(List<String> sessionIds);
+  Future<void> updateSession(Session session);
 
 //ACTIVITY
   Future<void> addActivity(String sessionId, Activity activity);

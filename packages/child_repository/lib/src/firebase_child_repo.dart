@@ -40,9 +40,9 @@ class FirebaseChildRepo implements ChildRepository {
   }
 
   @override
-  Stream<List<Child>> getChildrenForUserStream(String userId) {
+  Stream<List<Child>> getChildrenForUserStream(List<String> usersId) {
     return childrenCollection
-        .where('parent_ids', arrayContains: userId)
+        .where('parent_ids', arrayContainsAny: usersId)
         .snapshots()
         .map((snapshot) => snapshot.docs.map((doc) {
               return Child.fromEntity(ChildEntity.fromDocument(doc));

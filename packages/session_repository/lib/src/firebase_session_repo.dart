@@ -73,6 +73,18 @@ class FirebaseSessionRepo implements SessionRepository {
     return sessions;
   }
 
+  @override
+  Future<void> updateSession(Session session) async {
+    try {
+      await sessionCollection
+          .doc(session.sessionId)
+          .update(session.toEntity().toDocument());
+    } catch (e) {
+      log('Error updating session: ${e.toString()}');
+      rethrow;
+    }
+  }
+
 //ACTIVITY
 
   @override
