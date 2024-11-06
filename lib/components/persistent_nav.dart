@@ -25,6 +25,17 @@ class _PersistentTabScreenState extends State<PersistentTabScreen> {
       PersistentTabController(initialIndex: 0);
   late Color dynamicColor;
 
+  Widget _addNannyButton() {
+    return IconButton(
+      onPressed: () {},
+      icon: const Icon(
+        Icons.add,
+        color: Colors.black,
+        size: 26,
+      ),
+    );
+  }
+
   List<Widget> _buildScreens() {
     return [
       BlocProvider(
@@ -99,6 +110,7 @@ class _PersistentTabScreenState extends State<PersistentTabScreen> {
           ],
         ),
         backgroundColor: Theme.of(context).colorScheme.background,
+        actions: [_addNannyButton()],
       ),
       body: PersistentTabView(
         context,

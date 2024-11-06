@@ -10,6 +10,7 @@ sealed class RegisterEvent extends Equatable {
 class RegisterRequired extends RegisterEvent {
   final MyUser user;
   final String password;
+  final bool isNanny;
 
-  const RegisterRequired(this.user, this.password);
+  const RegisterRequired(this.user, this.password, this.isNanny);
 }

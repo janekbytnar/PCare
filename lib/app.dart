@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:perfect_childcare/app_view.dart';
 import 'package:perfect_childcare/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:perfect_childcare/blocs/internet_connection_bloc/internet_connection_bloc.dart';
+import 'package:perfect_childcare/blocs/nanny_bloc/nanny_bloc.dart';
 import 'package:user_repository/user_repository.dart';
 import 'package:session_repository/session_repository.dart';
 
@@ -39,9 +40,15 @@ class MyApp extends StatelessWidget {
           BlocProvider<InternetConnectionBloc>(
             create: (context) => InternetConnectionBloc(),
           ),
+          BlocProvider<NannyBloc>(
+            create: (context) => NannyBloc(
+              userRepository: context.read<UserRepository>(),
+            ),
+          ),
           BlocProvider<AuthenticationBloc>(
             create: (context) => AuthenticationBloc(
               userRepository: context.read<UserRepository>(),
+              nannyBloc: context.read<NannyBloc>(),
             ),
           ),
         ],

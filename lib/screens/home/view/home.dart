@@ -2,6 +2,7 @@ import 'package:child_repository/child_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:perfect_childcare/blocs/nanny_bloc/nanny_bloc.dart';
 import 'package:perfect_childcare/blocs/session_bloc/session_bloc.dart';
 import 'package:perfect_childcare/components/date_selector.dart';
 import 'package:perfect_childcare/components/my_button.dart';
@@ -26,8 +27,9 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     selectedDate = DateTime.now();
-    // Optionally, load sessions for the initial date
-    context.read<SessionBloc>().add(LoadSessionsForDate(selectedDate));
+    context
+        .read<SessionBloc>()
+        .add(LoadSessionsForDate(selectedDate)); //load session for initial date
   }
 
   bool get isButtonEnabled {
@@ -159,7 +161,19 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
           ),
-          _addButton(),
+          BlocBuilder<NannyBloc, NannyState>(
+            builder: (context, nannyState) {
+              switch (nannyState.status) {
+                case NannyStatus.isNanny:
+                  return const SizedBox.shrink();
+                case NannyStatus.isNotNanny:
+                  return _addButton();
+                case NannyStatus.unknown:
+                default:
+                  return const SizedBox.shrink();
+              }
+            },
+          ),
         ],
       ),
     );

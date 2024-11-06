@@ -6,6 +6,59 @@ import 'package:user_repository/user_repository.dart';
 class IncomingRequestsScreen extends StatelessWidget {
   const IncomingRequestsScreen({super.key});
 
+  Widget _listView(BuildContext context, ConnectionsLoaded state) {
+    return ListView.builder(
+      itemCount: state.requests.length,
+      itemBuilder: (context, index) {
+        final request = state.requests[index];
+        return _listTile(context, request.connectionId, request.senderEmail);
+      },
+    );
+  }
+
+  Widget _listTile(
+    BuildContext context,
+    String connectionId,
+    String senderEmail,
+  ) {
+    return ListTile(
+      title: Text('Request from $senderEmail'), // Display sender's email
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _acceptButton(context, connectionId),
+          _declineButton(context, connectionId),
+        ],
+      ),
+    );
+  }
+
+  Widget _acceptButton(
+    BuildContext context,
+    String connectionId,
+  ) {
+    return IconButton(
+      icon: const Icon(Icons.check, color: Colors.green),
+      onPressed: () {
+        context.read<ConnectionsManagementBloc>().add(
+              AcceptConnectionRequest(connectionId),
+            );
+        Navigator.pop(context);
+      },
+    );
+  }
+
+  Widget _declineButton(BuildContext context, String connectionId) {
+    return IconButton(
+      icon: const Icon(Icons.close, color: Colors.red),
+      onPressed: () {
+        context.read<ConnectionsManagementBloc>().add(
+              DeclineConnectionRequest(connectionId),
+            );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<MyUser?>(
@@ -44,40 +97,7 @@ class IncomingRequestsScreen extends StatelessWidget {
                 if (state.requests.isEmpty) {
                   return const Center(child: Text('No incoming requests'));
                 }
-                return ListView.builder(
-                  itemCount: state.requests.length,
-                  itemBuilder: (context, index) {
-                    final request = state.requests[index];
-                    return ListTile(
-                      title: Text(
-                          'Request from ${request.connectionReceiverId}'), // Display sender's email
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.check, color: Colors.green),
-                            onPressed: () {
-                              context.read<ConnectionsManagementBloc>().add(
-                                    AcceptConnectionRequest(
-                                        request.connectionId),
-                                  );
-                              Navigator.pop(context);
-                            },
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.close, color: Colors.red),
-                            onPressed: () {
-                              context.read<ConnectionsManagementBloc>().add(
-                                    DeclineConnectionRequest(
-                                        request.connectionId),
-                                  );
-                            },
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                );
+                return _listView(context, state);
               } else if (state is ConnectionsError) {
                 return Center(child: Text('Error: ${state.message}'));
               } else {

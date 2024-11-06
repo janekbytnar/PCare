@@ -25,9 +25,11 @@ class ConnectionsManagementBloc
   Future<void> _onSendConnectionRequest(SendConnectionRequest event,
       Emitter<ConnectionsManagementState> emit) async {
     emit(ConnectionsLoading());
-    final normalizedEmail = event.receiverEmail.toLowerCase();
+    final normalizedReceiverEmail = event.receiverEmail.toLowerCase();
+    final normalizedSenderEmail = event.senderEmail.toLowerCase();
     try {
-      final receiverId = await userRepository.getUserIdByEmail(normalizedEmail);
+      final receiverId =
+          await userRepository.getUserIdByEmail(normalizedReceiverEmail);
 
       if (receiverId == null) {
         throw Exception(
@@ -36,6 +38,7 @@ class ConnectionsManagementBloc
       await connectionsRepository.sendConnectionsRequest(
         senderId: event.senderId,
         receiverId: receiverId,
+        senderEmail: normalizedSenderEmail,
       );
       emit(ConnectionRequestSent());
     } catch (e) {

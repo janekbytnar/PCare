@@ -5,6 +5,7 @@ import 'package:connections_repository/connections_repository.dart';
 class ConnectionsEntity extends Equatable {
   final String connectionId;
   final String connectionSenderId;
+  final String senderEmail;
   final String connectionReceiverId;
   final String status;
   final DateTime requestTime;
@@ -13,6 +14,7 @@ class ConnectionsEntity extends Equatable {
   const ConnectionsEntity({
     required this.connectionId,
     required this.connectionSenderId,
+    required this.senderEmail,
     required this.connectionReceiverId,
     required this.status,
     required this.requestTime,
@@ -23,6 +25,7 @@ class ConnectionsEntity extends Equatable {
     return {
       'connectionId': connectionId,
       'connectionSenderId': connectionSenderId,
+      'senderEmail': senderEmail,
       'connectionReceiverId': connectionReceiverId,
       'isComplstatuseted': status,
       'requestTime': Timestamp.fromDate(requestTime),
@@ -35,6 +38,7 @@ class ConnectionsEntity extends Equatable {
     return ConnectionsEntity(
       connectionId: data['connectionId'] ?? '',
       connectionSenderId: data['connectionSenderId'] ?? '',
+      senderEmail: data['senderEmail'] ?? '',
       connectionReceiverId: data['connectionReceiverId'] ?? '',
       status: data['status'] ?? '',
       requestTime: (data['requestTime'] as Timestamp).toDate(),
@@ -46,6 +50,7 @@ class ConnectionsEntity extends Equatable {
     return Connections(
       connectionId: connectionId,
       connectionSenderId: connectionSenderId,
+      senderEmail: senderEmail,
       connectionReceiverId: connectionReceiverId,
       status: status,
       requestTime: requestTime,
@@ -57,6 +62,7 @@ class ConnectionsEntity extends Equatable {
   List<Object?> get props => [
         connectionId,
         connectionSenderId,
+        senderEmail,
         connectionReceiverId,
         status,
         requestTime,

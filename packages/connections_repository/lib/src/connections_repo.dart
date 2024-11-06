@@ -4,6 +4,7 @@ abstract class ConnectionsRepository {
   Future<void> sendConnectionsRequest({
     required String senderId,
     required String receiverId,
+    required String senderEmail,
   });
   Future<List<Connections>> loadIncomingRequests(String userId);
   Future<void> acceptConnectionRequest(String requestId);

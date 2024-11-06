@@ -30,7 +30,7 @@ class MyUserEntity extends Equatable {
       'firstName': firstName,
       'surname': surname,
       'imgUrl': imgUrl,
-      'nanny': isNanny,
+      'isNanny': isNanny,
       'linkedPerson': linkedPerson,
       'children': children,
       'sessions': sessions,
