@@ -6,7 +6,8 @@ import 'package:perfect_childcare/blocs/nanny_bloc/nanny_bloc.dart';
 import 'package:perfect_childcare/blocs/session_bloc/session_bloc.dart';
 import 'package:perfect_childcare/components/date_selector.dart';
 import 'package:perfect_childcare/components/my_button.dart';
-import 'package:perfect_childcare/components/persistent_nav.dart';
+import 'package:perfect_childcare/screens/session/blocs/nanny_management_bloc/nanny_connection_management_bloc.dart';
+import 'package:perfect_childcare/screens/session/views/persistent_nav.dart';
 import 'package:perfect_childcare/components/side_bar.dart';
 import 'package:perfect_childcare/screens/home/view/add_session.dart';
 import 'package:perfect_childcare/screens/session/blocs/session_management_bloc/session_management_bloc.dart';
@@ -115,12 +116,22 @@ class _HomeScreenState extends State<HomeScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => BlocProvider(
-                create: (context) => SessionManagementBloc(
-                  childRepository: context.read<ChildRepository>(),
-                  userRepository: context.read<UserRepository>(),
-                  sessionRepository: context.read<SessionRepository>(),
-                ),
+              builder: (context) => MultiBlocProvider(
+                providers: [
+                  BlocProvider<SessionManagementBloc>(
+                    create: (context) => SessionManagementBloc(
+                      childRepository: context.read<ChildRepository>(),
+                      userRepository: context.read<UserRepository>(),
+                      sessionRepository: context.read<SessionRepository>(),
+                    ),
+                  ),
+                  BlocProvider<NannyConnectionsManagementBloc>(
+                    create: (context) => NannyConnectionsManagementBloc(
+                      userRepository: context.read<UserRepository>(),
+                      sessionRepository: context.read<SessionRepository>(),
+                    ),
+                  ),
+                ],
                 child: PersistentTabScreen(session: session),
               ),
             ),

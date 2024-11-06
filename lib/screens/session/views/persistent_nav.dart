@@ -2,8 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:perfect_childcare/components/my_button.dart';
+import 'package:perfect_childcare/components/my_text_field.dart';
 import 'package:perfect_childcare/screens/session/blocs/activity_management_bloc/activity_management_bloc.dart';
 import 'package:perfect_childcare/screens/session/blocs/meal_management_bloc/meal_management_bloc.dart';
+import 'package:perfect_childcare/screens/session/blocs/nanny_management_bloc/nanny_connection_management_bloc.dart';
 import 'package:perfect_childcare/screens/session/blocs/note_management_bloc/note_management_bloc.dart';
 
 import 'package:perfect_childcare/screens/session/views/activity.dart';
@@ -11,6 +14,7 @@ import 'package:perfect_childcare/screens/session/views/meal.dart';
 import 'package:perfect_childcare/screens/session/views/note.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:session_repository/session_repository.dart';
+import 'package:user_repository/user_repository.dart';
 
 class PersistentTabScreen extends StatefulWidget {
   final Session? session;
@@ -23,16 +27,108 @@ class PersistentTabScreen extends StatefulWidget {
 class _PersistentTabScreenState extends State<PersistentTabScreen> {
   final PersistentTabController _controller =
       PersistentTabController(initialIndex: 0);
+  final _formKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
   late Color dynamicColor;
 
   Widget _addNannyButton() {
     return IconButton(
-      onPressed: () {},
+      onPressed: () {
+        _showModalBottomSheet(context);
+      },
       icon: const Icon(
         Icons.add,
         color: Colors.black,
         size: 26,
       ),
+    );
+  }
+
+  void _showModalBottomSheet(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 12),
+                  _emailField(),
+                  const SizedBox(height: 12),
+                  _linkButton(),
+                  const SizedBox(height: 12),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _emailField() {
+    return MyTextField(
+      obscureText: false,
+      controller: emailController,
+      keyboardType: TextInputType.emailAddress,
+      prefixIcon: const Icon(CupertinoIcons.mail_solid),
+      hintText: 'Provide another person\'s email',
+      validator: (val) {
+        if (val!.isEmpty) {
+          return 'Please fill the field';
+        } else if (!RegExp(r'^[\w=\.]+@([\w-]+\.)+[\w-]{2,3}$').hasMatch(val)) {
+          return 'Invalid email format';
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _linkButton() {
+    return MyTextButton(
+      onPressed: () async {
+        if (_formKey.currentState!.validate()) {
+          final nannyConnectionsBloc =
+              context.read<NannyConnectionsManagementBloc>();
+          final receiverEmail = emailController.text.trim();
+          try {
+            final user =
+                await context.read<UserRepository>().getCurrentUserData();
+            final userId = user?.userId;
+            final senderEmail = user?.email;
+            if (userId != null && senderEmail != null) {
+              nannyConnectionsBloc.add(
+                SendNannyConnectionRequest(
+                  userId,
+                  widget.session!.sessionId,
+                  senderEmail,
+                  receiverEmail,
+                ),
+              );
+              Navigator.of(context).pop();
+            } else {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content:
+                          Text('User not logged in or data not available')),
+                );
+              }
+            }
+          } catch (e) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Error: ${e.toString()}')),
+              );
+            }
+          }
+        }
+      },
+      text: 'Send request',
     );
   }
 

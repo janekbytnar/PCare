@@ -12,6 +12,19 @@ abstract class SessionRepository {
   Future<List<Session>> getSessions(List<String> sessionIds);
   Future<void> updateSession(Session session);
 
+  Future<void> sendNannyConnectionRequest({
+    required String sessionId,
+    required String senderId,
+    required String senderEmail,
+    required String receiverId,
+  });
+//ADD NANNY TO SESSION
+  Future<List<NannyConnections>> loadIncomingNannyRequests(String userId);
+  Future<void> acceptNannyConnectionRequest(String requestId);
+  Future<void> declineNannyConnectionRequest(String requestId);
+  Future<void> unlinkNannyConnection(String sessionId);
+  Future<NannyConnections> getNannyConnectionRequest(String requestId);
+
 //ACTIVITY
   Future<void> addActivity(String sessionId, Activity activity);
   Future<void> updateActivity(String sessionId, Activity activity);

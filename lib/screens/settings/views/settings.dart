@@ -38,7 +38,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
         linked = user?.linkedPerson.isNotEmpty ?? false;
       });
     });
-    // No need to call _loadUserLinkedStatus() since the stream listener handles it
   }
 
   @override
@@ -240,7 +239,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           }
         }
       },
-      text: 'Link',
+      text: 'Send request for link',
     );
   }
 

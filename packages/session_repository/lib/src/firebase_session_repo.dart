@@ -5,6 +5,8 @@ import 'package:session_repository/session_repository.dart';
 
 class FirebaseSessionRepo implements SessionRepository {
   final sessionCollection = FirebaseFirestore.instance.collection('sessions');
+  final nannyConnectionsCollection =
+      FirebaseFirestore.instance.collection('NannyConnections');
 
   FirebaseSessionRepo();
 //SESION
@@ -83,6 +85,121 @@ class FirebaseSessionRepo implements SessionRepository {
       log('Error updating session: ${e.toString()}');
       rethrow;
     }
+  }
+
+// ADD NANNY TO SESSION
+  @override
+  Future<void> sendNannyConnectionRequest({
+    required String sessionId,
+    required String senderId,
+    required String senderEmail,
+    required String receiverId,
+  }) async {
+    // Check for existing request
+    final existingRequest = await nannyConnectionsCollection
+        .where('senderId', isEqualTo: senderId)
+        .where('sessionId', isEqualTo: sessionId)
+        .where('status', isEqualTo: 'pending')
+        .get();
+
+    if (existingRequest.docs.isNotEmpty) {
+      throw Exception('Request already sent');
+    }
+
+    // Create new connection request
+    await nannyConnectionsCollection.add({
+      'sessionId': sessionId,
+      'senderId': senderId,
+      'senderEmail': senderEmail,
+      'receiverId': receiverId,
+      'status': 'pending',
+      'requestTime': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  @override
+  Future<List<NannyConnections>> loadIncomingNannyRequests(
+      String userId) async {
+    final querySnapshot = await nannyConnectionsCollection
+        .where('receiverId', isEqualTo: userId)
+        .where('status', isEqualTo: 'pending')
+        .get();
+
+    return querySnapshot.docs.map((doc) {
+      final data = doc.data();
+      return NannyConnections(
+        connectionId: doc.id,
+        sessionId: data['sessionId'],
+        senderId: data['senderId'],
+        senderEmail: data['senderEmail'],
+        receiverId: data['receiverId'],
+        status: data['status'],
+        requestTime: (data['requestTime'] as Timestamp).toDate(),
+        updatedAt: (data['updatedAt'] as Timestamp).toDate(),
+      );
+    }).toList();
+  }
+
+  @override
+  Future<void> acceptNannyConnectionRequest(String requestId) async {
+    final requestRef = nannyConnectionsCollection.doc(requestId);
+    final requestDoc = await requestRef.get();
+
+    if (requestDoc.exists && requestDoc['status'] == 'pending') {
+      await requestRef.update({
+        'status': 'accepted',
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    } else {
+      throw Exception('Invalid or already processed request.');
+    }
+  }
+
+  @override
+  Future<void> declineNannyConnectionRequest(String requestId) async {
+    final requestRef = nannyConnectionsCollection.doc(requestId);
+    await requestRef.update({
+      'status': 'declined',
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  @override
+  Future<void> unlinkNannyConnection(String sessionId) async {
+    final connectionsQuery = await nannyConnectionsCollection
+        .where('sessionId', isEqualTo: sessionId)
+        .where('status', isEqualTo: 'accepted')
+        .get();
+
+    for (var doc in connectionsQuery.docs) {
+      await doc.reference.update({
+        'status': 'unlinked',
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    }
+  }
+
+  @override
+  Future<NannyConnections> getNannyConnectionRequest(String requestId) async {
+    final requestRef = nannyConnectionsCollection.doc(requestId);
+    final requestDoc = await requestRef.get();
+
+    if (!requestDoc.exists) {
+      throw Exception('Connection request not found.');
+    }
+
+    final data = requestDoc.data()!;
+    return NannyConnections(
+      sessionId: data['sessionId'],
+      connectionId: requestDoc.id,
+      senderId: data['senderId'],
+      senderEmail: data['senderEmail'],
+      receiverId: data['receiverId'],
+      status: data['status'],
+      requestTime: (data['requestTime'] as Timestamp).toDate(),
+      updatedAt: (data['updatedAt'] as Timestamp).toDate(),
+    );
   }
 
 //ACTIVITY

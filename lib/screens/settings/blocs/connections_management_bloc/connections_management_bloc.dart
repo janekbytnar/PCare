@@ -35,7 +35,7 @@ class ConnectionsManagementBloc
         throw Exception(
             "User with email ${event.receiverEmail} does not exist");
       }
-      await connectionsRepository.sendConnectionsRequest(
+      await connectionsRepository.sendConnectionRequest(
         senderId: event.senderId,
         receiverId: receiverId,
         senderEmail: normalizedSenderEmail,

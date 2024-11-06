@@ -8,7 +8,7 @@ class FirebaseConnectionsRepo implements ConnectionsRepository {
   FirebaseConnectionsRepo();
 
   @override
-  Future<void> sendConnectionsRequest({
+  Future<void> sendConnectionRequest({
     required String senderId,
     required String receiverId,
     required String senderEmail,
