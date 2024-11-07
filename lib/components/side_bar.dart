@@ -8,9 +8,12 @@ import 'package:perfect_childcare/blocs/nanny_bloc/nanny_bloc.dart';
 import 'package:perfect_childcare/screens/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
 //import 'package:perfect_childcare/screens/nannies/nannies/nannies.dart';
 import 'package:perfect_childcare/screens/children/views/children.dart';
+import 'package:perfect_childcare/screens/childcare_incoming_requests/childcare_incoming_requests/childcare_incoming_requests.dart';
 import 'package:perfect_childcare/screens/personal_information/views/personal_information_screen.dart';
+import 'package:perfect_childcare/screens/session/blocs/nanny_management_bloc/nanny_connection_management_bloc.dart';
 import 'package:perfect_childcare/screens/settings/blocs/connections_management_bloc/connections_management_bloc.dart';
 import 'package:perfect_childcare/screens/settings/views/settings.dart';
+import 'package:session_repository/session_repository.dart';
 import 'package:user_repository/user_repository.dart';
 
 class SideBar extends StatelessWidget {
@@ -109,19 +112,44 @@ class SideBar extends StatelessWidget {
               }
             },
           ),
-
-          /*ListTile(
-            leading: const Icon(Icons.child_friendly),
-            title: const Text("Nannies"),
-            onTap: () {
-              Navigator.push(
-                context,
-                CupertinoPageRoute(
-                  builder: (context) => const NanniesScreen(),
-                ),
-              );
+          BlocBuilder<NannyBloc, NannyState>(
+            builder: (context, nannyState) {
+              switch (nannyState.status) {
+                case NannyStatus.isNotNanny:
+                  return const SizedBox.shrink();
+                case NannyStatus.isNanny:
+                  return Builder(
+                    builder: (context) {
+                      return ListTile(
+                        leading: const Icon(Icons.child_care),
+                        title: const Text("Childcare Requests"),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            CupertinoPageRoute(
+                              builder: (context) =>
+                                  BlocProvider<NannyConnectionsManagementBloc>(
+                                create: (context) =>
+                                    NannyConnectionsManagementBloc(
+                                  userRepository:
+                                      context.read<UserRepository>(),
+                                  sessionRepository:
+                                      context.read<SessionRepository>(),
+                                ),
+                                child: const ChildcareIncomingRequestsScreen(),
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  );
+                case NannyStatus.unknown:
+                default:
+                  return const SizedBox.shrink();
+              }
             },
-          ),*/
+          ),
           const Divider(color: Colors.black),
           ListTile(
             leading: const Icon(Icons.settings),

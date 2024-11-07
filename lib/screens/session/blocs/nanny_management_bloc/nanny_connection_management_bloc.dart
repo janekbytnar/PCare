@@ -36,10 +36,12 @@ class NannyConnectionsManagementBloc extends Bloc<
             "User with email ${event.receiverEmail} does not exist");
       }
       await sessionRepository.sendNannyConnectionRequest(
-        sessionId: event.sessionId,
+        sessionId: event.session.sessionId,
         senderId: event.senderId,
         senderEmail: event.senderEmail,
         receiverId: receiverId,
+        startDate: event.session.startDate,
+        endDate: event.session.endDate,
       );
       emit(NannyConnectionRequestSent());
     } catch (e) {
@@ -68,12 +70,20 @@ class NannyConnectionsManagementBloc extends Bloc<
 
       final nannyConnection =
           await sessionRepository.getNannyConnectionRequest(event.requestId);
-
-      final senderId = nannyConnection.senderId;
       final receiverId = nannyConnection.receiverId;
-      await userRepository.addLinkedPerson(senderId, receiverId);
+      final sessionId = nannyConnection.sessionId;
+      final sessions = await sessionRepository.getSessions([sessionId]);
+      if (sessions.isNotEmpty) {
+        Session session = sessions.first;
 
-      emit(NannyConnectionRequestAccepted());
+        final updatedSession = session.copyWith(nannyId: receiverId);
+
+        await sessionRepository.updateSession(updatedSession);
+
+        emit(NannyConnectionRequestAccepted());
+      } else {
+        emit(NannyConnectionsError('Session $sessionId not found.'));
+      }
     } catch (e) {
       emit(NannyConnectionsError(e.toString()));
     }

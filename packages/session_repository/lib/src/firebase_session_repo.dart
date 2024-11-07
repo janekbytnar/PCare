@@ -6,7 +6,7 @@ import 'package:session_repository/session_repository.dart';
 class FirebaseSessionRepo implements SessionRepository {
   final sessionCollection = FirebaseFirestore.instance.collection('sessions');
   final nannyConnectionsCollection =
-      FirebaseFirestore.instance.collection('NannyConnections');
+      FirebaseFirestore.instance.collection('nannyConnections');
 
   FirebaseSessionRepo();
 //SESION
@@ -94,6 +94,8 @@ class FirebaseSessionRepo implements SessionRepository {
     required String senderId,
     required String senderEmail,
     required String receiverId,
+    required DateTime startDate,
+    required DateTime endDate,
   }) async {
     // Check for existing request
     final existingRequest = await nannyConnectionsCollection
@@ -113,6 +115,8 @@ class FirebaseSessionRepo implements SessionRepository {
       'senderEmail': senderEmail,
       'receiverId': receiverId,
       'status': 'pending',
+      'startDate': startDate,
+      'endDate': endDate,
       'requestTime': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
     });
@@ -135,6 +139,8 @@ class FirebaseSessionRepo implements SessionRepository {
         senderEmail: data['senderEmail'],
         receiverId: data['receiverId'],
         status: data['status'],
+        startDate: (data['startDate'] as Timestamp).toDate(),
+        endDate: (data['endDate'] as Timestamp).toDate(),
         requestTime: (data['requestTime'] as Timestamp).toDate(),
         updatedAt: (data['updatedAt'] as Timestamp).toDate(),
       );
@@ -197,6 +203,8 @@ class FirebaseSessionRepo implements SessionRepository {
       senderEmail: data['senderEmail'],
       receiverId: data['receiverId'],
       status: data['status'],
+      startDate: (data['startDate'] as Timestamp).toDate(),
+      endDate: (data['endDate'] as Timestamp).toDate(),
       requestTime: (data['requestTime'] as Timestamp).toDate(),
       updatedAt: (data['updatedAt'] as Timestamp).toDate(),
     );

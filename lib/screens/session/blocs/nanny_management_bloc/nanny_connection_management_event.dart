@@ -8,16 +8,16 @@ sealed class NannyConnectionsManagementEvent extends Equatable {
 }
 
 class SendNannyConnectionRequest extends NannyConnectionsManagementEvent {
-  final String sessionId;
+  final Session session;
   final String senderId;
   final String senderEmail;
   final String receiverEmail;
 
   const SendNannyConnectionRequest(
-      this.senderId, this.sessionId, this.senderEmail, this.receiverEmail);
+      this.session, this.senderId, this.senderEmail, this.receiverEmail);
 
   @override
-  List<Object?> get props => [senderId, sessionId, senderEmail, receiverEmail];
+  List<Object?> get props => [session, senderId, senderEmail, receiverEmail];
 }
 
 class LoadNannyConnectionRequests extends NannyConnectionsManagementEvent {

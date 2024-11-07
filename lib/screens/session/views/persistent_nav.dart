@@ -28,6 +28,7 @@ class _PersistentTabScreenState extends State<PersistentTabScreen> {
   final PersistentTabController _controller =
       PersistentTabController(initialIndex: 0);
   final _formKey = GlobalKey<FormState>();
+  bool linked = false;
   final emailController = TextEditingController();
   late Color dynamicColor;
 
@@ -103,8 +104,8 @@ class _PersistentTabScreenState extends State<PersistentTabScreen> {
             if (userId != null && senderEmail != null) {
               nannyConnectionsBloc.add(
                 SendNannyConnectionRequest(
+                  widget.session!,
                   userId,
-                  widget.session!.sessionId,
                   senderEmail,
                   receiverEmail,
                 ),
@@ -186,62 +187,92 @@ class _PersistentTabScreenState extends State<PersistentTabScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.end, // align to right
-          children: [
-            Row(
-              children: [
-                Text(
-                  DateFormat('dd/MM/yyyy').format(widget.session!.startDate),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                ),
-                const SizedBox(width: 10),
-                Text(
-                    '${DateFormat('HH:mm').format(widget.session!.startDate)} - ${DateFormat('HH:mm').format(widget.session!.endDate)}'),
-              ],
-            ),
-          ],
+    return BlocListener<NannyConnectionsManagementBloc,
+        NannyConnectionsManagementState>(
+      listener: (context, state) {
+        if (state is NannyConnectionRequestSent) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Childcare request sent!')),
+          );
+        } else if (state is NannyConnectionRequestAccepted) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Request accepted!')),
+          );
+          setState(() {
+            linked = true;
+          });
+        } else if (state is NannyConnectionUnlinked) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Unlinked successfully.')),
+          );
+          setState(() {
+            linked = false;
+          });
+        } else if (state is NannyConnectionsError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.end, // align to right
+            children: [
+              Row(
+                children: [
+                  Text(
+                    DateFormat('dd/MM/yyyy').format(widget.session!.startDate),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                      '${DateFormat('HH:mm').format(widget.session!.startDate)} - ${DateFormat('HH:mm').format(widget.session!.endDate)}'),
+                ],
+              ),
+            ],
+          ),
+          backgroundColor: Theme.of(context).colorScheme.background,
+          actions: [_addNannyButton()],
         ),
-        backgroundColor: Theme.of(context).colorScheme.background,
-        actions: [_addNannyButton()],
-      ),
-      body: PersistentTabView(
-        context,
-        controller: _controller,
-        screens: _buildScreens(),
-        items: _navBarsItems(),
-        confineInSafeArea: true,
-        backgroundColor: Theme.of(context)
-            .colorScheme
-            .background, // Default is Colors.white.
-        handleAndroidBackButtonPress: true, // Default is true.
-        resizeToAvoidBottomInset:
-            true, // This needs to be true if you want to move up the screen when keyboard appears. Default is true.
-        stateManagement: true, // Default is true.
-        hideNavigationBarWhenKeyboardShows:
-            true, // Recommended to set 'resizeToAvoidBottomInset' as true while using this argument. Default is true.
-        decoration: NavBarDecoration(
-          borderRadius: BorderRadius.circular(10.0),
-          colorBehindNavBar: Colors.white,
+        body: PersistentTabView(
+          context,
+          controller: _controller,
+          screens: _buildScreens(),
+          items: _navBarsItems(),
+          confineInSafeArea: true,
+          backgroundColor: Theme.of(context)
+              .colorScheme
+              .background, // Default is Colors.white.
+          handleAndroidBackButtonPress: true, // Default is true.
+          resizeToAvoidBottomInset:
+              true, // This needs to be true if you want to move up the screen when keyboard appears. Default is true.
+          stateManagement: true, // Default is true.
+          hideNavigationBarWhenKeyboardShows:
+              true, // Recommended to set 'resizeToAvoidBottomInset' as true while using this argument. Default is true.
+          decoration: NavBarDecoration(
+            borderRadius: BorderRadius.circular(10.0),
+            colorBehindNavBar: Colors.white,
+          ),
+          popAllScreensOnTapOfSelectedTab: true,
+          popActionScreens: PopActionScreensType.all,
+          itemAnimationProperties: const ItemAnimationProperties(
+            // Navigation Bar's items animation properties.
+            duration: Duration(milliseconds: 200),
+            curve: Curves.ease,
+          ),
+          screenTransitionAnimation: const ScreenTransitionAnimation(
+            // Screen transition animation on change of selected tab.
+            animateTabTransition: true,
+            curve: Curves.ease,
+            duration: Duration(milliseconds: 200),
+          ),
+          navBarStyle: NavBarStyle
+              .style1, // Choose the nav bar style with this property.
         ),
-        popAllScreensOnTapOfSelectedTab: true,
-        popActionScreens: PopActionScreensType.all,
-        itemAnimationProperties: const ItemAnimationProperties(
-          // Navigation Bar's items animation properties.
-          duration: Duration(milliseconds: 200),
-          curve: Curves.ease,
-        ),
-        screenTransitionAnimation: const ScreenTransitionAnimation(
-          // Screen transition animation on change of selected tab.
-          animateTabTransition: true,
-          curve: Curves.ease,
-          duration: Duration(milliseconds: 200),
-        ),
-        navBarStyle:
-            NavBarStyle.style1, // Choose the nav bar style with this property.
       ),
     );
   }
