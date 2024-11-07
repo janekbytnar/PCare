@@ -9,7 +9,9 @@ import 'package:session_repository/session_repository.dart';
 class MealScreen extends StatefulWidget {
   final List<Meal>? meal;
   final String sessionId;
-  const MealScreen({super.key, this.meal, required this.sessionId});
+  final DateTime endDate;
+  const MealScreen(
+      {super.key, this.meal, required this.sessionId, required this.endDate});
 
   @override
   State<MealScreen> createState() => _MealScreenState();
@@ -20,18 +22,17 @@ class _MealScreenState extends State<MealScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(105.0),
-        child: AppBar(
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage("assets/meals.png"),
-                fit: BoxFit.cover,
-              ),
-            ),
+      appBar: AppBar(
+        title: const Text(
+          'Meal',
+          style: TextStyle(
+            fontSize: 50,
+            fontWeight: FontWeight.bold,
+            color: CupertinoColors.activeGreen,
           ),
         ),
+        centerTitle: true,
+        backgroundColor: Theme.of(context).colorScheme.background,
       ),
       body: BlocBuilder<MealManagementBloc, MealManagementState>(
         builder: (context, state) {
@@ -79,20 +80,22 @@ class _MealScreenState extends State<MealScreen> {
           }
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'mealsTag',
-        backgroundColor: CupertinoColors.activeGreen,
-        foregroundColor: CupertinoColors.systemGrey,
-        elevation: 5,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
-        ),
-        tooltip: "Add meal",
-        onPressed: () {
-          _dialogBuilder(context);
-        },
-        child: const Icon(Icons.add, color: Colors.white),
-      ),
+      floatingActionButton: (widget.endDate.isAfter(DateTime.now()))
+          ? FloatingActionButton(
+              heroTag: 'mealsTag',
+              backgroundColor: CupertinoColors.activeGreen,
+              foregroundColor: CupertinoColors.systemGrey,
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18),
+              ),
+              tooltip: "Add meal",
+              onPressed: () {
+                _dialogBuilder(context);
+              },
+              child: const Icon(Icons.add, color: Colors.white),
+            )
+          : null,
     );
   }
 

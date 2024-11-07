@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 
 class MyUserEntity extends Equatable {
   final String userId;
+  final String fcmToken;
   final String email;
   final String firstName;
   final String surname;
@@ -13,6 +14,7 @@ class MyUserEntity extends Equatable {
 
   const MyUserEntity({
     required this.userId,
+    required this.fcmToken,
     required this.email,
     required this.firstName,
     required this.surname,
@@ -26,6 +28,7 @@ class MyUserEntity extends Equatable {
   Map<String, Object?> toDocument() {
     return {
       'userId': userId,
+      'fcmToken': fcmToken,
       'email': email,
       'firstName': firstName,
       'surname': surname,
@@ -40,6 +43,7 @@ class MyUserEntity extends Equatable {
   static MyUserEntity fromDocument(Map<String, dynamic> doc) {
     return MyUserEntity(
       userId: doc['userId'] ?? '',
+      fcmToken: doc['fcmToken'] ?? '',
       email: doc['email'] ?? '',
       firstName: doc['firstName'] ?? '',
       surname: doc['surname'] ?? '',
@@ -60,6 +64,7 @@ class MyUserEntity extends Equatable {
   @override
   List<Object?> get props => [
         userId,
+        fcmToken,
         email,
         firstName,
         surname,
