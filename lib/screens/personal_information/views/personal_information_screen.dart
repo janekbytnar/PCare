@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:perfect_childcare/components/my_button.dart';
 import 'package:perfect_childcare/components/my_text_field.dart';
 import 'dart:io';
 import 'dart:core';
 
+import 'package:user_repository/user_repository.dart';
+
 class PersonalInformationScreen extends StatefulWidget {
-  const PersonalInformationScreen({super.key});
+  final MyUser user;
+  const PersonalInformationScreen({super.key, required this.user});
 
   @override
   State<PersonalInformationScreen> createState() =>
@@ -14,12 +19,26 @@ class PersonalInformationScreen extends StatefulWidget {
 }
 
 class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
-  final firstNameController = TextEditingController(text: 'Staszek');
-  final surnameController = TextEditingController(text: 'Nowak');
+  late TextEditingController firstNameController;
+  late TextEditingController surnameController;
   final _formKey = GlobalKey<FormState>();
   String newPhoto = '';
   bool loading = false;
   String error = '';
+
+  @override
+  void initState() {
+    super.initState();
+    firstNameController = TextEditingController(text: widget.user.firstName);
+    surnameController = TextEditingController(text: widget.user.surname);
+  }
+
+  @override
+  void dispose() {
+    firstNameController.dispose();
+    surnameController.dispose();
+    super.dispose();
+  }
 
   Widget _photoButton() {
     return InkWell(
@@ -144,29 +163,25 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
   Widget _button() {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.5,
-      child: TextButton(
-        onPressed: () {
+      child: MyTextButton(
+        text: 'Update',
+        onPressed: () async {
           if (_formKey.currentState!.validate()) {
-            Navigator.pop(context);
+            final updatedUser = widget.user.copyWith(
+              firstName: firstNameController.text,
+              surname: surnameController.text,
+            );
+            try {
+              await context.read<UserRepository>().setUserData(updatedUser);
+
+              Navigator.pop(context);
+            } catch (e) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Error: $e')),
+              );
+            }
           }
         },
-        style: TextButton.styleFrom(
-          backgroundColor: Colors.green,
-          foregroundColor: Colors.black,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(80),
-          ),
-        ),
-        child: const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-          child: Text('Update',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              )),
-        ),
       ),
     );
   }

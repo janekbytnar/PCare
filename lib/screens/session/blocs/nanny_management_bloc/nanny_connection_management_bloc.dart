@@ -79,6 +79,7 @@ class NannyConnectionsManagementBloc extends Bloc<
         final updatedSession = session.copyWith(nannyId: receiverId);
 
         await sessionRepository.updateSession(updatedSession);
+        await userRepository.connectSessionToUser(receiverId, sessionId);
 
         emit(NannyConnectionRequestAccepted());
       } else {

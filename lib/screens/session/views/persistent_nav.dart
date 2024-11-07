@@ -8,7 +8,6 @@ import 'package:perfect_childcare/screens/session/blocs/activity_management_bloc
 import 'package:perfect_childcare/screens/session/blocs/meal_management_bloc/meal_management_bloc.dart';
 import 'package:perfect_childcare/screens/session/blocs/nanny_management_bloc/nanny_connection_management_bloc.dart';
 import 'package:perfect_childcare/screens/session/blocs/note_management_bloc/note_management_bloc.dart';
-
 import 'package:perfect_childcare/screens/session/views/activity.dart';
 import 'package:perfect_childcare/screens/session/views/meal.dart';
 import 'package:perfect_childcare/screens/session/views/note.dart';
@@ -185,6 +184,32 @@ class _PersistentTabScreenState extends State<PersistentTabScreen> {
     ];
   }
 
+  Widget _nannyInformation() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16.0),
+      color: Colors.blueAccent, // Możesz zmienić kolor tła według potrzeb
+      child: Row(
+        children: [
+          const Icon(
+            Icons.person,
+            color: Colors.white,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              'Your nanny is ${widget.session!.nannyId}',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<NannyConnectionsManagementBloc,
@@ -217,63 +242,69 @@ class _PersistentTabScreenState extends State<PersistentTabScreen> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.end, // align to right
-            children: [
-              Row(
-                children: [
-                  Text(
-                    DateFormat('dd/MM/yyyy').format(widget.session!.startDate),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                      '${DateFormat('HH:mm').format(widget.session!.startDate)} - ${DateFormat('HH:mm').format(widget.session!.endDate)}'),
-                ],
+          appBar: AppBar(
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.end, // align to right
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      DateFormat('dd/MM/yyyy')
+                          .format(widget.session!.startDate),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                        '${DateFormat('HH:mm').format(widget.session!.startDate)} - ${DateFormat('HH:mm').format(widget.session!.endDate)}'),
+                  ],
+                ),
+              ],
+            ),
+            backgroundColor: Theme.of(context).colorScheme.background,
+            actions: [if (widget.session!.nannyId.isEmpty) _addNannyButton()],
+          ),
+          body: Column(children: [
+            // Warunkowe wyświetlanie informacji o opiekunce
+            if (widget.session!.nannyId.isNotEmpty) _nannyInformation(),
+            Expanded(
+              child: PersistentTabView(
+                context,
+                controller: _controller,
+                screens: _buildScreens(),
+                items: _navBarsItems(),
+                confineInSafeArea: true,
+                backgroundColor: Theme.of(context)
+                    .colorScheme
+                    .background, // Default is Colors.white.
+                handleAndroidBackButtonPress: true, // Default is true.
+                resizeToAvoidBottomInset:
+                    true, // This needs to be true if you want to move up the screen when keyboard appears. Default is true.
+                stateManagement: true, // Default is true.
+                hideNavigationBarWhenKeyboardShows:
+                    true, // Recommended to set 'resizeToAvoidBottomInset' as true while using this argument. Default is true.
+                decoration: NavBarDecoration(
+                  borderRadius: BorderRadius.circular(10.0),
+                  colorBehindNavBar: Colors.white,
+                ),
+                popAllScreensOnTapOfSelectedTab: true,
+                popActionScreens: PopActionScreensType.all,
+                itemAnimationProperties: const ItemAnimationProperties(
+                  // Navigation Bar's items animation properties.
+                  duration: Duration(milliseconds: 200),
+                  curve: Curves.ease,
+                ),
+                screenTransitionAnimation: const ScreenTransitionAnimation(
+                  // Screen transition animation on change of selected tab.
+                  animateTabTransition: true,
+                  curve: Curves.ease,
+                  duration: Duration(milliseconds: 200),
+                ),
+                navBarStyle: NavBarStyle
+                    .style1, // Choose the nav bar style with this property.
               ),
-            ],
-          ),
-          backgroundColor: Theme.of(context).colorScheme.background,
-          actions: [_addNannyButton()],
-        ),
-        body: PersistentTabView(
-          context,
-          controller: _controller,
-          screens: _buildScreens(),
-          items: _navBarsItems(),
-          confineInSafeArea: true,
-          backgroundColor: Theme.of(context)
-              .colorScheme
-              .background, // Default is Colors.white.
-          handleAndroidBackButtonPress: true, // Default is true.
-          resizeToAvoidBottomInset:
-              true, // This needs to be true if you want to move up the screen when keyboard appears. Default is true.
-          stateManagement: true, // Default is true.
-          hideNavigationBarWhenKeyboardShows:
-              true, // Recommended to set 'resizeToAvoidBottomInset' as true while using this argument. Default is true.
-          decoration: NavBarDecoration(
-            borderRadius: BorderRadius.circular(10.0),
-            colorBehindNavBar: Colors.white,
-          ),
-          popAllScreensOnTapOfSelectedTab: true,
-          popActionScreens: PopActionScreensType.all,
-          itemAnimationProperties: const ItemAnimationProperties(
-            // Navigation Bar's items animation properties.
-            duration: Duration(milliseconds: 200),
-            curve: Curves.ease,
-          ),
-          screenTransitionAnimation: const ScreenTransitionAnimation(
-            // Screen transition animation on change of selected tab.
-            animateTabTransition: true,
-            curve: Curves.ease,
-            duration: Duration(milliseconds: 200),
-          ),
-          navBarStyle: NavBarStyle
-              .style1, // Choose the nav bar style with this property.
-        ),
-      ),
+            ),
+          ])),
     );
   }
 }

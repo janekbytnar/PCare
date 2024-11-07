@@ -6,70 +6,91 @@ import 'package:perfect_childcare/blocs/authentication_bloc/authentication_bloc.
 import 'package:perfect_childcare/blocs/children_bloc/children_bloc.dart';
 import 'package:perfect_childcare/blocs/nanny_bloc/nanny_bloc.dart';
 import 'package:perfect_childcare/screens/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
-//import 'package:perfect_childcare/screens/nannies/nannies/nannies.dart';
 import 'package:perfect_childcare/screens/children/views/children.dart';
 import 'package:perfect_childcare/screens/childcare_incoming_requests/childcare_incoming_requests/childcare_incoming_requests.dart';
 import 'package:perfect_childcare/screens/personal_information/views/personal_information_screen.dart';
 import 'package:perfect_childcare/screens/session/blocs/nanny_management_bloc/nanny_connection_management_bloc.dart';
 import 'package:perfect_childcare/screens/settings/blocs/connections_management_bloc/connections_management_bloc.dart';
 import 'package:perfect_childcare/screens/settings/views/settings.dart';
+import 'package:provider/provider.dart';
 import 'package:session_repository/session_repository.dart';
 import 'package:user_repository/user_repository.dart';
 
-class SideBar extends StatelessWidget {
+class SideBar extends StatefulWidget {
   const SideBar({
     super.key,
   });
-  Widget buildHeader(BuildContext context) => Material(
-        color: Colors.grey.shade800,
-        child: InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => BlocProvider(
-                  create: (context) => SignInBloc(
-                    userRepository:
-                        context.read<AuthenticationBloc>().userRepository,
+
+  @override
+  _SideBarState createState() => _SideBarState();
+}
+
+class _SideBarState extends State<SideBar> {
+  Widget buildHeader(BuildContext context) {
+    final userRepository = context.watch<UserRepository>();
+    return Material(
+      color: Colors.grey.shade800,
+      child: FutureBuilder<MyUser?>(
+        future: userRepository.getCurrentUserData(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (snapshot.hasData) {
+            final user = snapshot.data!;
+            return InkWell(
+              onTap: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PersonalInformationScreen(
+                      user: user,
+                    ),
                   ),
-                  child: const PersonalInformationScreen(),
+                );
+                // Po powrocie z PersonalInformationScreen, wymuś odświeżenie
+                setState(() {});
+              },
+              child: Container(
+                padding: EdgeInsets.only(
+                  top: 24 + MediaQuery.of(context).padding.top,
+                  bottom: 24,
+                ),
+                child: Column(
+                  children: [
+                    const CircleAvatar(
+                      radius: 52,
+                      backgroundImage: AssetImage("assets/face.png"),
+                    ),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    Text(
+                      '${user.firstName} ${user.surname}',
+                      style: const TextStyle(
+                        fontSize: 28,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Text(
+                      user.email,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             );
-          },
-          child: Container(
-            padding: EdgeInsets.only(
-              top: 24 + MediaQuery.of(context).padding.top,
-              bottom: 24,
-            ),
-            child: const Column(
-              children: [
-                CircleAvatar(
-                  radius: 52,
-                  backgroundImage: AssetImage("assets/face.png"),
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
-                const Text(
-                  'John Smith',
-                  style: TextStyle(
-                    fontSize: 28,
-                    color: Colors.white,
-                  ),
-                ),
-                const Text(
-                  'test@testemail.com',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
+          } else {
+            return const SizedBox.shrink();
+          }
+        },
+      ),
+    );
+  }
 
   Widget buildMenuItems(BuildContext context) => Wrap(
         children: [
