@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:perfect_childcare/screens/settings/blocs/connections_management_bloc/connections_management_bloc.dart';
+import 'package:intl/intl.dart';
+import 'package:perfect_childcare/screens/session/blocs/nanny_management_bloc/nanny_connection_management_bloc.dart';
 import 'package:user_repository/user_repository.dart';
 
-class IncomingRequestsScreen extends StatelessWidget {
-  const IncomingRequestsScreen({super.key});
+class ChildcareIncomingRequestsScreen extends StatelessWidget {
+  const ChildcareIncomingRequestsScreen({super.key});
 
-  Widget _listView(BuildContext context, ConnectionsLoaded state) {
+  Widget _listView(BuildContext context, NannyConnectionsLoaded state) {
     return ListView.builder(
       itemCount: state.requests.length,
       itemBuilder: (context, index) {
         final request = state.requests[index];
-        return _listTile(context, request.connectionId, request.senderEmail);
+        return _listTile(
+          context,
+          request.connectionId,
+          request.senderEmail,
+          request.startDate,
+          request.endDate,
+        );
       },
     );
   }
@@ -20,9 +27,28 @@ class IncomingRequestsScreen extends StatelessWidget {
     BuildContext context,
     String connectionId,
     String senderEmail,
+    DateTime startDate,
+    DateTime endDate,
   ) {
     return ListTile(
       title: Text('Request from $senderEmail'), // Display sender's email
+      subtitle: Row(
+        mainAxisAlignment: MainAxisAlignment.end, // align to right
+        children: [
+          Row(
+            children: [
+              Text(
+                DateFormat('dd/MM/yyyy').format(startDate),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                  '${DateFormat('HH:mm').format(startDate)} - ${DateFormat('HH:mm').format(endDate)}'),
+            ],
+          ),
+        ],
+      ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -40,10 +66,9 @@ class IncomingRequestsScreen extends StatelessWidget {
     return IconButton(
       icon: const Icon(Icons.check, color: Colors.green),
       onPressed: () {
-        context.read<ConnectionsManagementBloc>().add(
-              AcceptConnectionRequest(connectionId),
+        context.read<NannyConnectionsManagementBloc>().add(
+              AcceptNannyConnectionRequest(connectionId),
             );
-        Navigator.pop(context);
       },
     );
   }
@@ -52,8 +77,8 @@ class IncomingRequestsScreen extends StatelessWidget {
     return IconButton(
       icon: const Icon(Icons.close, color: Colors.red),
       onPressed: () {
-        context.read<ConnectionsManagementBloc>().add(
-              DeclineConnectionRequest(connectionId),
+        context.read<NannyConnectionsManagementBloc>().add(
+              DeclineNannyConnectionRequest(connectionId),
             );
       },
     );
@@ -83,22 +108,22 @@ class IncomingRequestsScreen extends StatelessWidget {
 
         final userId = snapshot.data!.userId;
         context
-            .read<ConnectionsManagementBloc>()
-            .add(LoadConnectionRequests(userId));
+            .read<NannyConnectionsManagementBloc>()
+            .add(LoadNannyConnectionRequests(userId));
 
         return Scaffold(
           appBar: AppBar(title: const Text('Connection Requests')),
-          body: BlocBuilder<ConnectionsManagementBloc,
-              ConnectionsManagementState>(
+          body: BlocBuilder<NannyConnectionsManagementBloc,
+              NannyConnectionsManagementState>(
             builder: (context, state) {
-              if (state is ConnectionsLoading) {
+              if (state is NannyConnectionsLoading) {
                 return const Center(child: CircularProgressIndicator());
-              } else if (state is ConnectionsLoaded) {
+              } else if (state is NannyConnectionsLoaded) {
                 if (state.requests.isEmpty) {
                   return const Center(child: Text('No incoming requests'));
                 }
                 return _listView(context, state);
-              } else if (state is ConnectionsError) {
+              } else if (state is NannyConnectionsError) {
                 return Center(child: Text('Error: ${state.message}'));
               } else {
                 return const SizedBox.shrink();

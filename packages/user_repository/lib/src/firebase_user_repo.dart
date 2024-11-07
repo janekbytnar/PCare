@@ -36,7 +36,7 @@ class FirebaseUserRepo implements UserRepository {
   Future<MyUser> register(MyUser myUser, String password) async {
     try {
       UserCredential user = await _firebaseAuth.createUserWithEmailAndPassword(
-        email: myUser.email,
+        email: myUser.email.toLowerCase(),
         password: password,
       );
       myUser = myUser.copyWith(
@@ -134,8 +134,8 @@ class FirebaseUserRepo implements UserRepository {
   @override
   Future<void> disconnectChildFromUser(String childId) async {
     final userId = _firebaseAuth.currentUser?.uid;
-    print('disconnectChildFromUser: userId = $userId, childId = $childId');
-    if (userId != null) {
+    final user = await getCurrentUserData();
+    if (user != null) {
       try {
         await usersCollection.doc(userId).update({
           'children': FieldValue.arrayRemove([childId]),
@@ -143,6 +143,17 @@ class FirebaseUserRepo implements UserRepository {
       } catch (e) {
         log('Error disconnectChildFromUser: ${e.toString()}');
         rethrow;
+      }
+      final linkedPersonId = user.linkedPerson;
+      if (linkedPersonId.isNotEmpty) {
+        try {
+          await usersCollection.doc(linkedPersonId).update({
+            'children': FieldValue.arrayRemove([childId]),
+          });
+        } catch (e) {
+          log('Error disconnectChildFromUser: ${e.toString()}');
+          rethrow;
+        }
       }
     }
   }
@@ -156,6 +167,17 @@ class FirebaseUserRepo implements UserRepository {
       return querySnapshot.docs.first.id; // Return the user ID
     } else {
       return null; // Email not found
+    }
+  }
+
+  @override
+  Future<MyUser?> getUserById(String userId) async {
+    final doc = await usersCollection.doc(userId).get();
+    if (doc.exists) {
+      final data = doc.data() as Map<String, dynamic>;
+      return MyUser.fromEntity(MyUserEntity.fromDocument(data));
+    } else {
+      return null;
     }
   }
 

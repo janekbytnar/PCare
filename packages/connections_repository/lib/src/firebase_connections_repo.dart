@@ -8,15 +8,17 @@ class FirebaseConnectionsRepo implements ConnectionsRepository {
   FirebaseConnectionsRepo();
 
   @override
-  Future<void> sendConnectionsRequest({
+  Future<void> sendConnectionRequest({
     required String senderId,
     required String receiverId,
+    required String senderEmail,
   }) async {
     // Check for existing request
     final existingRequest = await connectionsCollection
         .where('connectionSenderId', isEqualTo: senderId)
         .where('connectionReceiverId', isEqualTo: receiverId)
         .where('status', isEqualTo: 'pending')
+        .where('senderEmail', isEqualTo: senderEmail)
         .get();
 
     if (existingRequest.docs.isNotEmpty) {
@@ -26,6 +28,7 @@ class FirebaseConnectionsRepo implements ConnectionsRepository {
     // Create new connection request
     await connectionsCollection.add({
       'connectionSenderId': senderId,
+      'senderEmail': senderEmail,
       'connectionReceiverId': receiverId,
       'status': 'pending',
       'requestTime': FieldValue.serverTimestamp(),
@@ -45,6 +48,7 @@ class FirebaseConnectionsRepo implements ConnectionsRepository {
       return Connections(
         connectionId: doc.id,
         connectionSenderId: data['connectionSenderId'],
+        senderEmail: data['senderEmail'],
         connectionReceiverId: data['connectionReceiverId'],
         status: data['status'],
         requestTime: (data['requestTime'] as Timestamp).toDate(),
@@ -105,6 +109,7 @@ class FirebaseConnectionsRepo implements ConnectionsRepository {
     return Connections(
       connectionId: requestDoc.id,
       connectionSenderId: data['connectionSenderId'],
+      senderEmail: data['senderEmail'],
       connectionReceiverId: data['connectionReceiverId'],
       status: data['status'],
       requestTime: (data['requestTime'] as Timestamp).toDate(),

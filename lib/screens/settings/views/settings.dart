@@ -38,23 +38,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
         linked = user?.linkedPerson.isNotEmpty ?? false;
       });
     });
-    // No need to call _loadUserLinkedStatus() since the stream listener handles it
-  }
-
-  Future<void> _loadUserLinkedStatus() async {
-    try {
-      final user = await context.read<UserRepository>().getCurrentUserData();
-      if (!mounted) return;
-
-      setState(() {
-        linked = user?.linkedPerson.isNotEmpty ?? false;
-      });
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error loading linked status: ${e.toString()}')),
-      );
-    }
   }
 
   @override
@@ -135,7 +118,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               MaterialPageRoute(
                 builder: (context) => BlocProvider.value(
                   value: connectionsBloc,
-                  child: IncomingRequestsScreen(),
+                  child: const IncomingRequestsScreen(),
                 ),
               ),
             );
@@ -227,14 +210,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
       onPressed: () async {
         if (_formKey.currentState!.validate()) {
           final connectionsBloc = context.read<ConnectionsManagementBloc>();
-          final email = emailController.text.trim();
+          final receiverEmail = emailController.text.trim();
           try {
             final user =
                 await context.read<UserRepository>().getCurrentUserData();
             final userId = user?.userId;
-            if (userId != null) {
+            final senderEmail = user?.email;
+            if (userId != null && senderEmail != null) {
               connectionsBloc.add(
-                SendConnectionRequest(userId, email),
+                SendConnectionRequest(userId, senderEmail, receiverEmail),
               );
               Navigator.of(context).pop();
             } else {
@@ -255,7 +239,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           }
         }
       },
-      text: 'Link',
+      text: 'Send request for link',
     );
   }
 

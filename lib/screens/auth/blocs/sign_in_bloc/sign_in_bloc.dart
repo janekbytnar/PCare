@@ -9,14 +9,20 @@ part 'sign_in_state.dart';
 class SignInBloc extends Bloc<SignInEvent, SignInState> {
   final UserRepository _userRepository;
 
-  SignInBloc({required UserRepository userRepository})
-      : _userRepository = userRepository,
+  SignInBloc({
+    required UserRepository userRepository,
+  })  : _userRepository = userRepository,
         super(SignInInitial()) {
     on<SignInRequired>((event, emit) async {
       emit(SignInProcess());
       try {
         await _userRepository.signIn(event.email, event.password);
-        emit(SignInSuccess());
+        final user = await _userRepository.getCurrentUserData();
+        if (user != null) {
+          emit(SignInSuccess(user.userId));
+        } else {
+          emit(const SignInFailure(message: "User not found"));
+        }
       } on FirebaseAuthException catch (e) {
         emit(SignInFailure(message: e.code));
       } catch (e) {

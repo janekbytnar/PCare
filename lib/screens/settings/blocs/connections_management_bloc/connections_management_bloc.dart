@@ -25,17 +25,20 @@ class ConnectionsManagementBloc
   Future<void> _onSendConnectionRequest(SendConnectionRequest event,
       Emitter<ConnectionsManagementState> emit) async {
     emit(ConnectionsLoading());
+    final normalizedReceiverEmail = event.receiverEmail.toLowerCase();
+    final normalizedSenderEmail = event.senderEmail.toLowerCase();
     try {
       final receiverId =
-          await userRepository.getUserIdByEmail(event.receiverEmail);
+          await userRepository.getUserIdByEmail(normalizedReceiverEmail);
 
       if (receiverId == null) {
         throw Exception(
             "User with email ${event.receiverEmail} does not exist");
       }
-      await connectionsRepository.sendConnectionsRequest(
+      await connectionsRepository.sendConnectionRequest(
         senderId: event.senderId,
         receiverId: receiverId,
+        senderEmail: normalizedSenderEmail,
       );
       emit(ConnectionRequestSent());
     } catch (e) {

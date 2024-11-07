@@ -11,5 +11,5 @@ abstract class ChildRepository {
       String childId, String sessionId); //Connect session to child
 
   Stream<List<Child>> getChildrenForUserStream(
-      String userId); // Dowload child for user
+      List<String> userId); // Dowload child for user
 }

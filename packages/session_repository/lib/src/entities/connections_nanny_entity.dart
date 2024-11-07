@@ -1,22 +1,28 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
-import 'package:connections_repository/connections_repository.dart';
+import 'package:session_repository/session_repository.dart';
 
-class ConnectionsEntity extends Equatable {
+class NannyConnectionsEntity extends Equatable {
   final String connectionId;
-  final String connectionSenderId;
+  final String sessionId;
+  final String senderId;
   final String senderEmail;
-  final String connectionReceiverId;
+  final String receiverId;
   final String status;
+  final DateTime startDate;
+  final DateTime endDate;
   final DateTime requestTime;
   final DateTime updatedAt;
 
-  const ConnectionsEntity({
+  const NannyConnectionsEntity({
     required this.connectionId,
-    required this.connectionSenderId,
+    required this.sessionId,
+    required this.senderId,
     required this.senderEmail,
-    required this.connectionReceiverId,
+    required this.receiverId,
     required this.status,
+    required this.startDate,
+    required this.endDate,
     required this.requestTime,
     required this.updatedAt,
   });
@@ -24,35 +30,44 @@ class ConnectionsEntity extends Equatable {
   Map<String, Object?> toDocument() {
     return {
       'connectionId': connectionId,
-      'connectionSenderId': connectionSenderId,
+      'sessionId': sessionId,
+      'senderId': senderId,
       'senderEmail': senderEmail,
-      'connectionReceiverId': connectionReceiverId,
+      'receiverId': receiverId,
       'status': status,
+      'startDate': Timestamp.fromDate(startDate),
+      'endDate': Timestamp.fromDate(endDate),
       'requestTime': Timestamp.fromDate(requestTime),
       'updatedAt': Timestamp.fromDate(updatedAt),
     };
   }
 
-  static ConnectionsEntity fromDocument(DocumentSnapshot doc) {
+  static NannyConnectionsEntity fromDocument(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
-    return ConnectionsEntity(
+    return NannyConnectionsEntity(
       connectionId: data['connectionId'] ?? '',
-      connectionSenderId: data['connectionSenderId'] ?? '',
+      sessionId: data['sessionId'] ?? '',
+      senderId: data['senderId'] ?? '',
       senderEmail: data['senderEmail'] ?? '',
-      connectionReceiverId: data['connectionReceiverId'] ?? '',
+      receiverId: data['receiverId'] ?? '',
       status: data['status'] ?? '',
+      startDate: (data['startDate'] as Timestamp).toDate(),
+      endDate: (data['endDate'] as Timestamp).toDate(),
       requestTime: (data['requestTime'] as Timestamp).toDate(),
       updatedAt: (data['updatedAt'] as Timestamp).toDate(),
     );
   }
 
-  Connections toModel() {
-    return Connections(
+  NannyConnections toModel() {
+    return NannyConnections(
       connectionId: connectionId,
-      connectionSenderId: connectionSenderId,
+      sessionId: sessionId,
+      senderId: senderId,
       senderEmail: senderEmail,
-      connectionReceiverId: connectionReceiverId,
+      receiverId: receiverId,
       status: status,
+      startDate: startDate,
+      endDate: endDate,
       requestTime: requestTime,
       updatedAt: updatedAt,
     );
@@ -61,10 +76,13 @@ class ConnectionsEntity extends Equatable {
   @override
   List<Object?> get props => [
         connectionId,
-        connectionSenderId,
+        sessionId,
+        senderId,
         senderEmail,
-        connectionReceiverId,
+        receiverId,
         status,
+        startDate,
+        endDate,
         requestTime,
         updatedAt,
       ];

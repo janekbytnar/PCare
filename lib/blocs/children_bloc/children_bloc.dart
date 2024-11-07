@@ -34,9 +34,17 @@ class ChildrenBloc extends Bloc<ChildrenEvent, ChildrenState> {
     if (user != null) {
       emit(const ChildrenState.loading());
       try {
+        final linkedPersonId = user.linkedPerson;
+
+        List<String> parentIds = [user.userId];
+
+        if (linkedPersonId.isNotEmpty) {
+          parentIds.add(linkedPersonId);
+        }
+
         // Subscribe to the children stream
         _childrenSubscription =
-            childRepository.getChildrenForUserStream(user.userId).listen(
+            childRepository.getChildrenForUserStream(parentIds).listen(
           (children) {
             // When new data arrives, add a ChildrenUpdated event
             add(ChildrenUpdated(children));
@@ -65,6 +73,7 @@ class ChildrenBloc extends Bloc<ChildrenEvent, ChildrenState> {
   @override
   Future<void> close() {
     _userSubscription.cancel();
+    _childrenSubscription?.cancel();
     return super.close();
   }
 }

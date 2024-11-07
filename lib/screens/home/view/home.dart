@@ -2,10 +2,12 @@ import 'package:child_repository/child_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:perfect_childcare/blocs/nanny_bloc/nanny_bloc.dart';
 import 'package:perfect_childcare/blocs/session_bloc/session_bloc.dart';
 import 'package:perfect_childcare/components/date_selector.dart';
 import 'package:perfect_childcare/components/my_button.dart';
-import 'package:perfect_childcare/components/persistent_nav.dart';
+import 'package:perfect_childcare/screens/session/blocs/nanny_management_bloc/nanny_connection_management_bloc.dart';
+import 'package:perfect_childcare/screens/session/views/persistent_nav.dart';
 import 'package:perfect_childcare/components/side_bar.dart';
 import 'package:perfect_childcare/screens/home/view/add_session.dart';
 import 'package:perfect_childcare/screens/session/blocs/session_management_bloc/session_management_bloc.dart';
@@ -26,8 +28,9 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     selectedDate = DateTime.now();
-    // Optionally, load sessions for the initial date
-    context.read<SessionBloc>().add(LoadSessionsForDate(selectedDate));
+    context
+        .read<SessionBloc>()
+        .add(LoadSessionsForDate(selectedDate)); //load session for initial date
   }
 
   bool get isButtonEnabled {
@@ -113,12 +116,22 @@ class _HomeScreenState extends State<HomeScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => BlocProvider(
-                create: (context) => SessionManagementBloc(
-                  childRepository: context.read<ChildRepository>(),
-                  userRepository: context.read<UserRepository>(),
-                  sessionRepository: context.read<SessionRepository>(),
-                ),
+              builder: (context) => MultiBlocProvider(
+                providers: [
+                  BlocProvider<SessionManagementBloc>(
+                    create: (context) => SessionManagementBloc(
+                      childRepository: context.read<ChildRepository>(),
+                      userRepository: context.read<UserRepository>(),
+                      sessionRepository: context.read<SessionRepository>(),
+                    ),
+                  ),
+                  BlocProvider<NannyConnectionsManagementBloc>(
+                    create: (context) => NannyConnectionsManagementBloc(
+                      userRepository: context.read<UserRepository>(),
+                      sessionRepository: context.read<SessionRepository>(),
+                    ),
+                  ),
+                ],
                 child: PersistentTabScreen(session: session),
               ),
             ),
@@ -159,7 +172,19 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
           ),
-          _addButton(),
+          BlocBuilder<NannyBloc, NannyState>(
+            builder: (context, nannyState) {
+              switch (nannyState.status) {
+                case NannyStatus.isNanny:
+                  return const SizedBox.shrink();
+                case NannyStatus.isNotNanny:
+                  return _addButton();
+                case NannyStatus.unknown:
+                default:
+                  return const SizedBox.shrink();
+              }
+            },
+          ),
         ],
       ),
     );

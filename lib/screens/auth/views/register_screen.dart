@@ -22,6 +22,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool registerRequired = false;
   bool obscurePassword = true;
   bool obscureConfirmPassword = true;
+  bool isNanny = false;
   IconData iconPassword = CupertinoIcons.eye_fill;
   IconData iconConfirmPassword = CupertinoIcons.eye_fill;
   String? _errorMsg;
@@ -124,6 +125,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
+  Widget _nannyCheckbox() {
+    return CheckboxListTile(
+      title: const Text('Is this a nanny account?'),
+      value: isNanny,
+      onChanged: (bool? newValue) {
+        setState(() {
+          isNanny = newValue ?? false;
+        });
+      },
+    );
+  }
+
   Widget _button() {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.5,
@@ -132,12 +145,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
           if (_formKey.currentState!.validate()) {
             MyUser myUser = MyUser.empty;
             myUser = myUser.copyWith(
-              email: emailController.text,
+              email: emailController.text.toLowerCase(),
             );
             setState(() {
               context.read<RegisterBloc>().add(RegisterRequired(
                     myUser,
                     passwordController.text,
+                    isNanny,
                   ));
             });
           }
@@ -184,6 +198,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             _passwordField(),
             const SizedBox(height: 10),
             _confirmPasswordField(),
+            const SizedBox(height: 10),
+            _nannyCheckbox(),
             if (registerFirebaseError) const SizedBox(height: 10),
             if (registerFirebaseError)
               Text(

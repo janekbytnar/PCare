@@ -9,12 +9,14 @@ abstract class ConnectionsManagementEvent extends Equatable {
 
 class SendConnectionRequest extends ConnectionsManagementEvent {
   final String senderId;
+  final String senderEmail;
   final String receiverEmail;
 
-  const SendConnectionRequest(this.senderId, this.receiverEmail);
+  const SendConnectionRequest(
+      this.senderId, this.senderEmail, this.receiverEmail);
 
   @override
-  List<Object?> get props => [senderId, receiverEmail];
+  List<Object?> get props => [senderId, senderEmail, receiverEmail];
 }
 
 class LoadConnectionRequests extends ConnectionsManagementEvent {

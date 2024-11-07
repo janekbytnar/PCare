@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:bloc/bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:equatable/equatable.dart';
@@ -23,7 +21,6 @@ class InternetConnectionBloc
   void _onCheckInternetConnection(CheckInternetConnection event,
       Emitter<InternetConnectionState> emit) async {
     final isConnected = await _checkInternetConnection();
-    log('Internet connection: $isConnected');
     if (isConnected) {
       emit(const InternetConnectionState.connected());
     } else {

@@ -17,6 +17,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       try {
         MyUser user =
             await _userRepository.register(event.user, event.password);
+        user = user.copyWith(isNanny: event.isNanny);
         await _userRepository.setUserData(user);
         emit(RegisterSuccess());
       } on FirebaseAuthException catch (e) {

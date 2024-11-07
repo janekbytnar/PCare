@@ -1,9 +1,10 @@
 import 'models/models.dart';
 
 abstract class ConnectionsRepository {
-  Future<void> sendConnectionsRequest({
+  Future<void> sendConnectionRequest({
     required String senderId,
     required String receiverId,
+    required String senderEmail,
   });
   Future<List<Connections>> loadIncomingRequests(String userId);
   Future<void> acceptConnectionRequest(String requestId);
