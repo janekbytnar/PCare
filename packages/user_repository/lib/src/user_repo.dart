@@ -17,4 +17,6 @@ abstract class UserRepository {
   Future<MyUser?> getUserById(String userId);
   Future<void> addLinkedPerson(String userId, String linkedPersonId);
   Future<void> unlinkPerson(String userId, String linkedPersonId);
+  Future<void> updateFCMToken(String userId, String fcmToken);
+  Future<void> removeFCMToken(String userId, String token);
 }

@@ -210,4 +210,27 @@ class FirebaseUserRepo implements UserRepository {
       rethrow;
     }
   }
+
+  @override
+  Future<void> updateFCMToken(String userId, String fcmToken) async {
+    try {
+      await usersCollection.doc(userId).update({
+        'fcmTokens': FieldValue.arrayUnion([fcmToken]),
+      });
+    } catch (e) {
+      log('Error updateFCMToken: ${e.toString()}');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> removeFCMToken(String userId, String token) async {
+    try {
+      await usersCollection.doc(userId).update({
+        'fcmTokens': FieldValue.arrayRemove([token]),
+      });
+    } catch (e) {
+      throw Exception('Token is not deleted: $e');
+    }
+  }
 }

@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:user_repository/user_repository.dart';
 
 part 'sign_in_event.dart';
@@ -30,7 +31,18 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
       }
     });
     on<SignOutRequired>((event, emit) async {
-      await _userRepository.signOut();
+      try {
+        User? user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          String? token = await FirebaseMessaging.instance.getToken();
+          if (token != null) {
+            await _userRepository.removeFCMToken(user.uid, token);
+          }
+        }
+        await _userRepository.signOut();
+      } catch (e) {
+        emit(const SignInFailure());
+      }
     });
   }
 }
