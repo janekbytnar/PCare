@@ -46,7 +46,7 @@ class Session extends Equatable {
     DateTime? endDate,
     List<Activity>? activities,
     List<Meal>? meals,
-    List<Note>? observations,
+    List<Note>? notes,
   }) {
     return Session(
       sessionId: sessionId ?? this.sessionId,
@@ -57,7 +57,7 @@ class Session extends Equatable {
       endDate: endDate ?? this.endDate,
       activities: activities ?? this.activities,
       meals: meals ?? this.meals,
-      notes: observations ?? this.notes,
+      notes: notes ?? this.notes,
     );
   }
 

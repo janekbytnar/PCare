@@ -61,7 +61,7 @@ class DateSelector extends StatelessWidget {
         children: [
           IconButton(
             style: ButtonStyle(
-              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                 const RoundedRectangleBorder(
                   borderRadius: BorderRadius.zero,
                 ),
@@ -82,7 +82,7 @@ class DateSelector extends StatelessWidget {
           ),
           IconButton(
             style: ButtonStyle(
-              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                 const RoundedRectangleBorder(
                   borderRadius: BorderRadius.zero,
                 ),

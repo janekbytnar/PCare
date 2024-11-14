@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:perfect_childcare/blocs/authentication_bloc/authentication_bloc.dart';
-import 'package:perfect_childcare/blocs/children_bloc/children_bloc.dart';
 import 'package:perfect_childcare/blocs/nanny_bloc/nanny_bloc.dart';
 import 'package:perfect_childcare/screens/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:perfect_childcare/screens/children/views/children.dart';
@@ -12,7 +11,6 @@ import 'package:perfect_childcare/screens/personal_information/views/personal_in
 import 'package:perfect_childcare/screens/session/blocs/nanny_management_bloc/nanny_connection_management_bloc.dart';
 import 'package:perfect_childcare/screens/settings/blocs/connections_management_bloc/connections_management_bloc.dart';
 import 'package:perfect_childcare/screens/settings/views/settings.dart';
-import 'package:provider/provider.dart';
 import 'package:session_repository/session_repository.dart';
 import 'package:user_repository/user_repository.dart';
 
@@ -109,7 +107,6 @@ class _SideBarState extends State<SideBar> {
                 case NannyStatus.isNotNanny:
                   return Builder(
                     builder: (context) {
-                      final childrenBloc = context.read<ChildrenBloc>();
                       return ListTile(
                         leading: const Icon(Icons.child_care),
                         title: const Text("Children"),
@@ -117,10 +114,7 @@ class _SideBarState extends State<SideBar> {
                           Navigator.push(
                             context,
                             CupertinoPageRoute(
-                              builder: (context) => BlocProvider.value(
-                                value: childrenBloc,
-                                child: const ChildrenScreen(),
-                              ),
+                              builder: (context) => const ChildrenScreen(),
                             ),
                           );
                         },
@@ -200,7 +194,7 @@ class _SideBarState extends State<SideBar> {
                           ),
                         ),
                       ],
-                      child: SettingsScreen(),
+                      child: const SettingsScreen(),
                     );
                   },
                 ),

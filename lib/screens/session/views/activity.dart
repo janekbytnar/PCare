@@ -34,7 +34,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
           ),
         ),
         centerTitle: true,
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: Theme.of(context).colorScheme.surface,
       ),
       body: BlocBuilder<ActivityManagementBloc, ActivityManagementState>(
         builder: (context, state) {

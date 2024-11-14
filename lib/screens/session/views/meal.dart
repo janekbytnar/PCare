@@ -21,7 +21,7 @@ class _MealScreenState extends State<MealScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: const Text(
           'Meal',
@@ -32,7 +32,7 @@ class _MealScreenState extends State<MealScreen> {
           ),
         ),
         centerTitle: true,
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: Theme.of(context).colorScheme.surface,
       ),
       body: BlocBuilder<MealManagementBloc, MealManagementState>(
         builder: (context, state) {

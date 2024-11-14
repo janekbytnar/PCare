@@ -1,16 +1,19 @@
 import 'package:child_repository/child_repository.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:perfect_childcare/blocs/children_bloc/children_bloc.dart';
 import 'package:perfect_childcare/blocs/nanny_bloc/nanny_bloc.dart';
 import 'package:perfect_childcare/blocs/session_bloc/session_bloc.dart';
 import 'package:perfect_childcare/components/date_selector.dart';
 import 'package:perfect_childcare/components/my_button.dart';
+import 'package:perfect_childcare/screens/children/views/children.dart';
 import 'package:perfect_childcare/screens/session/blocs/nanny_management_bloc/nanny_connection_management_bloc.dart';
 import 'package:perfect_childcare/screens/session/views/persistent_nav.dart';
 import 'package:perfect_childcare/components/side_bar.dart';
 import 'package:perfect_childcare/screens/home/view/add_session.dart';
-import 'package:perfect_childcare/screens/session/blocs/session_management_bloc/session_management_bloc.dart';
+import 'package:perfect_childcare/screens/home/blocs/session_management_bloc/session_management_bloc.dart';
 import 'package:session_repository/session_repository.dart';
 import 'package:user_repository/user_repository.dart';
 
@@ -50,29 +53,49 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _addButton() {
-    return MyTextButton(
-      onPressed: isButtonEnabled
-          ? () async {
-              final sessionBloc = context.read<SessionBloc>();
-              final result = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => BlocProvider(
-                    create: (context) => SessionManagementBloc(
-                      sessionRepository: context.read<SessionRepository>(),
-                      childRepository: context.read<ChildRepository>(),
-                      userRepository: context.read<UserRepository>(),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 30.0),
+      child: MyTextButton(
+        onPressed: isButtonEnabled
+            ? () async {
+                final sessionBloc = context.read<SessionBloc>();
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BlocProvider(
+                      create: (context) => SessionManagementBloc(
+                        sessionRepository: context.read<SessionRepository>(),
+                        childRepository: context.read<ChildRepository>(),
+                        userRepository: context.read<UserRepository>(),
+                      ),
+                      child: AddSessionScreen(selectedDate: selectedDate),
                     ),
-                    child: AddSessionScreen(selectedDate: selectedDate),
                   ),
-                ),
-              );
-              if (result == true) {
-                sessionBloc.add(LoadSessionsForDate(selectedDate));
+                );
+                if (result == true) {
+                  sessionBloc.add(LoadSessionsForDate(selectedDate));
+                }
               }
-            }
-          : null,
-      text: 'Add Session',
+            : null,
+        text: 'Add Session',
+      ),
+    );
+  }
+
+  Widget _addChildButton() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 30.0),
+      child: MyTextButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            CupertinoPageRoute(
+              builder: (context) => const ChildrenScreen(),
+            ),
+          );
+        },
+        text: 'Add your first child',
+      ),
     );
   }
 
@@ -178,7 +201,24 @@ class _HomeScreenState extends State<HomeScreen> {
                 case NannyStatus.isNanny:
                   return const SizedBox.shrink();
                 case NannyStatus.isNotNanny:
-                  return _addButton();
+                  {
+                    return BlocBuilder<ChildrenBloc, ChildrenState>(
+                      builder: (context, state) {
+                        if (state.status == ChildrenStatus.hasChildren) {
+                          return _addButton();
+                        } else if (state.status == ChildrenStatus.childless) {
+                          return _addChildButton();
+                        } else if (state.status == ChildrenStatus.failure) {
+                          return Center(
+                              child: Text(
+                                  'Failed to load children: ${state.error}'));
+                        } else {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+                      },
+                    );
+                  }
                 case NannyStatus.unknown:
                 default:
                   return const SizedBox.shrink();

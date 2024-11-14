@@ -21,7 +21,7 @@ class _NoteScreenState extends State<NoteScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: const Text(
           'Notes',
@@ -32,7 +32,7 @@ class _NoteScreenState extends State<NoteScreen> {
           ),
         ),
         centerTitle: true,
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: Theme.of(context).colorScheme.surface,
       ),
       body: BlocBuilder<NoteManagementBloc, NoteManagementState>(
         builder: (context, state) {

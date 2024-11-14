@@ -250,24 +250,32 @@ class _PersistentTabScreenState extends State<PersistentTabScreen> {
       child: Scaffold(
           appBar: AppBar(
             title: Row(
-              mainAxisAlignment: MainAxisAlignment.end, // align to right
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Row(
-                  children: [
-                    Text(
-                      DateFormat('dd/MM/yyyy')
-                          .format(widget.session!.startDate),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
+                Expanded(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown, // scale the text to fit
+                    child: Row(
+                      children: [
+                        Text(
+                          DateFormat('dd/MM/yyyy')
+                              .format(widget.session!.startDate),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          '${DateFormat('HH:mm').format(widget.session!.startDate)} - ${DateFormat('HH:mm').format(widget.session!.endDate)}',
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 10),
-                    Text(
-                        '${DateFormat('HH:mm').format(widget.session!.startDate)} - ${DateFormat('HH:mm').format(widget.session!.endDate)}'),
-                  ],
+                  ),
                 ),
               ],
             ),
-            backgroundColor: Theme.of(context).colorScheme.background,
+            backgroundColor: Theme.of(context).colorScheme.surface,
             actions: [
               if (widget.session!.nannyId.isEmpty &&
                   widget.session!.startDate.isAfter(DateTime.now()))
@@ -286,7 +294,7 @@ class _PersistentTabScreenState extends State<PersistentTabScreen> {
                 confineInSafeArea: true,
                 backgroundColor: Theme.of(context)
                     .colorScheme
-                    .background, // Default is Colors.white.
+                    .surface, // Default is Colors.white.
                 handleAndroidBackButtonPress: true, // Default is true.
                 resizeToAvoidBottomInset:
                     true, // This needs to be true if you want to move up the screen when keyboard appears. Default is true.
