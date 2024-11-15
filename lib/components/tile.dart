@@ -41,10 +41,12 @@ class CustomTile extends StatelessWidget {
         subtitle: subtitle != null && subtitle!.isNotEmpty
             ? Center(child: Text(subtitle!))
             : null,
-        trailing: IconButton(
-          icon: const Icon(Icons.delete),
-          onPressed: onDelete,
-        ),
+        trailing: onDelete == null
+            ? IconButton(
+                icon: const Icon(Icons.delete),
+                onPressed: onDelete,
+              )
+            : null,
         onTap: onToggleDone,
       ),
     );

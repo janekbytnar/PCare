@@ -35,6 +35,7 @@ class NannyConnectionsManagementBloc extends Bloc<
         throw Exception(
             "User with email ${event.receiverEmail} does not exist");
       }
+
       await sessionRepository.sendNannyConnectionRequest(
         sessionId: event.session.sessionId,
         senderId: event.senderId,

@@ -52,23 +52,33 @@ class _MealScreenState extends State<MealScreen> {
                   done: meal.isCompleted,
                   subtitle: meal.mealDescription,
                   onToggleDone: () {
-                    final updatedMeal = Meal(
-                      mealId: meal.mealId,
-                      mealName: meal.mealName,
-                      mealDescription: meal.mealDescription,
-                      isCompleted: !meal.isCompleted,
-                      mealTime: meal.mealTime,
-                    );
-                    context.read<MealManagementBloc>().add(MealManagementUpdate(
-                          updatedMeal,
-                          widget.sessionId,
-                        ));
+                    final currentTime = DateTime.now();
+                    if (currentTime.isBefore(widget.endDate)) {
+                      final updatedMeal = Meal(
+                        mealId: meal.mealId,
+                        mealName: meal.mealName,
+                        mealDescription: meal.mealDescription,
+                        isCompleted: !meal.isCompleted,
+                        mealTime: meal.mealTime,
+                      );
+                      context
+                          .read<MealManagementBloc>()
+                          .add(MealManagementUpdate(
+                            updatedMeal,
+                            widget.sessionId,
+                          ));
+                    }
                   },
                   onDelete: () {
-                    context.read<MealManagementBloc>().add(MealManagementDelete(
-                          meal.mealId,
-                          widget.sessionId,
-                        ));
+                    final currentTime = DateTime.now();
+                    if (currentTime.isBefore(widget.endDate)) {
+                      context
+                          .read<MealManagementBloc>()
+                          .add(MealManagementDelete(
+                            meal.mealId,
+                            widget.sessionId,
+                          ));
+                    }
                   },
                 );
               },

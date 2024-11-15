@@ -42,12 +42,10 @@ class _SideBarState extends State<SideBar> {
                 await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PersonalInformationScreen(
-                      user: user,
-                    ),
+                    builder: (context) => const PersonalInformationScreen(),
                   ),
                 );
-                // Po powrocie z PersonalInformationScreen, wymuś odświeżenie
+                // after back from personal screen refresh
                 setState(() {});
               },
               child: Container(

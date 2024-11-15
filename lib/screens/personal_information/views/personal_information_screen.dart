@@ -4,14 +4,16 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:perfect_childcare/components/my_button.dart';
 import 'package:perfect_childcare/components/my_text_field.dart';
+import 'package:perfect_childcare/screens/home/view/home.dart';
 import 'dart:io';
 import 'dart:core';
 
 import 'package:user_repository/user_repository.dart';
 
 class PersonalInformationScreen extends StatefulWidget {
-  final MyUser user;
-  const PersonalInformationScreen({super.key, required this.user});
+  const PersonalInformationScreen({
+    super.key,
+  });
 
   @override
   State<PersonalInformationScreen> createState() =>
@@ -25,12 +27,23 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
   String newPhoto = '';
   bool loading = false;
   String error = '';
+  MyUser? user;
+
+  Future<void> _loadUserData() async {
+    user = await context.read<UserRepository>().getCurrentUserData();
+    if (user != null) {
+      firstNameController = TextEditingController(text: user!.firstName);
+      surnameController = TextEditingController(text: user!.surname);
+      setState(() {}); // Trigger a rebuild with loaded data
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    firstNameController = TextEditingController(text: widget.user.firstName);
-    surnameController = TextEditingController(text: widget.user.surname);
+    firstNameController = TextEditingController();
+    surnameController = TextEditingController();
+    _loadUserData();
   }
 
   @override
@@ -167,18 +180,29 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
         text: 'Update',
         onPressed: () async {
           if (_formKey.currentState!.validate()) {
-            final updatedUser = widget.user.copyWith(
+            final updatedUser = user!.copyWith(
               firstName: firstNameController.text,
               surname: surnameController.text,
             );
             try {
               await context.read<UserRepository>().setUserData(updatedUser);
 
-              Navigator.pop(context);
+              if (!mounted) return; // Check if the widget is still mounted
+
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context);
+              } else {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomeScreen()),
+                );
+              }
             } catch (e) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Error: $e')),
-              );
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text('Error: $e'),
+                ));
+              }
             }
           }
         },

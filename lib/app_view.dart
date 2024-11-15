@@ -7,6 +7,7 @@ import 'package:perfect_childcare/blocs/session_bloc/session_bloc.dart';
 import 'package:perfect_childcare/screens/auth/error_screen/no_internet_screen.dart';
 import 'package:perfect_childcare/screens/auth/views/welcome_screen.dart';
 import 'package:perfect_childcare/screens/home/view/home.dart';
+import 'package:perfect_childcare/screens/personal_information/views/personal_information_screen.dart';
 import 'package:session_repository/session_repository.dart';
 import 'package:user_repository/user_repository.dart';
 
@@ -41,6 +42,9 @@ class MyAppView extends StatelessWidget {
                     if (authState.status ==
                         AuthenticationStatus.authenticated) {
                       return const HomeScreen();
+                    } else if (authState.status ==
+                        AuthenticationStatus.authenticatedNoData) {
+                      return const PersonalInformationScreen();
                     } else {
                       // User is not authenticated
                       return const WelcomeScreen();

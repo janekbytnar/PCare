@@ -54,27 +54,34 @@ class _ActivityScreenState extends State<ActivityScreen> {
                   done: activity.isCompleted,
                   subtitle: activity.activityDescription,
                   onToggleDone: () {
-                    final updatedActivity = Activity(
-                      activityId: activity.activityId,
-                      activityName: activity.activityName,
-                      activityDescription: activity.activityDescription,
-                      isCompleted: !activity.isCompleted,
-                      activityTime: activity.activityTime,
-                    );
-                    context
-                        .read<ActivityManagementBloc>()
-                        .add(ActivityManagementUpdate(
-                          updatedActivity,
-                          widget.sessionId,
-                        ));
+                    final currentTime = DateTime.now();
+                    if (currentTime.isBefore(widget.endDate)) {
+                      final updatedActivity = Activity(
+                        activityId: activity.activityId,
+                        activityName: activity.activityName,
+                        activityDescription: activity.activityDescription,
+                        isCompleted: !activity.isCompleted,
+                        activityTime: activity.activityTime,
+                      );
+                      context
+                          .read<ActivityManagementBloc>()
+                          .add(ActivityManagementUpdate(
+                            updatedActivity,
+                            widget.sessionId,
+                          ));
+                    }
+                    // do nothing when currenttime > endtime
                   },
                   onDelete: () {
-                    context
-                        .read<ActivityManagementBloc>()
-                        .add(ActivityManagementDelete(
-                          activity.activityId,
-                          widget.sessionId,
-                        ));
+                    final currentTime = DateTime.now();
+                    if (currentTime.isBefore(widget.endDate)) {
+                      context
+                          .read<ActivityManagementBloc>()
+                          .add(ActivityManagementDelete(
+                            activity.activityId,
+                            widget.sessionId,
+                          ));
+                    }
                   },
                 );
               },

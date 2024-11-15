@@ -28,7 +28,14 @@ class AuthenticationBloc
 
     on<AuthenticationUserChanged>((event, emit) async {
       if (event.user != null) {
-        emit(AuthenticationState.authenticated(event.user!));
+        final myUser = await userRepository.getCurrentUserData();
+        final isProfileComplete =
+            myUser!.firstName.isNotEmpty && myUser.surname.isNotEmpty;
+        if (isProfileComplete) {
+          emit(AuthenticationState.authenticated(event.user!));
+        } else {
+          emit(AuthenticationState.authenticatedNoData(event.user!));
+        }
 
         _nannyBloc.add(CheckNannyStatus(event.user!.uid));
         final fcmToken = await FirebaseMessaging.instance.getToken();

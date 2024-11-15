@@ -52,10 +52,15 @@ class _NoteScreenState extends State<NoteScreen> {
                   subtitle: note.noteDescription,
                   onToggleDone: () {},
                   onDelete: () {
-                    context.read<NoteManagementBloc>().add(NoteManagementDelete(
-                          note.noteId,
-                          widget.sessionId,
-                        ));
+                    final currentTime = DateTime.now();
+                    if (currentTime.isBefore(widget.endDate)) {
+                      context
+                          .read<NoteManagementBloc>()
+                          .add(NoteManagementDelete(
+                            note.noteId,
+                            widget.sessionId,
+                          ));
+                    }
                   },
                 );
               },
