@@ -8,6 +8,7 @@ class NannyConnectionsEntity extends Equatable {
   final String senderId;
   final String senderEmail;
   final String receiverId;
+  final String receiverEmail;
   final String status;
   final DateTime startDate;
   final DateTime endDate;
@@ -20,6 +21,7 @@ class NannyConnectionsEntity extends Equatable {
     required this.senderId,
     required this.senderEmail,
     required this.receiverId,
+    required this.receiverEmail,
     required this.status,
     required this.startDate,
     required this.endDate,
@@ -34,6 +36,7 @@ class NannyConnectionsEntity extends Equatable {
       'senderId': senderId,
       'senderEmail': senderEmail,
       'receiverId': receiverId,
+      'receiverEmail': receiverEmail,
       'status': status,
       'startDate': Timestamp.fromDate(startDate),
       'endDate': Timestamp.fromDate(endDate),
@@ -50,6 +53,7 @@ class NannyConnectionsEntity extends Equatable {
       senderId: data['senderId'] ?? '',
       senderEmail: data['senderEmail'] ?? '',
       receiverId: data['receiverId'] ?? '',
+      receiverEmail: data['receiverEmail'] ?? '',
       status: data['status'] ?? '',
       startDate: (data['startDate'] as Timestamp).toDate(),
       endDate: (data['endDate'] as Timestamp).toDate(),
@@ -65,6 +69,7 @@ class NannyConnectionsEntity extends Equatable {
       senderId: senderId,
       senderEmail: senderEmail,
       receiverId: receiverId,
+      receiverEmail: receiverEmail,
       status: status,
       startDate: startDate,
       endDate: endDate,
@@ -80,6 +85,7 @@ class NannyConnectionsEntity extends Equatable {
         senderId,
         senderEmail,
         receiverId,
+        receiverEmail,
         status,
         startDate,
         endDate,

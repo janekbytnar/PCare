@@ -7,6 +7,7 @@ class NannyConnections extends Equatable {
   final String senderId;
   final String senderEmail;
   final String receiverId;
+  final String receiverEmail;
   final String status;
   final DateTime startDate;
   final DateTime endDate;
@@ -19,6 +20,7 @@ class NannyConnections extends Equatable {
     required this.senderId,
     required this.senderEmail,
     required this.receiverId,
+    required this.receiverEmail,
     required this.status,
     required this.startDate,
     required this.endDate,
@@ -32,6 +34,7 @@ class NannyConnections extends Equatable {
     senderId: '',
     senderEmail: '',
     receiverId: '',
+    receiverEmail: '',
     status: '',
     startDate: DateTime(1970, 1, 1, 0, 0, 0),
     endDate: DateTime(1970, 1, 1, 0, 0, 0),
@@ -45,6 +48,7 @@ class NannyConnections extends Equatable {
     String? senderId,
     String? senderEmail,
     String? receiverId,
+    String? receiverEmail,
     String? status,
     DateTime? startDate,
     DateTime? endDate,
@@ -57,6 +61,7 @@ class NannyConnections extends Equatable {
       senderId: senderId ?? this.senderId,
       senderEmail: senderEmail ?? this.senderEmail,
       receiverId: receiverId ?? this.receiverId,
+      receiverEmail: receiverEmail ?? this.receiverEmail,
       status: status ?? this.status,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
@@ -72,6 +77,7 @@ class NannyConnections extends Equatable {
       senderId: senderId,
       senderEmail: senderEmail,
       receiverId: receiverId,
+      receiverEmail: receiverEmail,
       status: status,
       startDate: startDate,
       endDate: endDate,
@@ -87,6 +93,7 @@ class NannyConnections extends Equatable {
       senderId: entity.senderId,
       senderEmail: entity.senderEmail,
       receiverId: entity.receiverId,
+      receiverEmail: entity.receiverEmail,
       status: entity.status,
       startDate: entity.startDate,
       endDate: entity.endDate,
@@ -102,6 +109,7 @@ class NannyConnections extends Equatable {
         senderId,
         senderEmail,
         receiverId,
+        receiverEmail,
         status,
         startDate,
         endDate,

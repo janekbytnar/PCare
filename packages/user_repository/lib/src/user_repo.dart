@@ -13,7 +13,7 @@ abstract class UserRepository {
   Future<void> connectSessionToUser(String userId, String sessionId);
   Future<MyUser?> getCurrentUserData();
   Stream<MyUser?> getCurrentUserDataStream();
-  Future<String?> getUserIdByEmail(String email);
+  Future<List<Object>?> getUserIdAndNannyStatusByEmail(String email);
   Future<MyUser?> getUserById(String userId);
   Future<void> addLinkedPerson(String userId, String linkedPersonId);
   Future<void> unlinkPerson(String userId, String linkedPersonId);

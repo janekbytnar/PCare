@@ -159,12 +159,15 @@ class FirebaseUserRepo implements UserRepository {
   }
 
   @override
-  Future<String?> getUserIdByEmail(String email) async {
+  Future<List<Object>?> getUserIdAndNannyStatusByEmail(String email) async {
     final querySnapshot =
         await usersCollection.where('email', isEqualTo: email).get();
 
     if (querySnapshot.docs.isNotEmpty) {
-      return querySnapshot.docs.first.id; // Return the user ID
+      final doc = querySnapshot.docs.first;
+      final userId = doc.id;
+      final isNanny = doc.data()['isNanny'] as bool? ?? false;
+      return [userId, isNanny]; //return Nanny status and id
     } else {
       return null; // Email not found
     }

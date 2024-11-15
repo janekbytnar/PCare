@@ -28,13 +28,14 @@ class ConnectionsManagementBloc
     final normalizedReceiverEmail = event.receiverEmail.toLowerCase();
     final normalizedSenderEmail = event.senderEmail.toLowerCase();
     try {
-      final receiverId =
-          await userRepository.getUserIdByEmail(normalizedReceiverEmail);
+      final results = await userRepository
+          .getUserIdAndNannyStatusByEmail(normalizedReceiverEmail);
 
-      if (receiverId == null) {
+      if (results == null) {
         throw Exception(
             "User with email ${event.receiverEmail} does not exist");
       }
+      final receiverId = results[0].toString();
       await connectionsRepository.sendConnectionRequest(
         senderId: event.senderId,
         receiverId: receiverId,

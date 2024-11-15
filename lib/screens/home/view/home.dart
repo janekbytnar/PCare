@@ -126,7 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Expanded(
                 flex: 3,
                 child: Text(
-                  session.sessionId,
+                  session.sessionName,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 )),

@@ -94,6 +94,7 @@ class FirebaseSessionRepo implements SessionRepository {
     required String senderId,
     required String senderEmail,
     required String receiverId,
+    required String receiverEmail,
     required DateTime startDate,
     required DateTime endDate,
   }) async {
@@ -105,7 +106,10 @@ class FirebaseSessionRepo implements SessionRepository {
         .get();
 
     if (existingRequest.docs.isNotEmpty) {
-      throw Exception('Request already sent');
+      final currentReceiverEmail =
+          existingRequest.docs.first.data()['receiverEmail'] as String? ??
+              'unknown';
+      throw Exception('Request already sent to $currentReceiverEmail');
     }
 
     // Create new connection request
@@ -114,6 +118,7 @@ class FirebaseSessionRepo implements SessionRepository {
       'senderId': senderId,
       'senderEmail': senderEmail,
       'receiverId': receiverId,
+      'receiverEmail': receiverEmail,
       'status': 'pending',
       'startDate': startDate,
       'endDate': endDate,
@@ -138,6 +143,7 @@ class FirebaseSessionRepo implements SessionRepository {
         senderId: data['senderId'],
         senderEmail: data['senderEmail'],
         receiverId: data['receiverId'],
+        receiverEmail: data['receiverEmail'],
         status: data['status'],
         startDate: (data['startDate'] as Timestamp).toDate(),
         endDate: (data['endDate'] as Timestamp).toDate(),
@@ -202,6 +208,7 @@ class FirebaseSessionRepo implements SessionRepository {
       senderId: data['senderId'],
       senderEmail: data['senderEmail'],
       receiverId: data['receiverId'],
+      receiverEmail: data['receiverEmail'],
       status: data['status'],
       startDate: (data['startDate'] as Timestamp).toDate(),
       endDate: (data['endDate'] as Timestamp).toDate(),

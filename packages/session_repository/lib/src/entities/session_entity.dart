@@ -5,6 +5,7 @@ import 'package:session_repository/session_repository.dart';
 class SessionEntity extends Equatable {
   final String sessionId;
   final List<String> parentsId;
+  final String sessionName;
   final String nannyId;
   final List<String> childsId;
   final DateTime startDate;
@@ -16,6 +17,7 @@ class SessionEntity extends Equatable {
   const SessionEntity({
     required this.sessionId,
     required this.parentsId,
+    required this.sessionName,
     required this.nannyId,
     required this.childsId,
     required this.startDate,
@@ -29,6 +31,7 @@ class SessionEntity extends Equatable {
     return {
       'sessionId': sessionId,
       'parentsId': parentsId,
+      'sessionName': sessionName,
       'nannyId': nannyId,
       'childsId': childsId,
       'startDate': Timestamp.fromDate(startDate),
@@ -47,6 +50,7 @@ class SessionEntity extends Equatable {
               ?.map((parentId) => parentId as String)
               .toList() ??
           [],
+      sessionName: doc['sessionName'] ?? '',
       nannyId: doc['nannyId'] ?? '',
       childsId: (doc['childsId'] as List<dynamic>?)
               ?.map((childId) => childId as String)
@@ -76,6 +80,7 @@ class SessionEntity extends Equatable {
     return Session(
       sessionId: sessionId,
       parentsId: parentsId,
+      sessionName: sessionName,
       nannyId: nannyId,
       childsId: childsId,
       startDate: startDate,
@@ -90,6 +95,7 @@ class SessionEntity extends Equatable {
   List<Object?> get props => [
         sessionId,
         parentsId,
+        sessionName,
         nannyId,
         childsId,
         startDate,

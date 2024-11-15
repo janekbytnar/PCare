@@ -28,15 +28,22 @@ class NannyConnectionsManagementBloc extends Bloc<
     final normalizedReceiverEmail = event.receiverEmail.toLowerCase();
 
     try {
-      final receiverId =
-          await userRepository.getUserIdByEmail(normalizedReceiverEmail);
+      final results = await userRepository
+          .getUserIdAndNannyStatusByEmail(normalizedReceiverEmail);
 
-      if (receiverId == null) {
+      if (results == null) {
         throw Exception(
             "User with email ${event.receiverEmail} does not exist");
       }
+      final receiverId = results[0].toString();
+      final nannyStatus = results[1] as bool;
 
+      if (!nannyStatus) {
+        throw Exception(
+            "User with email ${event.receiverEmail} is not nanny account");
+      }
       await sessionRepository.sendNannyConnectionRequest(
+        receiverEmail: event.receiverEmail,
         sessionId: event.session.sessionId,
         senderId: event.senderId,
         senderEmail: event.senderEmail,

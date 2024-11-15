@@ -5,6 +5,7 @@ import 'models.dart';
 class Session extends Equatable {
   final String sessionId;
   final List<String> parentsId;
+  final String sessionName;
   final String nannyId;
   final List<String> childsId;
   final DateTime startDate;
@@ -16,6 +17,7 @@ class Session extends Equatable {
   const Session({
     required this.sessionId,
     required this.parentsId,
+    required this.sessionName,
     this.nannyId = '',
     required this.childsId,
     required this.startDate,
@@ -28,6 +30,7 @@ class Session extends Equatable {
   static final empty = Session(
     sessionId: '',
     parentsId: const [],
+    sessionName: '',
     nannyId: '',
     childsId: const [],
     startDate: DateTime(1970, 1, 1),
@@ -40,6 +43,7 @@ class Session extends Equatable {
   Session copyWith({
     String? sessionId,
     List<String>? parentsId,
+    String? sessionName,
     String? nannyId,
     List<String>? childsId,
     DateTime? startDate,
@@ -51,6 +55,7 @@ class Session extends Equatable {
     return Session(
       sessionId: sessionId ?? this.sessionId,
       parentsId: parentsId ?? this.parentsId,
+      sessionName: sessionName ?? this.sessionName,
       nannyId: nannyId ?? this.nannyId,
       childsId: childsId ?? this.childsId,
       startDate: startDate ?? this.startDate,
@@ -65,6 +70,7 @@ class Session extends Equatable {
     return SessionEntity(
       sessionId: sessionId,
       parentsId: parentsId,
+      sessionName: sessionName,
       nannyId: nannyId,
       childsId: childsId,
       startDate: startDate,
@@ -79,6 +85,7 @@ class Session extends Equatable {
     return Session(
       sessionId: entity.sessionId,
       parentsId: entity.parentsId,
+      sessionName: entity.sessionName,
       nannyId: entity.nannyId,
       childsId: entity.childsId,
       startDate: entity.startDate,
@@ -99,6 +106,7 @@ class Session extends Equatable {
   List<Object?> get props => [
         sessionId,
         parentsId,
+        sessionName,
         nannyId,
         childsId,
         startDate,
