@@ -3,6 +3,7 @@ import '../entities/entities.dart';
 
 class MyUser extends Equatable {
   final String userId;
+  final List<String> fcmTokens;
   final String email;
   final String firstName;
   final String surname;
@@ -14,6 +15,7 @@ class MyUser extends Equatable {
 
   const MyUser({
     required this.userId,
+    required this.fcmTokens,
     required this.email,
     required this.firstName,
     required this.surname,
@@ -26,6 +28,7 @@ class MyUser extends Equatable {
 
   static const empty = MyUser(
     userId: '',
+    fcmTokens: [],
     email: '',
     firstName: '',
     surname: '',
@@ -38,6 +41,7 @@ class MyUser extends Equatable {
 
   MyUser copyWith({
     String? userId,
+    List<String>? fcmTokens,
     String? email,
     String? firstName,
     String? surname,
@@ -49,6 +53,7 @@ class MyUser extends Equatable {
   }) {
     return MyUser(
       userId: userId ?? this.userId,
+      fcmTokens: fcmTokens ?? this.fcmTokens,
       email: email ?? this.email,
       firstName: firstName ?? this.firstName,
       surname: surname ?? this.surname,
@@ -63,6 +68,7 @@ class MyUser extends Equatable {
   MyUserEntity toEntity() {
     return MyUserEntity(
       userId: userId,
+      fcmTokens: fcmTokens,
       email: email,
       firstName: firstName,
       surname: surname,
@@ -77,6 +83,7 @@ class MyUser extends Equatable {
   static MyUser fromEntity(MyUserEntity entity) {
     return MyUser(
       userId: entity.userId,
+      fcmTokens: entity.fcmTokens,
       email: entity.email,
       firstName: entity.firstName,
       surname: entity.surname,
@@ -91,6 +98,7 @@ class MyUser extends Equatable {
   @override
   List<Object?> get props => [
         userId,
+        fcmTokens,
         email,
         firstName,
         surname,

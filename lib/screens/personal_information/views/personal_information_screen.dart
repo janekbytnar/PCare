@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:perfect_childcare/components/my_button.dart';
 import 'package:perfect_childcare/components/my_text_field.dart';
+import 'package:perfect_childcare/screens/home/view/home.dart';
 import 'dart:io';
 import 'dart:core';
 
+import 'package:user_repository/user_repository.dart';
+
 class PersonalInformationScreen extends StatefulWidget {
-  const PersonalInformationScreen({super.key});
+  const PersonalInformationScreen({
+    super.key,
+  });
 
   @override
   State<PersonalInformationScreen> createState() =>
@@ -14,12 +21,37 @@ class PersonalInformationScreen extends StatefulWidget {
 }
 
 class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
-  final firstNameController = TextEditingController(text: 'Staszek');
-  final surnameController = TextEditingController(text: 'Nowak');
+  late TextEditingController firstNameController;
+  late TextEditingController surnameController;
   final _formKey = GlobalKey<FormState>();
   String newPhoto = '';
   bool loading = false;
   String error = '';
+  MyUser? user;
+
+  Future<void> _loadUserData() async {
+    user = await context.read<UserRepository>().getCurrentUserData();
+    if (user != null) {
+      firstNameController = TextEditingController(text: user!.firstName);
+      surnameController = TextEditingController(text: user!.surname);
+      setState(() {}); // Trigger a rebuild with loaded data
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    firstNameController = TextEditingController();
+    surnameController = TextEditingController();
+    _loadUserData();
+  }
+
+  @override
+  void dispose() {
+    firstNameController.dispose();
+    surnameController.dispose();
+    super.dispose();
+  }
 
   Widget _photoButton() {
     return InkWell(
@@ -144,29 +176,36 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
   Widget _button() {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.5,
-      child: TextButton(
-        onPressed: () {
+      child: MyTextButton(
+        text: 'Update',
+        onPressed: () async {
           if (_formKey.currentState!.validate()) {
-            Navigator.pop(context);
+            final updatedUser = user!.copyWith(
+              firstName: firstNameController.text,
+              surname: surnameController.text,
+            );
+            try {
+              await context.read<UserRepository>().setUserData(updatedUser);
+
+              if (!mounted) return; // Check if the widget is still mounted
+
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context);
+              } else {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomeScreen()),
+                );
+              }
+            } catch (e) {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text('Error: $e'),
+                ));
+              }
+            }
           }
         },
-        style: TextButton.styleFrom(
-          backgroundColor: Colors.green,
-          foregroundColor: Colors.black,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(80),
-          ),
-        ),
-        child: const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-          child: Text('Update',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              )),
-        ),
       ),
     );
   }
@@ -176,7 +215,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Personal information'),
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: Theme.of(context).colorScheme.surface,
       ),
       body: SingleChildScrollView(
           child: Padding(

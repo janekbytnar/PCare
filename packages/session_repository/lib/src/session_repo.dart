@@ -17,6 +17,7 @@ abstract class SessionRepository {
     required String senderId,
     required String senderEmail,
     required String receiverId,
+    required String receiverEmail,
     required DateTime startDate,
     required DateTime endDate,
   });

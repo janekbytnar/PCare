@@ -9,7 +9,12 @@ import 'package:session_repository/session_repository.dart';
 class ActivityScreen extends StatefulWidget {
   final List<Activity>? activity;
   final String sessionId;
-  const ActivityScreen({super.key, this.activity, required this.sessionId});
+  final DateTime endDate;
+  const ActivityScreen(
+      {super.key,
+      this.activity,
+      required this.sessionId,
+      required this.endDate});
 
   @override
   State<ActivityScreen> createState() => _ActivityScreenState();
@@ -19,18 +24,17 @@ class _ActivityScreenState extends State<ActivityScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(105.0),
-        child: AppBar(
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage("assets/activity.png"),
-                fit: BoxFit.cover,
-              ),
-            ),
+      appBar: AppBar(
+        title: const Text(
+          'Activity',
+          style: TextStyle(
+            fontSize: 50,
+            fontWeight: FontWeight.bold,
+            color: CupertinoColors.activeBlue,
           ),
         ),
+        centerTitle: true,
+        backgroundColor: Theme.of(context).colorScheme.surface,
       ),
       body: BlocBuilder<ActivityManagementBloc, ActivityManagementState>(
         builder: (context, state) {
@@ -50,27 +54,34 @@ class _ActivityScreenState extends State<ActivityScreen> {
                   done: activity.isCompleted,
                   subtitle: activity.activityDescription,
                   onToggleDone: () {
-                    final updatedActivity = Activity(
-                      activityId: activity.activityId,
-                      activityName: activity.activityName,
-                      activityDescription: activity.activityDescription,
-                      isCompleted: !activity.isCompleted,
-                      activityTime: activity.activityTime,
-                    );
-                    context
-                        .read<ActivityManagementBloc>()
-                        .add(ActivityManagementUpdate(
-                          updatedActivity,
-                          widget.sessionId,
-                        ));
+                    final currentTime = DateTime.now();
+                    if (currentTime.isBefore(widget.endDate)) {
+                      final updatedActivity = Activity(
+                        activityId: activity.activityId,
+                        activityName: activity.activityName,
+                        activityDescription: activity.activityDescription,
+                        isCompleted: !activity.isCompleted,
+                        activityTime: activity.activityTime,
+                      );
+                      context
+                          .read<ActivityManagementBloc>()
+                          .add(ActivityManagementUpdate(
+                            updatedActivity,
+                            widget.sessionId,
+                          ));
+                    }
+                    // do nothing when currenttime > endtime
                   },
                   onDelete: () {
-                    context
-                        .read<ActivityManagementBloc>()
-                        .add(ActivityManagementDelete(
-                          activity.activityId,
-                          widget.sessionId,
-                        ));
+                    final currentTime = DateTime.now();
+                    if (currentTime.isBefore(widget.endDate)) {
+                      context
+                          .read<ActivityManagementBloc>()
+                          .add(ActivityManagementDelete(
+                            activity.activityId,
+                            widget.sessionId,
+                          ));
+                    }
                   },
                 );
               },
@@ -82,20 +93,22 @@ class _ActivityScreenState extends State<ActivityScreen> {
           }
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'acitivityTag',
-        backgroundColor: CupertinoColors.activeBlue,
-        foregroundColor: CupertinoColors.systemGrey,
-        elevation: 5,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
-        ),
-        tooltip: "Add action",
-        onPressed: () {
-          _dialogBuilder(context);
-        },
-        child: const Icon(Icons.add, color: Colors.white),
-      ),
+      floatingActionButton: (widget.endDate.isAfter(DateTime.now()))
+          ? FloatingActionButton(
+              heroTag: 'acitivityTag',
+              backgroundColor: CupertinoColors.activeBlue,
+              foregroundColor: CupertinoColors.systemGrey,
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18),
+              ),
+              tooltip: "Add action",
+              onPressed: () {
+                _dialogBuilder(context);
+              },
+              child: const Icon(Icons.add, color: Colors.white),
+            )
+          : null,
     );
   }
 

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:perfect_childcare/components/my_button.dart';
 import 'package:perfect_childcare/components/my_text_field.dart';
-import 'package:perfect_childcare/screens/session/blocs/session_management_bloc/session_management_bloc.dart';
+import 'package:perfect_childcare/screens/home/blocs/session_management_bloc/session_management_bloc.dart';
 import 'package:session_repository/session_repository.dart';
 import 'package:user_repository/user_repository.dart';
 
@@ -23,6 +23,7 @@ class _AddSessionScreenState extends State<AddSessionScreen> {
   late UserRepository userRepository;
   DateTime? _selectedStartTime;
   DateTime? _selectedEndTime;
+  final sessionNameController = TextEditingController();
   final timeControllerStart = TextEditingController();
   final timeControllerEnd = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -35,6 +36,26 @@ class _AddSessionScreenState extends State<AddSessionScreen> {
     selectedDate = widget.selectedDate;
 
     userRepository = context.read<UserRepository>();
+  }
+
+  Widget _sessionNameField() {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.9,
+      child: MyTextField(
+        controller: sessionNameController,
+        hintText: 'Session\'s Name',
+        obscureText: false,
+        keyboardType: TextInputType.name,
+        prefixIcon: const Icon(CupertinoIcons.person),
+        errorMsg: _errorMsg,
+        validator: (val) {
+          if (val!.isEmpty) {
+            return 'Please fill the field';
+          }
+          return null;
+        },
+      ),
+    );
   }
 
   Widget _timeFieldStart() {
@@ -169,6 +190,7 @@ class _AddSessionScreenState extends State<AddSessionScreen> {
   Future<Session> _prepareSession(List<String> parentsId, List<String> childsId,
       DateTime startDate, DateTime endDate) async {
     final user = await userRepository.getCurrentUserData();
+    final sessionName = sessionNameController.text;
     if (user != null) {
       final currentUserId = user.userId;
       parentsId.add(currentUserId);
@@ -183,6 +205,7 @@ class _AddSessionScreenState extends State<AddSessionScreen> {
     return Session(
       sessionId: UniqueKey().toString(),
       parentsId: parentsId,
+      sessionName: sessionName,
       startDate: startDate,
       endDate: endDate,
       childsId: childsId,
@@ -214,6 +237,10 @@ class _AddSessionScreenState extends State<AddSessionScreen> {
               key: _formKey,
               child: Column(
                 children: [
+                  const Text('Session name:'),
+                  const SizedBox(height: 20),
+                  _sessionNameField(),
+                  const SizedBox(height: 20),
                   const Text('Start Session:'),
                   const SizedBox(height: 20),
                   _timeFieldStart(),

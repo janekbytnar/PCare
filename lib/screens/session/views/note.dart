@@ -9,7 +9,9 @@ import 'package:session_repository/session_repository.dart';
 class NoteScreen extends StatefulWidget {
   final List<Note>? note;
   final String sessionId;
-  const NoteScreen({super.key, this.note, required this.sessionId});
+  final DateTime endDate;
+  const NoteScreen(
+      {super.key, this.note, required this.sessionId, required this.endDate});
 
   @override
   State<NoteScreen> createState() => _NoteScreenState();
@@ -19,19 +21,18 @@ class _NoteScreenState extends State<NoteScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(105.0),
-        child: AppBar(
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage("assets/notes.png"),
-                fit: BoxFit.cover,
-              ),
-            ),
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      appBar: AppBar(
+        title: const Text(
+          'Notes',
+          style: TextStyle(
+            fontSize: 50,
+            fontWeight: FontWeight.bold,
+            color: CupertinoColors.activeOrange,
           ),
         ),
+        centerTitle: true,
+        backgroundColor: Theme.of(context).colorScheme.surface,
       ),
       body: BlocBuilder<NoteManagementBloc, NoteManagementState>(
         builder: (context, state) {
@@ -51,10 +52,15 @@ class _NoteScreenState extends State<NoteScreen> {
                   subtitle: note.noteDescription,
                   onToggleDone: () {},
                   onDelete: () {
-                    context.read<NoteManagementBloc>().add(NoteManagementDelete(
-                          note.noteId,
-                          widget.sessionId,
-                        ));
+                    final currentTime = DateTime.now();
+                    if (currentTime.isBefore(widget.endDate)) {
+                      context
+                          .read<NoteManagementBloc>()
+                          .add(NoteManagementDelete(
+                            note.noteId,
+                            widget.sessionId,
+                          ));
+                    }
                   },
                 );
               },
@@ -66,20 +72,22 @@ class _NoteScreenState extends State<NoteScreen> {
           }
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'notesTag',
-        backgroundColor: CupertinoColors.activeGreen,
-        foregroundColor: CupertinoColors.systemGrey,
-        elevation: 5,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
-        ),
-        tooltip: "Add note",
-        onPressed: () {
-          _dialogBuilder(context);
-        },
-        child: const Icon(Icons.add, color: Colors.white),
-      ),
+      floatingActionButton: (widget.endDate.isAfter(DateTime.now()))
+          ? FloatingActionButton(
+              heroTag: 'notesTag',
+              backgroundColor: CupertinoColors.activeGreen,
+              foregroundColor: CupertinoColors.systemGrey,
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18),
+              ),
+              tooltip: "Add note",
+              onPressed: () {
+                _dialogBuilder(context);
+              },
+              child: const Icon(Icons.add, color: Colors.white),
+            )
+          : null,
     );
   }
 

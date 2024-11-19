@@ -30,22 +30,25 @@ class _ChildrenScreenState extends State<ChildrenScreen> {
   }
 
   Widget _addButton() {
-    return MyTextButton(
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => BlocProvider(
-              create: (context) => ChildrenManagementBloc(
-                childRepository: context.read<ChildRepository>(),
-                userRepository: context.read<UserRepository>(),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 30.0),
+      child: MyTextButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BlocProvider(
+                create: (context) => ChildrenManagementBloc(
+                  childRepository: context.read<ChildRepository>(),
+                  userRepository: context.read<UserRepository>(),
+                ),
+                child: const AddChildScreen(),
               ),
-              child: const AddChildScreen(),
             ),
-          ),
-        );
-      },
-      text: 'Add Child',
+          );
+        },
+        text: 'Add Child',
+      ),
     );
   }
 
