@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:perfect_childcare/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:perfect_childcare/components/my_button.dart';
 import 'package:perfect_childcare/components/my_text_field.dart';
-import 'package:perfect_childcare/screens/home/view/home.dart';
 import 'dart:io';
 import 'dart:core';
 
@@ -188,15 +188,9 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
               await context.read<UserRepository>().setUserData(updatedUser);
 
               if (!mounted) return; // Check if the widget is still mounted
-
-              if (Navigator.canPop(context)) {
-                Navigator.pop(context);
-              } else {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const HomeScreen()),
-                );
-              }
+              context
+                  .read<AuthenticationBloc>()
+                  .add(const AuthenticationUserDataChanged());
             } catch (e) {
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(

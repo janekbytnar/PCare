@@ -46,6 +46,17 @@ class AuthenticationBloc
         emit(const AuthenticationState.unauthenticated());
       }
     });
+
+     on<AuthenticationUserDataChanged>((event, emit) async {
+      final myUser = await userRepository.getCurrentUserData();
+      final isProfileComplete =
+          myUser!.firstName.isNotEmpty && myUser.surname.isNotEmpty;
+      if (isProfileComplete) {
+        emit(AuthenticationState.authenticated(FirebaseAuth.instance.currentUser!));
+      } else {
+        emit(AuthenticationState.authenticatedNoData(FirebaseAuth.instance.currentUser!));
+      }
+    });
   }
 
   @override
