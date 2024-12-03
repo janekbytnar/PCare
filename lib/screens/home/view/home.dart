@@ -34,6 +34,15 @@ class _HomeScreenState extends State<HomeScreen> {
     context
         .read<SessionBloc>()
         .add(LoadSessionsForDate(selectedDate)); //load session for initial date
+    _loadUserData();
+  }
+
+//update children state
+  void _loadUserData() async {
+    final user = await context.read<UserRepository>().getCurrentUserData();
+    if (user != null) {
+      context.read<ChildrenBloc>().add(ChildrenStatusChanged(user));
+    }
   }
 
   bool get isButtonEnabled {
