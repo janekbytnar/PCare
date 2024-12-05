@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:perfect_childcare/components/my_button.dart';
+import 'package:perfect_childcare/components/my_text_button.dart';
 import 'package:perfect_childcare/screens/auth/blocs/register_bloc/register_bloc.dart';
 import 'package:perfect_childcare/components/my_text_field.dart';
 import 'package:user_repository/user_repository.dart';

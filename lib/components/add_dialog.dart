@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:perfect_childcare/components/my_text_field.dart';
 
-class AddDialog extends StatefulWidget {
+class MyAddDialog extends StatefulWidget {
   final Function(String name, String? description) onAdd;
   final String title;
-  const AddDialog({
+  const MyAddDialog({
     super.key,
     required this.onAdd,
     required this.title,
   });
 
   @override
-  State<AddDialog> createState() => _AddDialogState();
+  State<MyAddDialog> createState() => _MyAddDialogState();
 }
 
-class _AddDialogState extends State<AddDialog> {
+class _MyAddDialogState extends State<MyAddDialog> {
   final nameController = TextEditingController();
   final descriptionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();

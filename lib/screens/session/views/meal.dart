@@ -113,7 +113,7 @@ class _MealScreenState extends State<MealScreen> {
     return showDialog<void>(
       context: context,
       builder: (BuildContext dialogContext) {
-        return AddDialog(
+        return MyAddDialog(
           title: 'Meal',
           onAdd: (name, description) {
             final newMeal = Meal(

@@ -75,7 +75,7 @@ class _NoteScreenState extends State<NoteScreen> {
       floatingActionButton: (widget.endDate.isAfter(DateTime.now()))
           ? FloatingActionButton(
               heroTag: 'notesTag',
-              backgroundColor: CupertinoColors.activeGreen,
+              backgroundColor: CupertinoColors.activeOrange,
               foregroundColor: CupertinoColors.systemGrey,
               elevation: 5,
               shape: RoundedRectangleBorder(
@@ -95,7 +95,7 @@ class _NoteScreenState extends State<NoteScreen> {
     return showDialog<void>(
       context: context,
       builder: (BuildContext dialogContext) {
-        return AddDialog(
+        return MyAddDialog(
           title: 'Note',
           onAdd: (name, description) {
             final newNote = Note(

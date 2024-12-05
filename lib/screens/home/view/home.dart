@@ -7,10 +7,10 @@ import 'package:perfect_childcare/blocs/children_bloc/children_bloc.dart';
 import 'package:perfect_childcare/blocs/nanny_bloc/nanny_bloc.dart';
 import 'package:perfect_childcare/blocs/session_bloc/session_bloc.dart';
 import 'package:perfect_childcare/components/date_selector.dart';
-import 'package:perfect_childcare/components/my_button.dart';
+import 'package:perfect_childcare/components/my_text_button.dart';
 import 'package:perfect_childcare/screens/children/views/children.dart';
 import 'package:perfect_childcare/screens/session/blocs/nanny_management_bloc/nanny_connection_management_bloc.dart';
-import 'package:perfect_childcare/screens/session/views/persistent_nav.dart';
+import 'package:perfect_childcare/screens/session/views/session_tab.dart';
 import 'package:perfect_childcare/components/side_bar.dart';
 import 'package:perfect_childcare/screens/home/view/add_session.dart';
 import 'package:perfect_childcare/screens/home/blocs/session_management_bloc/session_management_bloc.dart';
@@ -164,7 +164,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ],
-                child: PersistentTabScreen(session: session),
+                child: SessionTabScreen(session: session),
               ),
             ),
           );

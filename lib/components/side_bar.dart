@@ -55,10 +55,10 @@ class _SideBarState extends State<SideBar> {
                 ),
                 child: Column(
                   children: [
-                    const CircleAvatar(
+                    /*const CircleAvatar(
                       radius: 52,
                       backgroundImage: AssetImage("assets/face.png"),
-                    ),
+                    ),*/
                     const SizedBox(
                       height: 12,
                     ),

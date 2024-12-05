@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:perfect_childcare/components/my_button.dart';
+import 'package:perfect_childcare/components/my_text_button.dart';
 import 'package:perfect_childcare/components/my_text_field.dart';
 import 'package:perfect_childcare/screens/session/blocs/activity_management_bloc/activity_management_bloc.dart';
 import 'package:perfect_childcare/screens/session/blocs/meal_management_bloc/meal_management_bloc.dart';
@@ -15,15 +15,15 @@ import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:session_repository/session_repository.dart';
 import 'package:user_repository/user_repository.dart';
 
-class PersistentTabScreen extends StatefulWidget {
+class SessionTabScreen extends StatefulWidget {
   final Session? session;
-  const PersistentTabScreen({super.key, this.session});
+  const SessionTabScreen({super.key, this.session});
 
   @override
-  State<PersistentTabScreen> createState() => _PersistentTabScreenState();
+  State<SessionTabScreen> createState() => _SessionTabScreenState();
 }
 
-class _PersistentTabScreenState extends State<PersistentTabScreen> {
+class _SessionTabScreenState extends State<SessionTabScreen> {
   final PersistentTabController _controller =
       PersistentTabController(initialIndex: 0);
   final _formKey = GlobalKey<FormState>();

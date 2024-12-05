@@ -116,7 +116,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
     return showDialog<void>(
       context: context,
       builder: (BuildContext dialogContext) {
-        return AddDialog(
+        return MyAddDialog(
           title: 'Activity',
           onAdd: (name, description) {
             final newActivity = Activity(

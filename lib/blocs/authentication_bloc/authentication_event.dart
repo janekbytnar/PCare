@@ -15,5 +15,4 @@ class AuthenticationUserChanged extends AuthenticationEvent {
 
 class AuthenticationUserDataChanged extends AuthenticationEvent {
   const AuthenticationUserDataChanged();
-
 }
