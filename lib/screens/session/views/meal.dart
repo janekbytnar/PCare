@@ -7,11 +7,9 @@ import 'package:perfect_childcare/screens/session/blocs/meal_management_bloc/mea
 import 'package:session_repository/session_repository.dart';
 
 class MealScreen extends StatefulWidget {
-  final List<Meal>? meal;
   final String sessionId;
   final DateTime endDate;
-  const MealScreen(
-      {super.key, this.meal, required this.sessionId, required this.endDate});
+  const MealScreen({super.key, required this.sessionId, required this.endDate});
 
   @override
   State<MealScreen> createState() => _MealScreenState();

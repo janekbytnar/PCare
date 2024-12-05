@@ -7,14 +7,10 @@ import 'package:perfect_childcare/screens/session/blocs/activity_management_bloc
 import 'package:session_repository/session_repository.dart';
 
 class ActivityScreen extends StatefulWidget {
-  final List<Activity>? activity;
   final String sessionId;
   final DateTime endDate;
   const ActivityScreen(
-      {super.key,
-      this.activity,
-      required this.sessionId,
-      required this.endDate});
+      {super.key, required this.sessionId, required this.endDate});
 
   @override
   State<ActivityScreen> createState() => _ActivityScreenState();

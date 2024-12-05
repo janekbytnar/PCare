@@ -7,11 +7,9 @@ import 'package:perfect_childcare/screens/session/blocs/note_management_bloc/not
 import 'package:session_repository/session_repository.dart';
 
 class NoteScreen extends StatefulWidget {
-  final List<Note>? note;
   final String sessionId;
   final DateTime endDate;
-  const NoteScreen(
-      {super.key, this.note, required this.sessionId, required this.endDate});
+  const NoteScreen({super.key, required this.sessionId, required this.endDate});
 
   @override
   State<NoteScreen> createState() => _NoteScreenState();

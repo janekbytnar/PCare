@@ -10,9 +10,6 @@ class SessionEntity extends Equatable {
   final List<String> childsId;
   final DateTime startDate;
   final DateTime endDate;
-  final List<ActivityEntity> activities;
-  final List<MealEntity> meals;
-  final List<NoteEntity> notes;
 
   const SessionEntity({
     required this.sessionId,
@@ -22,9 +19,6 @@ class SessionEntity extends Equatable {
     required this.childsId,
     required this.startDate,
     required this.endDate,
-    this.activities = const [],
-    this.meals = const [],
-    this.notes = const [],
   });
 
   Map<String, Object?> toDocument() {
@@ -36,10 +30,6 @@ class SessionEntity extends Equatable {
       'childsId': childsId,
       'startDate': Timestamp.fromDate(startDate),
       'endDate': Timestamp.fromDate(endDate),
-      'activities':
-          activities.map((activity) => activity.toDocument()).toList(),
-      'meals': meals.map((meal) => meal.toDocument()).toList(),
-      'notes': notes.map((note) => note.toDocument()).toList(),
     };
   }
 
@@ -58,21 +48,6 @@ class SessionEntity extends Equatable {
           [],
       startDate: (doc['startDate'] as Timestamp).toDate(),
       endDate: (doc['endDate'] as Timestamp).toDate(),
-      activities: (doc['activities'] as List<dynamic>?)
-              ?.map((activityData) => ActivityEntity.fromDocument(
-                  activityData as DocumentSnapshot<Object?>))
-              .toList() ??
-          [],
-      meals: (doc['meals'] as List<dynamic>?)
-              ?.map((mealData) => MealEntity.fromDocument(
-                  mealData as DocumentSnapshot<Object?>))
-              .toList() ??
-          [],
-      notes: (doc['notes'] as List<dynamic>?)
-              ?.map((noteData) => NoteEntity.fromDocument(
-                  noteData as DocumentSnapshot<Object?>))
-              .toList() ??
-          [],
     );
   }
 
@@ -85,9 +60,6 @@ class SessionEntity extends Equatable {
       childsId: childsId,
       startDate: startDate,
       endDate: endDate,
-      activities: activities.map((activity) => activity.toModel()).toList(),
-      meals: meals.map((meal) => meal.toModel()).toList(),
-      notes: notes.map((note) => note.toModel()).toList(),
     );
   }
 
@@ -100,8 +72,5 @@ class SessionEntity extends Equatable {
         childsId,
         startDate,
         endDate,
-        activities,
-        meals,
-        notes,
       ];
 }

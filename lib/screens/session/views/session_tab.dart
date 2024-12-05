@@ -139,7 +139,6 @@ class _SessionTabScreenState extends State<SessionTabScreen> {
           sessionRepository: context.read<SessionRepository>(),
         )..add(LoadActivities(widget.session!.sessionId)),
         child: ActivityScreen(
-          activity: widget.session?.activities,
           sessionId: widget.session!.sessionId,
           endDate: widget.session!.endDate,
         ),
@@ -149,7 +148,6 @@ class _SessionTabScreenState extends State<SessionTabScreen> {
           sessionRepository: context.read<SessionRepository>(),
         )..add(LoadMeals(widget.session!.sessionId)),
         child: MealScreen(
-          meal: widget.session?.meals,
           sessionId: widget.session!.sessionId,
           endDate: widget.session!.endDate,
         ),
@@ -159,7 +157,6 @@ class _SessionTabScreenState extends State<SessionTabScreen> {
           sessionRepository: context.read<SessionRepository>(),
         )..add(LoadNotes(widget.session!.sessionId)),
         child: NoteScreen(
-          note: widget.session?.notes,
           sessionId: widget.session!.sessionId,
           endDate: widget.session!.endDate,
         ),
