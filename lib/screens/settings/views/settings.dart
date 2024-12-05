@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:perfect_childcare/blocs/children_bloc/children_bloc.dart';
 import 'package:perfect_childcare/components/my_button.dart';
 import 'package:perfect_childcare/components/my_text_field.dart';
 import 'package:perfect_childcare/screens/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
@@ -139,6 +140,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         context.read<ConnectionsManagementBloc>().add(
               UnlinkConnection(userId, linkedPersonId),
             );
+        context.read<ChildrenBloc>().add(ChildrenStatusChanged(currentUser!));
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Unlinked successfully.')),
