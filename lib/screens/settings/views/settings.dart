@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:perfect_childcare/blocs/children_bloc/children_bloc.dart';
 import 'package:perfect_childcare/blocs/nanny_bloc/nanny_bloc.dart';
+import 'package:perfect_childcare/blocs/session_bloc/session_bloc.dart';
 import 'package:perfect_childcare/components/my_text_button.dart';
 import 'package:perfect_childcare/components/my_text_field.dart';
 import 'package:perfect_childcare/screens/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
@@ -52,6 +53,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _logoutButton() {
     return IconButton(
       onPressed: () {
+        _userSubscription.cancel();
+        BlocProvider.of<ChildrenBloc>(context)
+            .add(const StopListeningChildren());
+        BlocProvider.of<SessionBloc>(context).add(const StopListeningSession());
         context.read<SignInBloc>().add(
               const SignOutRequired(),
             );
@@ -84,7 +89,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   final linkedUser = linkedUserSnapshot.data!;
                   final userEmail = linkedUser.email;
                   return Text(
-                    'Linked with: $userEmail',
+                    'Linked with $userEmail',
                     style: TextStyle(
                       color: Colors.grey[700],
                       fontSize: 18,

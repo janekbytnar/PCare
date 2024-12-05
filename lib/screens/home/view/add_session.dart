@@ -45,8 +45,8 @@ class _AddSessionScreenState extends State<AddSessionScreen> {
         controller: sessionNameController,
         hintText: 'Session\'s Name',
         obscureText: false,
-        keyboardType: TextInputType.name,
-        prefixIcon: const Icon(CupertinoIcons.person),
+        keyboardType: TextInputType.text,
+        prefixIcon: const Icon(CupertinoIcons.skew),
         errorMsg: _errorMsg,
         validator: (val) {
           if (val!.isEmpty) {

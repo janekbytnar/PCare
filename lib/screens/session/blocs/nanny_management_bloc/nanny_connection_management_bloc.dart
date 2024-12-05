@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:session_repository/session_repository.dart';
 import 'package:user_repository/user_repository.dart';
 
@@ -26,7 +27,10 @@ class NannyConnectionsManagementBloc extends Bloc<
       Emitter<NannyConnectionsManagementState> emit) async {
     emit(NannyConnectionsLoading());
     final normalizedReceiverEmail = event.receiverEmail.toLowerCase();
-
+    if (FirebaseAuth.instance.currentUser == null) {
+      emit(const NannyConnectionsError('User not logged in'));
+      return;
+    }
     try {
       final results = await userRepository
           .getUserIdAndNannyStatusByEmail(normalizedReceiverEmail);
@@ -59,6 +63,10 @@ class NannyConnectionsManagementBloc extends Bloc<
 
   Future<void> _onLoadNannyConnectionRequests(LoadNannyConnectionRequests event,
       Emitter<NannyConnectionsManagementState> emit) async {
+    if (FirebaseAuth.instance.currentUser == null) {
+      emit(const NannyConnectionsError('User not logged in'));
+      return;
+    }
     emit(NannyConnectionsLoading());
     try {
       final requests =
@@ -73,6 +81,10 @@ class NannyConnectionsManagementBloc extends Bloc<
     AcceptNannyConnectionRequest event,
     Emitter<NannyConnectionsManagementState> emit,
   ) async {
+    if (FirebaseAuth.instance.currentUser == null) {
+      emit(const NannyConnectionsError('User not logged in'));
+      return;
+    }
     try {
       await sessionRepository.acceptNannyConnectionRequest(event.requestId);
 
@@ -101,6 +113,10 @@ class NannyConnectionsManagementBloc extends Bloc<
   Future<void> _onDeclineNannyConnectionRequest(
       DeclineNannyConnectionRequest event,
       Emitter<NannyConnectionsManagementState> emit) async {
+    if (FirebaseAuth.instance.currentUser == null) {
+      emit(const NannyConnectionsError('User not logged in'));
+      return;
+    }
     try {
       await sessionRepository.declineNannyConnectionRequest(event.requestId);
       emit(NannyConnectionRequestDeclined());
@@ -111,6 +127,10 @@ class NannyConnectionsManagementBloc extends Bloc<
 
   Future<void> _onUnlinkNannyConnection(UnlinkNannyConnection event,
       Emitter<NannyConnectionsManagementState> emit) async {
+    if (FirebaseAuth.instance.currentUser == null) {
+      emit(const NannyConnectionsError('User not logged in'));
+      return;
+    }
     try {
       await sessionRepository.unlinkNannyConnection(event.sessionId);
       emit(NannyConnectionUnlinked());

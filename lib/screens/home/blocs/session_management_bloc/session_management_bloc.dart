@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:child_repository/child_repository.dart';
 import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:session_repository/session_repository.dart';
 import 'package:user_repository/user_repository.dart';
 
@@ -25,6 +26,10 @@ class SessionManagementBloc
   Future<void> _onAddSession(
       AddSessionEvent event, Emitter<SessionManagementState> emit) async {
     emit(SessionManagementLoading());
+    if (FirebaseAuth.instance.currentUser == null) {
+      emit(const SessionManagementFailure('User not logged in'));
+      return;
+    }
     if (event.session.startDate.isAfter(event.session.endDate) ||
         event.session.startDate.isAtSameMomentAs(event.session.endDate)) {
       emit(const SessionManagementFailure(

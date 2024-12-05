@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:session_repository/session_repository.dart';
 
 part 'meal_management_event.dart';
@@ -21,6 +22,10 @@ class MealManagementBloc
     on<MealManagementDelete>(_onDeleteMeal);
   }
   void _onLoadMeals(LoadMeals event, Emitter<MealManagementState> emit) {
+    if (FirebaseAuth.instance.currentUser == null) {
+      emit(const MealManagementError('User not logged in'));
+      return;
+    }
     _mealsSubscription?.cancel();
     _mealsSubscription = sessionRepository.getMeals(event.sessionId).listen(
       (meals) {

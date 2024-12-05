@@ -23,6 +23,10 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
     });
     on<SessionStatusChanged>(_onStatusChanged);
     on<LoadSessionsForDate>(_onLoadSessionsForDate);
+    on<StopListeningSession>((event, emit) async {
+      await _userSubscription.cancel();
+      emit(const SessionState.unknown());
+    });
   }
 
   Future<void> _onStatusChanged(
