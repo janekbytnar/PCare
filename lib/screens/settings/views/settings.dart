@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:perfect_childcare/blocs/children_bloc/children_bloc.dart';
+import 'package:perfect_childcare/blocs/nanny_bloc/nanny_bloc.dart';
 import 'package:perfect_childcare/components/my_text_button.dart';
 import 'package:perfect_childcare/components/my_text_field.dart';
 import 'package:perfect_childcare/screens/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
@@ -72,15 +73,42 @@ class _SettingsScreenState extends State<SettingsScreen> {
           final linkedPersonId = myUser.linkedPerson;
           final isLinked = linkedPersonId.isNotEmpty;
 
-          return Text(
-            isLinked
-                ? 'Linked with: $linkedPersonId'
-                : 'No other parents linked',
-            style: TextStyle(
-              color: isLinked ? Colors.grey[700] : Colors.red,
-              fontSize: 18,
-            ),
-          );
+          if (isLinked) {
+            // Fetch the linked person's email
+            return FutureBuilder<MyUser?>(
+              future:
+                  context.read<UserRepository>().getUserById(linkedPersonId),
+              builder: (context, linkedUserSnapshot) {
+                if (linkedUserSnapshot.hasData &&
+                    linkedUserSnapshot.data != null) {
+                  final linkedUser = linkedUserSnapshot.data!;
+                  final userEmail = linkedUser.email;
+                  return Text(
+                    'Linked with: $userEmail',
+                    style: TextStyle(
+                      color: Colors.grey[700],
+                      fontSize: 18,
+                    ),
+                  );
+                } else if (linkedUserSnapshot.hasError) {
+                  return Text(
+                    'Error: ${linkedUserSnapshot.error}',
+                    style: const TextStyle(color: Colors.red),
+                  );
+                } else {
+                  return const CircularProgressIndicator();
+                }
+              },
+            );
+          } else {
+            return const Text(
+              'No other parents linked',
+              style: TextStyle(
+                color: Colors.red,
+                fontSize: 18,
+              ),
+            );
+          }
         } else if (snapshot.hasError) {
           return Text(
             'Error: ${snapshot.error}',
@@ -283,21 +311,41 @@ class _SettingsScreenState extends State<SettingsScreen> {
           centerTitle: true,
           backgroundColor: Theme.of(context).colorScheme.surface,
         ),
-        body: Center(
-          child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _linkedInfo(),
-                linked ? Container() : _incomingRequestButton(),
-                _linkParentButton(),
-                const SizedBox(height: 20),
-              ],
-            ),
-          ),
-        ),
+        body:
+            BlocBuilder<NannyBloc, NannyState>(builder: (context, nannyState) {
+          switch (nannyState.status) {
+            case NannyStatus.isNotNanny:
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 20.0, vertical: 30.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      _linkedInfo(),
+                      linked ? Container() : _incomingRequestButton(),
+                      _linkParentButton(),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
+                ),
+              );
+            case NannyStatus.isNanny:
+              return const Center(
+                child: Text(
+                  'You are nanny',
+                  style: TextStyle(fontSize: 20),
+                ),
+              );
+            case NannyStatus.unknown:
+              return const Center(
+                child: Text(
+                  'Unknown nanny status',
+                  style: TextStyle(fontSize: 20),
+                ),
+              );
+          }
+        }),
       ),
     );
   }
