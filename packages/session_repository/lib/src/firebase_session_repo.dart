@@ -76,6 +76,24 @@ class FirebaseSessionRepo implements SessionRepository {
   }
 
   @override
+  Future<List<Session>> getSessionsByParentsId(
+    List<String> parentsId,
+  ) async {
+    try {
+      final querySnapshot = await sessionCollection
+          .where('parentsId', arrayContainsAny: parentsId)
+          .get();
+
+      return querySnapshot.docs
+          .map((doc) => SessionEntity.fromDocument(doc).toModel())
+          .toList();
+    } catch (e) {
+      log('Error getting sessions by parentsId: ${e.toString()}');
+      rethrow;
+    }
+  }
+
+  @override
   Future<void> updateSession(Session session) async {
     try {
       await sessionCollection

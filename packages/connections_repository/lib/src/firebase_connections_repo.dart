@@ -24,9 +24,10 @@ class FirebaseConnectionsRepo implements ConnectionsRepository {
     if (existingRequest.docs.isNotEmpty) {
       throw Exception('Connection request already sent');
     }
-
+    final docRef = connectionsCollection.doc();
     // Create new connection request
     await connectionsCollection.add({
+      'connectionId': docRef.id,
       'connectionSenderId': senderId,
       'senderEmail': senderEmail,
       'connectionReceiverId': receiverId,

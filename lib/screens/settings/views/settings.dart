@@ -80,9 +80,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
           if (isLinked) {
             // Fetch the linked person's email
-            return FutureBuilder<MyUser?>(
-              future:
-                  context.read<UserRepository>().getUserById(linkedPersonId),
+            return FutureBuilder<MyUserPublic?>(
+              future: context
+                  .read<UserRepository>()
+                  .getUserPublicById(linkedPersonId),
               builder: (context, linkedUserSnapshot) {
                 if (linkedUserSnapshot.hasData &&
                     linkedUserSnapshot.data != null) {

@@ -241,4 +241,15 @@ class FirebaseUserRepo implements UserRepository {
       throw Exception('Token is not deleted: $e');
     }
   }
+
+  @override
+  Future<MyUserPublic?> getUserPublicById(String userId) async {
+    final doc = await usersPublicCollection.doc(userId).get();
+    if (doc.exists) {
+      final data = doc.data() as Map<String, dynamic>;
+      return MyUserPublic.fromEntity(MyUserPublicEntity.fromDocument(data));
+    } else {
+      return null;
+    }
+  }
 }

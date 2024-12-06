@@ -19,4 +19,5 @@ abstract class UserRepository {
   Future<void> unlinkPerson(String userId, String linkedPersonId);
   Future<void> updateFCMToken(String userId, String fcmToken);
   Future<void> removeFCMToken(String userId, String token);
+  Future<MyUserPublic?> getUserPublicById(String userId);
 }
