@@ -80,13 +80,32 @@ class FirebaseSessionRepo implements SessionRepository {
     List<String> parentsId,
   ) async {
     try {
+      // Perform initial query based on 'parentsId'
       final querySnapshot = await sessionCollection
           .where('parentsId', arrayContainsAny: parentsId)
           .get();
 
-      return querySnapshot.docs
+      // Map initial query results to a list of sessions
+      List<Session> sessions = querySnapshot.docs
           .map((doc) => SessionEntity.fromDocument(doc).toModel())
           .toList();
+
+      // If the list contains only one item, add an additional query for 'nannyId'
+      if (parentsId.length == 1) {
+        final additionalQuerySnapshot = await sessionCollection
+            .where('nannyId', isEqualTo: parentsId.first)
+            .get();
+
+        // Map additional query results to a list of sessions
+        List<Session> additionalSessions = additionalQuerySnapshot.docs
+            .map((doc) => SessionEntity.fromDocument(doc).toModel())
+            .toList();
+
+        // Combine both sets of results (avoiding duplicates)
+        sessions = [...sessions, ...additionalSessions];
+      }
+
+      return sessions;
     } catch (e) {
       log('Error getting sessions by parentsId: ${e.toString()}');
       rethrow;
