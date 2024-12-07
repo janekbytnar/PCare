@@ -207,10 +207,10 @@ class FirebaseUserRepo implements UserRepository {
   @override
   Future<void> unlinkPerson(String userId, String linkedPersonId) async {
     try {
-      await usersCollection.doc(userId).update({
+      await usersCollection.doc(linkedPersonId).update({
         'linkedPerson': '',
       });
-      await usersCollection.doc(linkedPersonId).update({
+      await usersCollection.doc(userId).update({
         'linkedPerson': '',
       });
     } catch (e) {
