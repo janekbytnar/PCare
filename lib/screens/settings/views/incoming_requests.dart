@@ -51,8 +51,8 @@ class IncomingRequestsScreen extends StatelessWidget {
         context.read<ConnectionsManagementBloc>().add(
               AcceptConnectionRequest(connectionId),
             );
-        Navigator.pop(context);
         context.read<ChildrenBloc>().add(ChildrenStatusChanged(user));
+        Navigator.pop(context);
       },
     );
   }

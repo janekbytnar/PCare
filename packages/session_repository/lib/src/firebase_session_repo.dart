@@ -373,7 +373,7 @@ class FirebaseSessionRepo implements SessionRepository {
     try {
       final docRef = await sessionCollection
           .doc(sessionId)
-          .collection('note')
+          .collection('notes')
           .add(note.toEntity().toDocument());
 
       await docRef.update({'noteId': docRef.id});
@@ -402,7 +402,7 @@ class FirebaseSessionRepo implements SessionRepository {
     try {
       await sessionCollection
           .doc(sessionId)
-          .collection('note')
+          .collection('notes')
           .doc(noteId)
           .delete();
     } catch (e) {
@@ -415,7 +415,7 @@ class FirebaseSessionRepo implements SessionRepository {
   Stream<List<Note>> getNotes(String sessionId) {
     return sessionCollection
         .doc(sessionId)
-        .collection('note')
+        .collection('notes')
         .snapshots()
         .map((snapshot) => snapshot.docs.map((doc) {
               return Note.fromEntity(NoteEntity.fromDocument(doc));

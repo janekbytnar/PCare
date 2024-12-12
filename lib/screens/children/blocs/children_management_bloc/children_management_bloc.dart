@@ -32,15 +32,6 @@ class ChildrenManagementBloc
       await childRepository.addChild(event.child);
       // Update user's children list
       await userRepository.connectChildToUser(event.userId, event.child.id);
-      final user = await userRepository.getUserById(event.userId);
-
-      if (user != null) {
-        final linkedPersonId = user.linkedPerson;
-        if (linkedPersonId.isNotEmpty) {
-          await userRepository.connectChildToUser(
-              linkedPersonId, event.child.id);
-        }
-      }
 
       emit(ChildrenManagementSuccess());
     } catch (e) {

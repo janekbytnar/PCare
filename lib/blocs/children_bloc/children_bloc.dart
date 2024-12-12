@@ -54,7 +54,6 @@ class ChildrenBloc extends Bloc<ChildrenEvent, ChildrenState> {
           add(ChildrenUpdated(children));
         }, onError: (error) {
           if (error.toString().contains('permission-denied')) {
-            // Zignoruj błąd jeśli user jest null lub przejdź do stanu childless
             emit(const ChildrenState.childless());
           } else {
             emit(ChildrenState.failure(error.toString()));
