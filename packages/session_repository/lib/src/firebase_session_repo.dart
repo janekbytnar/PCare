@@ -76,6 +76,43 @@ class FirebaseSessionRepo implements SessionRepository {
   }
 
   @override
+  Future<List<Session>> getSessionsByParentsId(
+    List<String> parentsId,
+  ) async {
+    try {
+      // Perform initial query based on 'parentsId'
+      final querySnapshot = await sessionCollection
+          .where('parentsId', arrayContainsAny: parentsId)
+          .get();
+
+      // Map initial query results to a list of sessions
+      List<Session> sessions = querySnapshot.docs
+          .map((doc) => SessionEntity.fromDocument(doc).toModel())
+          .toList();
+
+      // If the list contains only one item, add an additional query for 'nannyId'
+      if (parentsId.length == 1) {
+        final additionalQuerySnapshot = await sessionCollection
+            .where('nannyId', isEqualTo: parentsId.first)
+            .get();
+
+        // Map additional query results to a list of sessions
+        List<Session> additionalSessions = additionalQuerySnapshot.docs
+            .map((doc) => SessionEntity.fromDocument(doc).toModel())
+            .toList();
+
+        // Combine both sets of results (avoiding duplicates)
+        sessions = [...sessions, ...additionalSessions];
+      }
+
+      return sessions;
+    } catch (e) {
+      log('Error getting sessions by parentsId: ${e.toString()}');
+      rethrow;
+    }
+  }
+
+  @override
   Future<void> updateSession(Session session) async {
     try {
       await sessionCollection
@@ -336,7 +373,7 @@ class FirebaseSessionRepo implements SessionRepository {
     try {
       final docRef = await sessionCollection
           .doc(sessionId)
-          .collection('note')
+          .collection('notes')
           .add(note.toEntity().toDocument());
 
       await docRef.update({'noteId': docRef.id});
@@ -365,7 +402,7 @@ class FirebaseSessionRepo implements SessionRepository {
     try {
       await sessionCollection
           .doc(sessionId)
-          .collection('note')
+          .collection('notes')
           .doc(noteId)
           .delete();
     } catch (e) {
@@ -378,7 +415,7 @@ class FirebaseSessionRepo implements SessionRepository {
   Stream<List<Note>> getNotes(String sessionId) {
     return sessionCollection
         .doc(sessionId)
-        .collection('note')
+        .collection('notes')
         .snapshots()
         .map((snapshot) => snapshot.docs.map((doc) {
               return Note.fromEntity(NoteEntity.fromDocument(doc));

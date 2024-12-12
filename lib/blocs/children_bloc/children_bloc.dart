@@ -24,6 +24,11 @@ class ChildrenBloc extends Bloc<ChildrenEvent, ChildrenState> {
     });
     on<ChildrenStatusChanged>(_onStatusChanged);
     on<ChildrenUpdated>(_onChildrenUpdated);
+    on<StopListeningChildren>((event, emit) async {
+      await _childrenSubscription?.cancel();
+      await _userSubscription.cancel();
+      emit(const ChildrenState.childless());
+    });
   }
 
   Future<void> _onStatusChanged(
@@ -43,16 +48,17 @@ class ChildrenBloc extends Bloc<ChildrenEvent, ChildrenState> {
         }
 
         // Subscribe to the children stream
-        _childrenSubscription =
-            childRepository.getChildrenForUserStream(parentIds).listen(
-          (children) {
-            // When new data arrives, add a ChildrenUpdated event
-            add(ChildrenUpdated(children));
-          },
-          onError: (error) {
+        _childrenSubscription = childRepository
+            .getChildrenForUserStream(parentIds)
+            .listen((children) {
+          add(ChildrenUpdated(children));
+        }, onError: (error) {
+          if (error.toString().contains('permission-denied')) {
+            emit(const ChildrenState.childless());
+          } else {
             emit(ChildrenState.failure(error.toString()));
-          },
-        );
+          }
+        });
       } catch (e) {
         emit(ChildrenState.failure(e.toString()));
       }

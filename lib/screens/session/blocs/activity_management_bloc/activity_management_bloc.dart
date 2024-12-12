@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:session_repository/session_repository.dart';
 
 part 'activity_management_event.dart';
@@ -22,6 +23,10 @@ class ActivityManagementBloc
   }
   void _onLoadActivities(
       LoadActivities event, Emitter<ActivityManagementState> emit) {
+    if (FirebaseAuth.instance.currentUser == null) {
+      emit(const ActivityManagementError('User not logged in'));
+      return;
+    }
     _activitiesSubscription?.cancel();
     _activitiesSubscription =
         sessionRepository.getActivities(event.sessionId).listen(

@@ -24,9 +24,10 @@ class FirebaseConnectionsRepo implements ConnectionsRepository {
     if (existingRequest.docs.isNotEmpty) {
       throw Exception('Connection request already sent');
     }
-
+    final docRef = connectionsCollection.doc();
     // Create new connection request
     await connectionsCollection.add({
+      'connectionId': docRef.id,
       'connectionSenderId': senderId,
       'senderEmail': senderEmail,
       'connectionReceiverId': receiverId,
@@ -83,13 +84,43 @@ class FirebaseConnectionsRepo implements ConnectionsRepository {
 
   @override
   Future<void> unlinkConnection(String userId, String connectedUserId) async {
-    final connectionsQuery = await connectionsCollection
-        .where('connectionSenderId', whereIn: [userId, connectedUserId])
+    // Query 1: Where `connectionSenderId` is `userId` and `status` is `accepted`
+    final senderQuery = await connectionsCollection
+        .where('connectionSenderId', isEqualTo: userId)
         .where('status', isEqualTo: 'accepted')
         .get();
 
-    for (var doc in connectionsQuery.docs) {
+    // Query 2: Where `connectionReceiverId` is `userId` and `status` is `accepted`
+    final receiverQuery = await connectionsCollection
+        .where('connectionReceiverId', isEqualTo: userId)
+        .where('status', isEqualTo: 'accepted')
+        .get();
+
+    // Ensure only one document exists in senderQuery
+    if (senderQuery.docs.length == 1) {
+      final doc = senderQuery.docs.first;
+      final oldData = doc.data(); // Data from the existing document
       await doc.reference.update({
+        'connectionId': oldData['connectionId'],
+        'connectionSenderId': oldData['connectionSenderId'],
+        'senderEmail': oldData['senderEmail'],
+        'connectionReceiverId': oldData['connectionReceiverId'],
+        'requestTime': oldData['requestTime'],
+        'status': 'unlinked',
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    }
+
+    // Ensure only one document exists in receiverQuery
+    if (receiverQuery.docs.length == 1) {
+      final doc = receiverQuery.docs.first;
+      final oldData = doc.data(); // Data from the existing document
+      await doc.reference.update({
+        'connectionId': oldData['connectionId'],
+        'connectionSenderId': oldData['connectionSenderId'],
+        'senderEmail': oldData['senderEmail'],
+        'connectionReceiverId': oldData['connectionReceiverId'],
+        'requestTime': oldData['requestTime'],
         'status': 'unlinked',
         'updatedAt': FieldValue.serverTimestamp(),
       });

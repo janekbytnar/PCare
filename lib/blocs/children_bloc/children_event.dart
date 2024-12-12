@@ -24,3 +24,7 @@ class ChildrenUpdated extends ChildrenEvent {
   @override
   List<Object?> get props => [children];
 }
+
+class StopListeningChildren extends ChildrenEvent {
+  const StopListeningChildren();
+}

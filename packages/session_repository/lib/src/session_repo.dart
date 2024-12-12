@@ -10,7 +10,9 @@ abstract class SessionRepository {
     DateTime endDate,
   );
   Future<List<Session>> getSessions(List<String> sessionIds);
+  Future<List<Session>> getSessionsByParentsId(List<String> parentsId);
   Future<void> updateSession(Session session);
+
 //ADD NANNY TO SESSION
   Future<void> sendNannyConnectionRequest({
     required String sessionId,

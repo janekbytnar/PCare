@@ -4,7 +4,7 @@ import 'package:child_repository/child_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:perfect_childcare/blocs/children_bloc/children_bloc.dart';
-import 'package:perfect_childcare/components/my_button.dart';
+import 'package:perfect_childcare/components/my_text_button.dart';
 import 'package:perfect_childcare/screens/children/blocs/children_management_bloc/children_management_bloc.dart';
 import 'package:perfect_childcare/screens/children/views/add_child.dart';
 import 'package:user_repository/user_repository.dart';

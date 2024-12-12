@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:perfect_childcare/components/my_button.dart';
+import 'package:perfect_childcare/components/my_text_button.dart';
 import 'package:perfect_childcare/components/my_text_field.dart';
 import 'package:perfect_childcare/screens/home/blocs/session_management_bloc/session_management_bloc.dart';
 import 'package:session_repository/session_repository.dart';
@@ -45,8 +45,8 @@ class _AddSessionScreenState extends State<AddSessionScreen> {
         controller: sessionNameController,
         hintText: 'Session\'s Name',
         obscureText: false,
-        keyboardType: TextInputType.name,
-        prefixIcon: const Icon(CupertinoIcons.person),
+        keyboardType: TextInputType.text,
+        prefixIcon: const Icon(CupertinoIcons.skew),
         errorMsg: _errorMsg,
         validator: (val) {
           if (val!.isEmpty) {

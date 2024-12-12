@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import '../entities/entities.dart';
-import 'models.dart';
 
 class Session extends Equatable {
   final String sessionId;
@@ -10,9 +9,6 @@ class Session extends Equatable {
   final List<String> childsId;
   final DateTime startDate;
   final DateTime endDate;
-  final List<Activity> activities;
-  final List<Meal> meals;
-  final List<Note> notes;
 
   const Session({
     required this.sessionId,
@@ -22,9 +18,6 @@ class Session extends Equatable {
     required this.childsId,
     required this.startDate,
     required this.endDate,
-    this.activities = const [],
-    this.meals = const [],
-    this.notes = const [],
   });
 
   static final empty = Session(
@@ -35,9 +28,6 @@ class Session extends Equatable {
     childsId: const [],
     startDate: DateTime(1970, 1, 1),
     endDate: DateTime(1970, 1, 1),
-    activities: const [],
-    meals: const [],
-    notes: const [],
   );
 
   Session copyWith({
@@ -48,9 +38,6 @@ class Session extends Equatable {
     List<String>? childsId,
     DateTime? startDate,
     DateTime? endDate,
-    List<Activity>? activities,
-    List<Meal>? meals,
-    List<Note>? notes,
   }) {
     return Session(
       sessionId: sessionId ?? this.sessionId,
@@ -60,9 +47,6 @@ class Session extends Equatable {
       childsId: childsId ?? this.childsId,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
-      activities: activities ?? this.activities,
-      meals: meals ?? this.meals,
-      notes: notes ?? this.notes,
     );
   }
 
@@ -75,9 +59,6 @@ class Session extends Equatable {
       childsId: childsId,
       startDate: startDate,
       endDate: endDate,
-      activities: activities.map((activity) => activity.toEntity()).toList(),
-      meals: meals.map((meal) => meal.toEntity()).toList(),
-      notes: notes.map((note) => note.toEntity()).toList(),
     );
   }
 
@@ -90,15 +71,6 @@ class Session extends Equatable {
       childsId: entity.childsId,
       startDate: entity.startDate,
       endDate: entity.endDate,
-      activities: entity.activities
-          .map((activityEntity) => Activity.fromEntity(activityEntity))
-          .toList(),
-      meals: entity.meals
-          .map((mealEntity) => Meal.fromEntity(mealEntity))
-          .toList(),
-      notes: entity.notes
-          .map((noteEntity) => Note.fromEntity(noteEntity))
-          .toList(),
     );
   }
 
@@ -111,8 +83,5 @@ class Session extends Equatable {
         childsId,
         startDate,
         endDate,
-        activities,
-        meals,
-        notes,
       ];
 }

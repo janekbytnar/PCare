@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:perfect_childcare/blocs/authentication_bloc/authentication_bloc.dart';
-import 'package:perfect_childcare/components/my_button.dart';
+import 'package:perfect_childcare/components/my_text_button.dart';
 import 'package:perfect_childcare/components/my_text_field.dart';
 import 'dart:io';
 import 'dart:core';
@@ -188,6 +188,10 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
               await context.read<UserRepository>().setUserData(updatedUser);
 
               if (!mounted) return; // Check if the widget is still mounted
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context);
+                return;
+              }
               context
                   .read<AuthenticationBloc>()
                   .add(const AuthenticationUserDataChanged());
@@ -218,7 +222,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
           key: _formKey,
           child: Column(
             children: [
-              _photoButton(),
+              // _photoButton(),
               const SizedBox(height: 30),
               _firsNameField(),
               const SizedBox(height: 30),

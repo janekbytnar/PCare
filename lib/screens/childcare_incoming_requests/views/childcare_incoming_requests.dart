@@ -91,17 +91,17 @@ class ChildcareIncomingRequestsScreen extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Connection Requests')),
+            appBar: AppBar(title: const Text('Incoming Requests')),
             body: const Center(child: CircularProgressIndicator()),
           );
         } else if (snapshot.hasError) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Connection Requests')),
+            appBar: AppBar(title: const Text('Incoming Requests')),
             body: Center(child: Text('Error: ${snapshot.error}')),
           );
         } else if (!snapshot.hasData || snapshot.data == null) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Connection Requests')),
+            appBar: AppBar(title: const Text('Incoming Requests')),
             body: const Center(child: Text('User not logged in')),
           );
         }
@@ -112,7 +112,7 @@ class ChildcareIncomingRequestsScreen extends StatelessWidget {
             .add(LoadNannyConnectionRequests(userId));
 
         return Scaffold(
-          appBar: AppBar(title: const Text('Connection Requests')),
+          appBar: AppBar(title: const Text('Incoming Requests')),
           body: BlocBuilder<NannyConnectionsManagementBloc,
               NannyConnectionsManagementState>(
             builder: (context, state) {

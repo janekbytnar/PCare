@@ -7,6 +7,8 @@ import 'package:user_repository/user_repository.dart';
 class FirebaseUserRepo implements UserRepository {
   final FirebaseAuth _firebaseAuth;
   final usersCollection = FirebaseFirestore.instance.collection('user');
+  final usersPublicCollection =
+      FirebaseFirestore.instance.collection('userPublic');
 
   FirebaseUserRepo({
     FirebaseAuth? firebaseAuth,
@@ -54,6 +56,9 @@ class FirebaseUserRepo implements UserRepository {
   Future<void> setUserData(MyUser myUser) async {
     try {
       await usersCollection
+          .doc(myUser.userId)
+          .set(myUser.toEntity().toDocument());
+      await usersPublicCollection
           .doc(myUser.userId)
           .set(myUser.toEntity().toDocument());
     } catch (e) {
@@ -161,7 +166,7 @@ class FirebaseUserRepo implements UserRepository {
   @override
   Future<List<Object>?> getUserIdAndNannyStatusByEmail(String email) async {
     final querySnapshot =
-        await usersCollection.where('email', isEqualTo: email).get();
+        await usersPublicCollection.where('email', isEqualTo: email).get();
 
     if (querySnapshot.docs.isNotEmpty) {
       final doc = querySnapshot.docs.first;
@@ -202,10 +207,10 @@ class FirebaseUserRepo implements UserRepository {
   @override
   Future<void> unlinkPerson(String userId, String linkedPersonId) async {
     try {
-      await usersCollection.doc(userId).update({
+      await usersCollection.doc(linkedPersonId).update({
         'linkedPerson': '',
       });
-      await usersCollection.doc(linkedPersonId).update({
+      await usersCollection.doc(userId).update({
         'linkedPerson': '',
       });
     } catch (e) {
@@ -234,6 +239,17 @@ class FirebaseUserRepo implements UserRepository {
       });
     } catch (e) {
       throw Exception('Token is not deleted: $e');
+    }
+  }
+
+  @override
+  Future<MyUserPublic?> getUserPublicById(String userId) async {
+    final doc = await usersPublicCollection.doc(userId).get();
+    if (doc.exists) {
+      final data = doc.data() as Map<String, dynamic>;
+      return MyUserPublic.fromEntity(MyUserPublicEntity.fromDocument(data));
+    } else {
+      return null;
     }
   }
 }

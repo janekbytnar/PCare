@@ -5,8 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:perfect_childcare/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:perfect_childcare/blocs/nanny_bloc/nanny_bloc.dart';
 import 'package:perfect_childcare/screens/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
+import 'package:perfect_childcare/screens/childcare_incoming_requests/views/childcare_incoming_requests.dart';
 import 'package:perfect_childcare/screens/children/views/children.dart';
-import 'package:perfect_childcare/screens/childcare_incoming_requests/childcare_incoming_requests/childcare_incoming_requests.dart';
 import 'package:perfect_childcare/screens/personal_information/views/personal_information_screen.dart';
 import 'package:perfect_childcare/screens/session/blocs/nanny_management_bloc/nanny_connection_management_bloc.dart';
 import 'package:perfect_childcare/screens/settings/blocs/connections_management_bloc/connections_management_bloc.dart';
@@ -55,10 +55,10 @@ class _SideBarState extends State<SideBar> {
                 ),
                 child: Column(
                   children: [
-                    const CircleAvatar(
+                    /*const CircleAvatar(
                       radius: 52,
                       backgroundImage: AssetImage("assets/face.png"),
-                    ),
+                    ),*/
                     const SizedBox(
                       height: 12,
                     ),

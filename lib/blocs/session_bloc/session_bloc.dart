@@ -23,6 +23,10 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
     });
     on<SessionStatusChanged>(_onStatusChanged);
     on<LoadSessionsForDate>(_onLoadSessionsForDate);
+    on<StopListeningSession>((event, emit) async {
+      await _userSubscription.cancel();
+      emit(const SessionState.unknown());
+    });
   }
 
   Future<void> _onStatusChanged(
@@ -31,27 +35,14 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
     final today = DateTime.now();
     if (user != null) {
       emit(SessionState.loading(selectedDate: today));
-      Set<String> sessionsId = {};
-      if (user.sessions.isNotEmpty) {
-        sessionsId.addAll(user.sessions);
-      }
       final linkedPersonId = user.linkedPerson;
+      List<String> parentsIdList = linkedPersonId.isNotEmpty
+          ? [linkedPersonId, user.userId]
+          : [user.userId];
 
       try {
-        if (linkedPersonId.isNotEmpty) {
-          final linkedPerson = await userRepository.getUserById(linkedPersonId);
-          if (linkedPerson != null && linkedPerson.sessions.isNotEmpty) {
-            List<String> linkedPersonSessionsId = linkedPerson.sessions;
-            sessionsId.addAll(linkedPersonSessionsId);
-          }
-        }
-        if (sessionsId.isEmpty) {
-          emit(SessionState.inactive(today));
-          return;
-        }
-
         List<Session> sessions =
-            await sessionRepository.getSessions(sessionsId.toList());
+            await sessionRepository.getSessionsByParentsId(parentsIdList);
         // Filter sessions for today
         List<Session> sessionsToday = sessions.where((session) {
           return session.startDate.year == today.year &&
@@ -75,34 +66,20 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
   Future<void> _onLoadSessionsForDate(
       LoadSessionsForDate event, Emitter<SessionState> emit) async {
     emit(SessionState.loading(selectedDate: event.selectedDate));
+
     try {
       final user = await userRepository.getCurrentUserData();
 
       if (user != null) {
-        Set<String> sessionsId = {};
-
-// Fetch all sessions of the user if exists
-        if (user.sessions.isNotEmpty) {
-          sessionsId.addAll(user.sessions);
-        }
-
+        // Prepare the list of parent IDs
         final linkedPersonId = user.linkedPerson;
+        List<String> parentsList = linkedPersonId.isNotEmpty
+            ? [linkedPersonId, user.userId]
+            : [user.userId];
 
-        //fetch all sessions of the linked person if exists
-        if (linkedPersonId.isNotEmpty) {
-          final linkedPerson = await userRepository.getUserById(linkedPersonId);
-          if (linkedPerson != null && linkedPerson.sessions.isNotEmpty) {
-            List<String> linkedPersonSessionsId = linkedPerson.sessions;
-            sessionsId.addAll(linkedPersonSessionsId);
-          }
-        }
-        if (sessionsId.isEmpty) {
-          emit(SessionState.inactive(event.selectedDate));
-          return;
-        }
-
+        // Fetch sessions by parent IDs
         List<Session> sessions =
-            await sessionRepository.getSessions(sessionsId.toList());
+            await sessionRepository.getSessionsByParentsId(parentsList);
 
         // Filter sessions for the selected date
         List<Session> sessionsForDate = sessions.where((session) {

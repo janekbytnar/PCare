@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:user_repository/user_repository.dart';
 import 'package:connections_repository/connections_repository.dart';
 
@@ -24,6 +25,10 @@ class ConnectionsManagementBloc
 
   Future<void> _onSendConnectionRequest(SendConnectionRequest event,
       Emitter<ConnectionsManagementState> emit) async {
+    if (FirebaseAuth.instance.currentUser == null) {
+      emit(const ConnectionsError('User not logged in'));
+      return;
+    }
     emit(ConnectionsLoading());
     final normalizedReceiverEmail = event.receiverEmail.toLowerCase();
     final normalizedSenderEmail = event.senderEmail.toLowerCase();
@@ -49,6 +54,10 @@ class ConnectionsManagementBloc
 
   Future<void> _onLoadConnectionRequests(LoadConnectionRequests event,
       Emitter<ConnectionsManagementState> emit) async {
+    if (FirebaseAuth.instance.currentUser == null) {
+      emit(const ConnectionsError('User not logged in'));
+      return;
+    }
     emit(ConnectionsLoading());
     try {
       final requests =
@@ -63,6 +72,10 @@ class ConnectionsManagementBloc
     AcceptConnectionRequest event,
     Emitter<ConnectionsManagementState> emit,
   ) async {
+    if (FirebaseAuth.instance.currentUser == null) {
+      emit(const ConnectionsError('User not logged in'));
+      return;
+    }
     try {
       await connectionsRepository.acceptConnectionRequest(event.requestId);
 
@@ -81,6 +94,10 @@ class ConnectionsManagementBloc
 
   Future<void> _onDeclineConnectionRequest(DeclineConnectionRequest event,
       Emitter<ConnectionsManagementState> emit) async {
+    if (FirebaseAuth.instance.currentUser == null) {
+      emit(const ConnectionsError('User not logged in'));
+      return;
+    }
     try {
       await connectionsRepository.declineConnectionRequest(event.requestId);
       emit(ConnectionRequestDeclined());
@@ -92,6 +109,10 @@ class ConnectionsManagementBloc
   Future<void> _onUnlinkConnection(
       UnlinkConnection event, Emitter<ConnectionsManagementState> emit) async {
     try {
+      if (FirebaseAuth.instance.currentUser == null) {
+        emit(const ConnectionsError('User not logged in'));
+        return;
+      }
       await connectionsRepository.unlinkConnection(
           event.userId, event.linkedPersonId);
       await userRepository.unlinkPerson(event.userId, event.linkedPersonId);

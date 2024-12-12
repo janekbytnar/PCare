@@ -23,3 +23,7 @@ class LoadSessionsForDate extends SessionEvent {
   @override
   List<Object?> get props => [selectedDate];
 }
+
+class StopListeningSession extends SessionEvent {
+  const StopListeningSession();
+}

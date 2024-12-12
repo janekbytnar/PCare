@@ -7,11 +7,9 @@ import 'package:perfect_childcare/screens/session/blocs/note_management_bloc/not
 import 'package:session_repository/session_repository.dart';
 
 class NoteScreen extends StatefulWidget {
-  final List<Note>? note;
   final String sessionId;
   final DateTime endDate;
-  const NoteScreen(
-      {super.key, this.note, required this.sessionId, required this.endDate});
+  const NoteScreen({super.key, required this.sessionId, required this.endDate});
 
   @override
   State<NoteScreen> createState() => _NoteScreenState();
@@ -75,7 +73,7 @@ class _NoteScreenState extends State<NoteScreen> {
       floatingActionButton: (widget.endDate.isAfter(DateTime.now()))
           ? FloatingActionButton(
               heroTag: 'notesTag',
-              backgroundColor: CupertinoColors.activeGreen,
+              backgroundColor: CupertinoColors.activeOrange,
               foregroundColor: CupertinoColors.systemGrey,
               elevation: 5,
               shape: RoundedRectangleBorder(
@@ -95,7 +93,7 @@ class _NoteScreenState extends State<NoteScreen> {
     return showDialog<void>(
       context: context,
       builder: (BuildContext dialogContext) {
-        return AddDialog(
+        return MyAddDialog(
           title: 'Note',
           onAdd: (name, description) {
             final newNote = Note(

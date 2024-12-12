@@ -4,7 +4,7 @@ import 'package:perfect_childcare/blocs/authentication_bloc/authentication_bloc.
 
 import 'package:perfect_childcare/blocs/internet_connection_bloc/internet_connection_bloc.dart';
 import 'package:perfect_childcare/blocs/session_bloc/session_bloc.dart';
-import 'package:perfect_childcare/screens/auth/error_screen/no_internet_screen.dart';
+import 'package:perfect_childcare/screens/error_screen/no_internet_screen.dart';
 import 'package:perfect_childcare/screens/auth/views/welcome_screen.dart';
 import 'package:perfect_childcare/screens/home/view/home.dart';
 import 'package:perfect_childcare/screens/personal_information/views/personal_information_screen.dart';

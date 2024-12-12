@@ -53,8 +53,11 @@ class AuthenticationBloc
 
     on<AuthenticationUserDataChanged>((event, emit) async {
       final myUser = await userRepository.getCurrentUserData();
+      if (myUser == null) {
+        return;
+      }
       final isProfileComplete =
-          myUser!.firstName.isNotEmpty && myUser.surname.isNotEmpty;
+          myUser.firstName.isNotEmpty && myUser.surname.isNotEmpty;
       if (isProfileComplete) {
         emit(AuthenticationState.authenticated(
             FirebaseAuth.instance.currentUser!));
